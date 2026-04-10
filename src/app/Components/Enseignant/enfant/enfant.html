@@ -1,0 +1,67 @@
+
+        <div id="dashboard-section">
+            <div class="header">
+                <h1 class="page-title">Gestion des Enfant</h1>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Total Enfants</div><div class="stat-value" id="dash-total-enfants">{{listEnfant().length}}</div></div>
+                        <div class="stat-icon blue"><i class="fas fa-child"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Prochaine Séance</div><div class="stat-value" style="font-size:1.5rem">Demain 14h</div></div>
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Paiements</div><div class="stat-value" id="dash-total-paiements">12</div></div>
+                        <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="enfants-section" class="">
+
+            <div class="data-table">
+                <div class="table-responsive">
+                    <table class="table" id="enfantsTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Classe</th>
+                                <th>Redoublant</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enfantsTableBody">
+                            @for (e of listEnfant(); track $index) {
+                                <tr>
+                                    <td>{{e.nomComplet}}</td>
+                                    <td>{{e.niveau.intitule}} - {{e.filiere.intitule}} </td>
+                                    <td>
+                                        @if (e.redoublant) {
+                                            <span class="badge badge-warning">OUI</span>
+                                        }@else {
+                                            <span class="badge badge-success">NON</span>
+
+                                        }
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-edit text-info me-2"></i>
+                                        <i class="fas fa-trash text-danger me-2"></i>
+                                    </td>
+                                    
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+

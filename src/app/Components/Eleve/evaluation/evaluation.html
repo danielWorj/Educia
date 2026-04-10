@@ -1,0 +1,292 @@
+
+
+
+<div class="eleve-compo-container">
+  <!-- Header -->
+  <div class="eleve-compo-header">
+    <h1 class="eleve-compo-title">
+      <i class="fas fa-graduation-cap me-2"></i>Mes Compositions
+    </h1>
+    <p class="eleve-compo-subtitle">Sélectionnez une matière pour voir vos évaluations</p>
+  </div>
+
+
+  <!-- ÉTAPE 1 & 2: Sélection Matière et Compositions -->
+  @if (!compositionEnCours && !afficherResultat) {
+    <div class="row">
+      <!-- Colonne Gauche: Liste des matières -->
+      <div class="col-md-6">
+        <h2 class="eleve-compo-section-title">
+          <i class="fas fa-book"></i>
+          Matières
+        </h2>
+
+        @for (matiere of listMatiere(); track matiere.id) {
+          <div class="eleve-compo-matiere-card" 
+               [class.active]="matiereSelectionnee?.id === matiere.id"
+               (click)="getAllCompoByMatiere(matiere.id); matiereSelectionnee = matiere">
+            <div class="eleve-compo-matiere-icon">
+              <i class="fas fa-book-open"></i>
+            </div>
+            <div class="eleve-compo-matiere-name">{{ matiere.intitule }}</div>
+            <div class="eleve-compo-matiere-count">
+              <i class="fas fa-file-alt"></i>
+              <span>Voir les compositions</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Colonne Droite: Liste des compositions -->
+      <div class="col-md-6">
+        <h2 class="eleve-compo-section-title">
+          <i class="fas fa-clipboard-list"></i>
+          Évaluations
+        </h2>
+
+        <div class="eleve-compo-liste-container">
+          <!-- État par défaut: Aucune matière sélectionnée -->
+          @if (!matiereSelectionnee) {
+            <div class="eleve-compo-empty">
+              <i class="fas fa-hand-pointer"></i>
+              <h3>Sélectionnez une matière</h3>
+              <p>Cliquez sur une matière à gauche pour voir vos compositions</p>
+            </div>
+          }
+
+          <!-- Liste des compositions -->
+          @if (matiereSelectionnee && listCompositionByMatiere().length > 0) {
+            @for (compo of listCompositionByMatiere(); track compo.id) {
+              <div class="eleve-compo-composition-card show">
+                <div class="eleve-compo-composition-header">
+                  <div>
+                    <h3 class="eleve-compo-composition-title">{{ compo.matiere.intitule }}</h3>
+                    <p class="eleve-compo-composition-subtitle">{{ compo.description }}</p>
+                  </div>
+                  <span class="eleve-compo-status-badge eleve-compo-status-available">
+                    Disponible
+                  </span>
+                </div>
+
+                <div class="eleve-compo-composition-meta">
+                  <div class="eleve-compo-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Durée: <strong>{{ compo.duree }} min</strong></span>
+                  </div>
+                  <div class="eleve-compo-meta-item">
+                    <i class="fas fa-star"></i>
+                    <span><strong>20</strong> points</span>
+                  </div>
+                </div>
+
+                <div class="eleve-compo-composition-footer">
+                  <div class="eleve-compo-score">Non commencée</div>
+                  <button class="eleve-compo-btn-commencer" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#modalConfirmation"
+                          (click)="selectComposition(compo)">
+                    <i class="fas fa-play"></i>
+                    Commencer
+                  </button>
+                </div>
+              </div>
+            }
+          }
+
+          @if (matiereSelectionnee && listCompositionByMatiere().length === 0) {
+            <div class="eleve-compo-empty">
+              <i class="fas fa-inbox"></i>
+              <h3>Aucune composition</h3>
+              <p>Aucune composition disponible pour cette matière</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ÉTAPE 3: Composition en cours -->
+  @if (compositionEnCours && !afficherResultat) {
+    <div class="composition-active">
+      <!-- Header avec chronomètre -->
+      <div class="composition-header">
+        <div class="composition-info">
+          <h2 class="composition-titre">{{ compositionSelectionnee?.matiere?.intitule }}</h2>
+          <p class="composition-description">{{ compositionSelectionnee?.description }}</p>
+        </div>
+        <div class="composition-timer">
+          <i class="fas fa-clock"></i>
+          <span class="timer-value">{{ tempsRestant }}</span>
+        </div>
+      </div>
+
+      <!-- Liste des questions -->
+      <div class="questions-container">
+        @for (item of listQuestionReponsePossibleConstruct(); track item.question.id; let idx = $index) {
+          <div class="question-card">
+            <div class="question-header">
+              <span class="question-numero">Question {{ idx + 1 }}</span>
+              <span class="question-points">{{ item.question.points }} points</span>
+            </div>
+            
+            <div class="question-enonce">
+              <p>{{ item.question.enonce }}</p>
+            </div>
+
+            <div class="reponses-list">
+              @for (reponse of item.reponsesPossibles; track reponse.id) {
+                <div class="reponse-item">
+                  <input type="radio" 
+                         [id]="'reponse-' + reponse.id" 
+                         [name]="'question-' + item.question.id"
+                         [value]="reponse.id"
+                         (change)="SelectReponse(reponse); creationReponseEleve()">
+                  <label [for]="'reponse-' + reponse.id">
+                    {{ reponse.reponse }}
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Bouton Terminer -->
+      <div class="composition-footer">
+        <button class="btn-terminer" (click)="terminerComposition()">
+          <i class="fas fa-check-circle"></i>
+          Terminer la composition
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ÉTAPE 4: Affichage des résultats et correction -->
+  @if (afficherResultat) {
+    <div class="resultats-container">
+      <!-- Note finale -->
+      <div class="resultat-header">
+        <div class="resultat-card">
+          <i class="fas fa-trophy resultat-icon"></i>
+          <h2>Votre note</h2>
+          <div class="note-finale">
+            <span class="note-value">{{ noteFinal() }}</span>
+            <span class="note-total">/ 20</span>
+          </div>
+          <button class="btn-retour" (click)="retourListeCompositions()">
+            <i class="fas fa-arrow-left"></i>
+            Retour aux compositions
+          </button>
+        </div>
+      </div>
+
+      <!-- Correction détaillée -->
+      <div class="correction-container">
+        <h3 class="correction-titre">
+          <i class="fas fa-check-double"></i>
+          Correction détaillée
+        </h3>
+
+        @for (correction of listCorrection(); track correction.question.id; let idx = $index) {
+          <div class="correction-card" 
+               [class.correction-juste]="correction.reponseChoisie.reponseChoisie.id == correction.reponseCorrecte.id"
+               [class.correction-fausse]="correction.reponseChoisie.reponseChoisie.id !== correction.reponseCorrecte.id">
+            
+            <div class="correction-header">
+              <span class="correction-numero">Question {{ idx + 1 }}</span>
+              <span class="correction-statut">
+                @if (correction.reponseChoisie.reponseChoisie.id === correction.reponseCorrecte.id) {
+                  <i class="fas fa-check-circle"></i> Correct
+                } @else {
+                  <i class="fas fa-times-circle"></i> Incorrect
+                }
+              </span>
+            </div>
+
+            <div class="correction-enonce">
+              <p><strong>{{ correction.question.enonce }}</strong></p>
+            </div>
+
+            
+            <div class="correction-reponses">
+              <div class="reponse-choisie">
+                <strong>Votre réponse :</strong>
+                <p [class.text-danger]="correction.reponseChoisie!.id   !== correction.reponseCorrecte!.id"
+                   [class.text-success]="correction.reponseChoisie!.id === correction.reponseCorrecte!.id">
+                  {{ correction.reponseChoisie.reponseChoisie.reponse }}
+                </p>
+              </div>
+
+              @if (correction.reponseChoisie?.id !== correction.reponseCorrecte!.id) {
+                <div class="reponse-correcte">
+                  <strong>Bonne réponse :</strong>
+                  <p class="text-success">{{ correction.reponseCorrecte.reponse }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="modalConfirmation" tabindex="-1" aria-labelledby="modalConfirmationLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalConfirmationLabel">
+          <i class="fas fa-info-circle"></i>
+          Commencer la composition
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+     
+         <div class="modal-body">
+          <div class="modal-info">
+            <h6>{{ compositionSelectionnee?.matiere?.intitule }}</h6>
+            <div class="modal-details">
+              <p><i class="fas fa-clock"></i> Durée : <strong>{{ duree }} minutes</strong></p>
+              <p><i class="fas fa-star"></i> Points : <strong>20</strong></p>
+            </div>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              Une fois commencée, vous ne pourrez pas mettre la composition en pause. Le chronomètre démarrera immédiatement.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="demarrerComposition()">
+            <i class="fas fa-play"></i>
+            Commencer maintenant
+          </button>
+        </div>
+      
+      <!-- @else {
+         <div class="modal-body">
+          <div class="modal-info">
+            <h6>{{ compositionSelectionnee?.matiere?.intitule }}</h6>
+            <div class="modal-details">
+              <p><i class="fas fa-clock"></i> Durée : <strong>{{ duree }} minutes</strong></p>
+              <p><i class="fas fa-star"></i> Points : <strong>20</strong></p>
+            </div>
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle"></i>
+              Vous avez deje compose cette epreuve. Si vous choississez de poursuivre , vos resultats seront reinitialises. 
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="nettoyageEvaluation()">
+            <i class="fas fa-play"></i>
+            Recommencer maintenant
+          </button>
+        </div>
+
+      } -->
+    </div>
+  </div>
+</div>

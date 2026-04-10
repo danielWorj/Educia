@@ -1,0 +1,101 @@
+<div class="settings-section">
+    <div class="settings-section-header">
+        <h2 class="settings-section-title">Gestion des Filières</h2>
+        <button class="settings-btn-add" (click)="filiereFb.reset()" data-bs-toggle="modal" data-bs-target="#addFiliereModal">
+            <i class="fas fa-plus me-2"></i>Ajouter une filière
+        </button>
+    </div>
+
+    <div class="settings-table-wrapper">
+        <table class="settings-table table">
+            <thead>
+                <tr>
+                    <th>Intitulé</th>
+                    <th>Section</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of listFiliere(); track $index) {
+                    <tr>
+                        <td  ><span >{{f.intitule}}</span></td>
+                        <td><span class="settings-badge">{{f.section.intitule}}</span></td>
+                        
+                        <td class="text-end">
+                            <button class="settings-btn-action settings-btn-edit"
+                                    (click)="filiereFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addFiliereModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="settings-btn-action settings-btn-delete"
+                                    (click)="filiereFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteFiliereModal">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (listFiliere().length === 0) {
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">Aucune filière trouvée.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<!-- Modals for Niveau -->
+<!-- Add Niveau Modal -->
+<div class="modal fade" id="addFiliereModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Ajouter une Filiere</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="filiereFb" >
+                    <div class="mb-3">
+                        <label class="settings-form-label">Nom du Filiere</label>
+                        <input type="text" formControlName="intitule" class="settings-form-control form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="settings-form-label">Section</label>
+                        <select name="" class="form-control" formControlName="section" id="">
+                            @for (s of listSection(); track $index) {
+                            <option value="{{s.id}}">{{s.intitule}}</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="settings-btn-primary" (click)="createFiliere()"  data-bs-dismiss="modal">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Niveau Modal -->
+<div class="modal fade" id="deleteFiliereModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Supprimer le niveau</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce niveau ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="settings-btn-danger" (click)="deleteFiliere(filiereFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

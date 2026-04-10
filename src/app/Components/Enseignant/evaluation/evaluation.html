@@ -1,0 +1,364 @@
+
+        
+        <div id="dashboard-section">
+            <div class="header">
+                <h1 class="page-title">Gestion des Sessions des Evaluations</h1>
+            </div>
+            <div class="stats-grid">
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Nombre d'evaluation </div><div class="stat-value" style="font-size:1.5rem">{{this.listCompositionByEnseignant().length}}</div></div>
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Paiements</div><div class="stat-value" id="dash-total-paiements">12</div></div>
+                        <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="enfants-section" class="">
+            <div class="header">
+                <button class="btn-primary-custom" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" >
+                    <i class="fas fa-plus"></i> Ajouter une evaluation
+                </button>
+            </div>
+            <div class="data-table">
+                <!-- <button class="btn-primary" (click)="save()">Tester Toast</button> -->
+                <div class="table-responsive">
+                    <table class="tableau-compo-table table">
+                        <thead>
+                            <tr>
+                                <th>Élève</th>
+                                <th>Sujet</th>
+                                <th>Composition</th>
+                                <th>Visibilité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (c of listCompositionByEnseignant(); track $index) {
+                            <tr>
+                                <td data-label="Élève">
+                                    <div class="tableau-compo-eleve">
+                                        <div class="tableau-compo-eleve-info">
+                                            <h5>{{c.repetition.offreRepetition.eleve.nomComplet}}</h5>
+                                            <p>{{c.repetition.offreRepetition.eleve.niveau.intitule}} : {{c.repetition.offreRepetition.eleve.filiere.intitule}}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="Sujet">
+                                    <div class="tableau-compo-sujet">
+                                        <div class="tableau-compo-matiere">
+                                            {{c.matiere.intitule}}
+                                        </div>
+                                        <div class="tableau-compo-duree">
+                                            <i class="fas fa-clock"></i>
+                                            <span>{{c.duree}} minutes</span>
+                                        </div>
+                                        <p class="tableau-compo-description">
+                                            {{c.description}}
+                                        </p>
+                                    </div>
+                                </td>
+                                <td data-label="Composition">
+                                      @if (c.archived) {
+                                             <span class="tableau-compo-badge tableau-compo-badge-termine">
+                                                <i class="fas fa-check-circle"></i>
+                                                Terminé
+                                            </span>
+                                        }
+                                        @if (!c.archived) {
+                                            <span class="tableau-compo-badge tableau-compo-badge-attente">
+                                                <i class="fas fa-hourglass-half"></i>
+                                                Attente
+                                            </span>
+                                        }
+                                    
+                                </td>
+                                <td data-label="Visibilité">
+                                     <span class="tableau-compo-badge tableau-compo-badge-visible">
+                                        <i class="fas fa-eye"></i>
+                                        Visible
+                                    </span>
+                                </td>
+                                <td data-label="Actions">
+                                    <div class="tableau-compo-actions">
+                                        
+                                        <button class="tableau-compo-btn tableau-compo-btn-edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="selectComposition(c)" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="tableau-compo-btn tableau-compo-btn-delete" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }@empty {
+                                <div class="tableau-compo-empty">
+                                    <i class="fas fa-inbox"></i>
+                                    <h3>Aucune composition disponible</h3>
+                                    <p>Commencez par créer une nouvelle composition</p>
+                                </div>
+                            }                        
+
+                        </tbody>
+                    </table>
+                      
+                </div>
+            </div>
+            </div>
+        <!-- Modal -->
+
+
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            @if (isCreation()) {
+                                Créer une composition
+                            }
+                            @if (!isCreation()) {
+                                Editer une Composition 
+                            }
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Modal ou Page dédiée -->
+
+
+                    <div class="session-form-container">
+                       <div class="composition-form-container">
+                        <!-- En-tête -->
+                        <div class="comp-header">
+                            <h2><i class="fas fa-file-alt"></i> Création d'une Composition</h2>
+                            <p>Configurez votre composition et ajoutez les questions du QCM</p>
+                        </div>
+
+                        <!-- Partie 1: Informations de base -->
+                        <div class="comp-section">
+                            <h3 class="comp-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Informations de la Composition
+                            </h3>
+
+                            <form action="" [formGroup]="compositionFb" (ngSubmit)="createComposition()">
+                                <div class="comp-form-group full-width">
+
+                                    <label class="comp-label required">Description</label>
+                                    <textarea 
+                                        class="comp-textarea" 
+                                        formControlName="description"
+                                        placeholder="Décrivez la composition...">
+                                    </textarea>
+                                </div>
+
+                                <div class="comp-form-row">
+                                <div class="comp-form-group">
+                                    <label class="comp-label required">Durée (en minutes)</label>
+                                    <input 
+                                    type="number" 
+                                    class="comp-input" 
+                                    formControlName="duree"
+                                    placeholder="Ex: 60" 
+                                    min="1">
+                                </div>
+
+                                <div class="comp-form-group">
+                                    <label class="comp-label required">Type d'Évaluation</label>
+                                    <select class="comp-select" formControlName="typeEvaluation">
+                                    <option value="">-- Sélectionner --</option>
+                                    @for (t of listTypeEvaluation(); track $index) {
+                                        <option value="{{t.id}}">
+                                            {{ t.intitule }}
+                                        </option>
+                                    }
+                                    </select>
+                                </div>
+                                </div>
+
+                                <div class="comp-form-row">
+                                    <div class="comp-form-group">
+                                        <label class="comp-label required">Session de Répétition</label>
+                                        <select class="comp-select" formControlName="repetition" (change)="selectSessionRepetition($event)">
+                                            <option value="">-- Sélectionner --</option>
+                                            @for (t of listRepetitionByEnseignant(); track $index) {
+                                                <option value="{{t.id}}">
+                                                    {{ t.offreRepetition.eleve.nomComplet }} - {{ t.offreRepetition.eleve.niveau.intitule }} {{ t.offreRepetition.eleve.filiere.intitule }}
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="comp-form-group">
+                                        <label class="comp-label required">Matiere</label>
+                                        <select class="comp-select" formControlName="matiere">
+                                            <option value="">-- Sélectionner --</option>
+                                            @for (m of listMatiereByRepetition(); track $index) {
+                                                <option value="{{m.id}}">
+                                                    {{ m.intitule }}
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                               
+
+
+                                <button class="comp-btn comp-btn-primary" type="submit" >
+                                    <i class="fas fa-save"></i> Enregistrer la Composition
+                                </button>
+                            </form>
+                           
+                        </div>
+
+                        @if (this.idComposition!=0) {
+                             <!-- Partie 2: Configuration des Questions -->
+                        <div class="comp-section">
+                            <h3 class="comp-section-title">
+                            <i class="fas fa-question-circle"></i>
+                            Configuration des Questions
+                            </h3>
+
+                            <div class="info-box">
+                            <i class="fas fa-lightbulb"></i>
+                            <p>Ajoutez les questions de votre QCM. Pour chaque question, définissez l'énoncé, le nombre de points et les réponses possibles. Cochez la ou les réponses correctes.</p>
+                            </div>
+
+                            <!-- Formulaire d'ajout de question -->
+                            <form action="" [formGroup]="questionFb" (ngSubmit)="createQuestion()">
+                                 <div class="comp-form-group full-width">
+                                    <label class="comp-label required">Énoncé de la Question</label>
+                                    <textarea 
+                                        class="comp-textarea" 
+                                        formControlName="enonce"
+                                        placeholder="Saisissez votre question...">
+                                    </textarea>
+                                    </div>
+
+                                    <div class="comp-form-group">
+                                    <label class="comp-label required">Nombre de Points</label>
+                                    <input 
+                                        type="number" 
+                                        class="comp-input" 
+                                        formControlName="points"
+                                        placeholder="Ex: 5" 
+                                        min="0.5" 
+                                        step="0.5">
+                                    </div>
+
+                                    <div class="add-section">
+                                    <button class="comp-btn comp-btn-primary" type="submit">
+                                        <i class="fas fa-plus-circle"></i> Ajouter la Question
+                                    </button>
+                                    </div>
+                            </form>
+                            <hr>
+                            <!-- Réponses possibles -->
+                            <form action="" [formGroup]="reponsePossibleFb" (ngSubmit)="createReponsePossible()">
+                                <div class="comp-form-group full-width">
+                                    <label class="comp-label">Réponses Possibles</label>
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                        <input 
+                                        type="text" 
+                                        class="comp-input" 
+                                        formControlName="reponse"
+                                        placeholder="Saisissez une réponse...">
+                                        <button class="comp-btn comp-btn-success" type="submit">
+                                            <i class="fas fa-plus"></i> Ajouter
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Liste des réponses possibles ajoutées -->
+                             <div>
+                                @for (r of listReponsePossibleByQuestion(); track $index) {
+                                    <div  class="answer-item" [class.correct]="r.correcte" >
+                                    <input 
+                                        type="checkbox" 
+                                        class="answer-checkbox" 
+                                        (click)="validateReponse(r)"
+                                        [checked]="r.correcte">
+                                        <span class="answer-text">{{ r.reponse }}</span>
+                                        <button class="answer-delete" (click)="deleteReponsePossible(r.id)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                }                                
+                            </div>
+                            <hr>
+                            <!-- Recapitulatif des Questions -->
+                            <div class="questions-list">
+                            <h3 class="comp-section-title">
+                            <i class="fas fa-check"></i>
+                                Recapitulatif des Questions
+                            </h3>
+
+                            @for (q of listQuestionReponsePossibleConstruct(); track $index) {
+                                <div class="question-card" (click)="selectQuestion(q.question)">
+                                    <div class="question-header">
+                                    <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+                                        <div class="question-number">{{ $index+1 }}</div>
+                                        <div style="flex: 1;">
+                                        <strong style="color: var(--primary);">Question {{ $index+1 }}</strong>
+                                        <span style="margin-left: 1rem; color: var(--text-muted);">
+                                            <i class="fas fa-star" style="color: var(--gold);"></i> {{ q.question.points }} points
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <button class="question-delete" (click)="deleteQuestion(q.question.id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    </div>
+                                    <p style="margin-bottom: 1rem; color: var(--text-dark); font-weight: 600;">
+                                    {{ q.question.enonce }}
+                                    </p>
+                                    <div class="answers-list">
+                                        @for (r of q.reponsesPossibles; track $index) {
+                                            <div class="answer-item" [class.correct]="r.correcte" (click)="validateReponse(r)">
+                                                <input 
+                                                type="checkbox" 
+                                                class="answer-checkbox" 
+                                                [checked]="r.correcte" 
+                                                disabled >
+                                                <span class="answer-text">{{ r.reponse }}</span>
+                                                @if (r.correcte) {
+                                                    <i class="fas fa-check-circle" style="color: #28a745; margin-left: auto;"></i>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                           
+                            </div>
+                        </div>
+
+                        <!-- Actions finales -->
+                        <div class="comp-actions">
+                            <button class="comp-btn comp-btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                            <button class="comp-btn comp-btn-primary" onclick="saveComposition()">
+                                <i class="fas fa-save"></i> Enregistrer la Composition
+                            </button>
+                          
+                        </div>
+                        }
+                    </div>
+                    </div>
+
+                   
+                    </div>
+                </div>
+            </div>
+        </div>
+

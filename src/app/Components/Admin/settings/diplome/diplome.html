@@ -1,0 +1,94 @@
+<div class="settings-section">
+    <div class="settings-section-header">
+        <h2 class="settings-section-title">Gestion des Diplomes</h2>
+        <button class="settings-btn-add" (click)="diplomeFB.reset()" data-bs-toggle="modal" data-bs-target="#addDiplomeModal">
+            <i class="fas fa-plus me-2"></i>Ajouter un diplome
+        </button>
+    </div>
+
+    <div class="settings-table-wrapper">
+        <table class="settings-table table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Intitulé</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of listDiplome(); track $index) {
+                    <tr>
+                        <td>{{f.id}}</td>
+                        <td><span class="settings-badge">{{f.intitule}}</span></td>
+                        
+                        <td class="text-end">
+                            <button class="settings-btn-action settings-btn-edit"
+                                    (click)="diplomeFB.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addDiplomeModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="settings-btn-action settings-btn-delete"
+                                    (click)="diplomeFB.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteDiplomeModal">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (listDiplome().length === 0) {
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">Aucun diplome trouvé.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<!-- Modals for Niveau -->
+<!-- Add Niveau Modal -->
+<div class="modal fade" id="addDiplomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Ajouter une Filiere</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="diplomeFB" >
+                    <div class="mb-3">
+                        <label class="settings-form-label">Nom du Diplome</label>
+                        <input type="text" formControlName="intitule" class="settings-form-control form-control">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="settings-btn-primary" (click)="createDiplome()"  data-bs-dismiss="modal">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Niveau Modal -->
+<div class="modal fade" id="deleteDiplomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Supprimer le niveau</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce diplome ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="settings-btn-danger" (click)="deleteDiplome(diplomeFB.value.id)" data-bs-dismiss="modal">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

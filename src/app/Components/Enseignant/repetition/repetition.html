@@ -1,0 +1,334 @@
+
+        
+        <div id="dashboard-section">
+            <div class="header">
+                <h1 class="page-title">Gestion des Sessions des Repetitions</h1>
+            </div>
+            <div class="stats-grid">
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Nombre de Session</div><div class="stat-value" style="font-size:1.5rem">{{this.resultatsSessionRepetitinConstruct().length}}</div></div>
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div><div class="stat-title">Paiements</div><div class="stat-value" id="dash-total-paiements">12</div></div>
+                        <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="enfants-section" class="">
+            <div class="header">
+                <button class="btn-primary-custom" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openModal()">
+                    <i class="fas fa-plus"></i> Ajouter une session
+                </button>
+            </div>
+            <div class="row">
+                @for (s of resultatsSessionRepetitinConstruct(); track $index) {
+                     <div class="session-card col-md-12 m-1 " data-id="1" (click)="selectRepetition(s.sessionRepetition)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <div class="session-header">
+                            <div class="student-info">
+                                <div class="student-avatar">{{s.sessionRepetition.offreRepetition.eleve.nomComplet.charAt(0)}}</div>
+                                <div>
+                                <h3 class="session-title">{{s.sessionRepetition.offreRepetition.eleve.nomComplet}}</h3>
+                                    <span class="session-badge badge-active">En cours</span>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="session-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-list"></i>
+                                <p>{{s.sessionRepetition.offreRepetition.eleve.localisation}}</p>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{s.sessionRepetition.offreRepetition.frequence}} fois/semaine</span>
+                            </div>
+                        </div>
+                
+                        <div class="session-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{s.sessionRepetition.offreRepetition.eleve.localisation}}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{s.sessionRepetition.offreRepetition.frequence}} fois/semaine</span>
+                            </div>
+                        </div>
+                        
+                        <div class="session-matieres">
+                            <div class="matieres-label">Matières :</div>
+                            <div class="matieres-tags">
+                                @for (m of s.matieres; track $index) {
+                                    <span class="matiere-tag">{{m.matiere.intitule}}</span>
+                                }
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="session-footer">
+                            <div class="session-price">{{s.sessionRepetition.montant}} XAF/mois</div>
+                            <div class="session-status">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{s.sessionRepetition.offreRepetition.frequence*4}} seances / mois (en Moyenne)</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            @if (isCreation()) {
+                                Créer une Session
+                            }
+                            @if (!isCreation()) {
+                                Editer une Session
+                            }
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="toggleCreation()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Modal ou Page dédiée -->
+
+
+                    <div class="session-form-container">
+                        @if (isWritable()) {
+                             <div class="session-creation-form">
+                                <!-- En-tête -->
+                                <div class="scf-header">
+                                    <h3 class="scf-title">Créer une Session de Répétition</h3>
+                                    <p class="scf-subtitle">Formalisez votre engagement pour cette offre</p>
+                                </div>
+
+                                <form id="sessionForm">
+                                    
+                                    <!-- SECTION 1: Présentation de l'offre (READ-ONLY) -->
+                                    <div class="scf-section">
+                                        <h4 class="scf-section-title">
+                                            <i class="fas fa-info-circle"></i> Offre sélectionnée
+                                        </h4>
+                                        
+                                        <div class="scf-offre-resume">
+                                            <div class="scf-row">
+                                                <div class="scf-col-6">
+                                                    <label class="scf-label">Parent</label>
+                                                    <input type="text" class="scf-input scf-readonly" [value]="offreRepetition()?.eleve?.parent?.nomComplet" readonly>
+                                                </div>
+                                                <div class="scf-col-6">
+                                                    <label class="scf-label">Élève</label>
+                                                    <input type="text" class="scf-input scf-readonly" [value]="offreRepetition()?.eleve?.nomComplet" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="scf-row">
+                                                <div class="scf-col-4">
+                                                    <label class="scf-label">Fréquence (semaine)</label>
+                                                    <input type="text" class="scf-input scf-readonly" [value]="offreRepetition()?.frequence" readonly>
+                                                </div>
+                                                <div class="scf-col-4">
+                                                    <label class="scf-label">Durée/séance(heures)</label>
+                                                    <input type="text" class="scf-input scf-readonly" [value]="offreRepetition()?.duree " readonly>
+                                                </div>
+                                                <div class="scf-col-4">
+                                                    <label class="scf-label">Budget proposé (XAF)</label>
+                                                    <input type="text" class="scf-input scf-readonly" [value]="offreRepetition()?.salaireMin" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SECTION 2: Sélection des matières -->
+                                    <div class="scf-section">
+                                        <h4 class="scf-section-title">
+                                            <i class="fas fa-book"></i> Matières d'intervention
+                                        </h4>
+                                        
+                                        <form action="" [formGroup]="matiereRepetitionForm"  >
+                                            <div class="scf-form-group">
+                                                <label class="scf-label scf-required">Sélectionnez les matières que vous allez enseigner</label>
+                                                <select class="scf-select" formControlName="matiere" id="matiereSelect" (change)="createMatiereRepetition()">
+                                                    <option value="">-- Choisir une matière --</option>
+                                                    @for (m of listMatiereBySection(); track $index) {
+                                                        <option value="{{m.id}}">{{m.intitule}}</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </form>
+
+                                        <!-- Affichage des matières sélectionnées sous forme de tags -->
+                                        <div class="scf-form-group">
+                                            <label class="scf-label">Matières sélectionnées :</label>
+                                            <div class="scf-tags-container">
+                                                @for (m of listMatiereRepetition(); track $index) {
+                                                    <div class="scf-tag">
+                                                        {{m.matiere.intitule}}
+                                                        <button type="button" class="scf-tag-close" aria-label="Supprimer">
+                                                            <i class="fas fa-close"></i>
+                                                        </button>
+                                                    </div>
+                                                }
+                                                
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SECTION 3: Horaires -->
+                                    <div class="scf-section">
+                                        <h4 class="scf-section-title">
+                                            <i class="fas fa-calendar-alt"></i> Horaires hebdomadaires
+                                        </h4>
+                                        
+                                        <div class="scf-form-group">
+                                            <label class="scf-label scf-required">Définissez vos disponibilités</label>
+                                            
+                                            <!-- Formulaire d'ajout d'horaire -->
+                                            <form action="" [formGroup]="horaireRepetitionForm" (ngSubmit)="createHoraireRepetition()">
+                                                 <div class="scf-horaire-form">
+                                                <select class="scf-select" formControlName="jour">
+                                                    <option value="">Choisir un jour</option>
+                                                    <option value="Lundi">Lundi</option>
+                                                    <option value="Mardi">Mardi</option>
+                                                    <option value="Mercredi">Mercredi</option>
+                                                    <option value="Jeudi">Jeudi</option>
+                                                    <option value="Vendredi">Vendredi</option>
+                                                    <option value="Samedi">Samedi</option>
+                                                    <option value="Dimanche">Dimanche</option>
+                                                </select>
+                                                <input type="time" class="scf-input" formControlName="timeStart" value="16:00">
+                                                <span class="scf-separator">à</span>
+                                                <input type="time" class="scf-input" formControlName="timeEnd" value="18:00">
+                                                <button type="submit" class="scf-btn-add">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            </form>
+                                        </div>
+
+                                        <!-- Liste des horaires ajoutés -->
+                                        <div class="scf-form-group">
+                                            <label class="scf-label">Horaires programmés :</label>
+                                            <div class="scf-horaires-list">
+                                                @for (h of listHoraiteRepetition(); track $index) {
+                                                    <div class="scf-horaire-item">
+                                                        <div class="scf-horaire-day">
+                                                            <i class="fas fa-calendar"></i>
+                                                            <strong>{{h.jour}}</strong>
+                                                        </div>
+                                                        <div class="scf-horaire-time">
+                                                            <i class="fas fa-clock"></i>
+                                                                {{h.timeStart}} - {{h.timeStart}}
+                                                        </div>
+                                                        <button type="button" class="scf-horaire-delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                }
+                                          
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Boutons d'action -->
+                                    <div class="scf-actions">
+                                        <button type="button" class="scf-btn scf-btn-secondary" data-bs-dismiss="modal">
+                                            <i class="fas fa-times"></i> Fermer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                        @if (!isWritable()) {
+                            <!-- Input avec bouton intégré -->
+                            <div>
+                                 <div class="custom-input-wrapper">
+                                    <label for="customInput" class="custom-input-label">Recherche</label>
+                                    <div class="custom-input-group">
+                                        <input 
+                                            type="text" 
+                                            id="customInput" 
+                                            class="custom-input-field" 
+                                            placeholder="Entrez le code de l'offre..."
+                                            [(ngModel)]="codeOffre"
+                                        >
+                                        <button type="button" class="custom-input-btn" (click)="findOffreByCode()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (offreIsPresent()) {
+                                <div class="offre-card m-1">
+                                    <div class="offre-header d-flex justify-content-between">
+                                        <h3 class="offre-title">{{ offreRepetition()!.intitule }}</h3>
+                                    </div>
+                                    <div class="offre-meta">
+                                        @if (offreRepetition()!.eleve!.niveau.intitule) {
+                                            <div class="meta-item">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                <span>{{ offreRepetition()!.eleve!.niveau.intitule }}</span>
+                                            </div>
+                                        }
+                                        @if (offreRepetition()!.eleve!.parent.localisation) {
+                                            <div class="meta-item">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>{{ offreRepetition()!.eleve!.parent.localisation }}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <p class="offre-description">
+                                        {{ offreRepetition()!.bio }}
+                                    </p>
+                                    <div class="offre-footer">
+                                        <div class="offre-price">{{ offreRepetition()!.salaireMax }} FCFA/h</div>
+                                        <div class="offre-date">
+                                            <i class="fas fa-clock me-1"></i>{{ offreRepetition()!.dateCreation }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-2 mb-2">
+                                <form action="" [formGroup]="sessionRepetitionForm" (ngSubmit)="createSessionRepetition()">
+                                        
+                                    <div class="custom-input-wrapper">
+                                        <label for="customInput" class="custom-input-label">Montant Conclu</label>
+                                        <div class="custom-input-group">
+                                            <input 
+                                                type="text" 
+                                                id="customInput" 
+                                                class="custom-input-field" 
+                                                placeholder="Entrez le code de l'offre..."
+                                                formControlName="montant"
+                                            >
+                                        
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary-custom">
+                                        <i class="fas fa-plus"></i> Creer une session de repetition
+                                    </button>
+                                </form>
+
+                            }
+                        }
+                    </div>
+                   
+                    </div>
+                </div>
+            </div>
+        </div>
+

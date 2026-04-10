@@ -1,0 +1,92 @@
+<div class="settings-section">
+    <div class="settings-section-header">
+        <h2 class="settings-section-title">Gestion des Profils</h2>
+        <button class="settings-btn-add" (click)="profilEnseignantFb.reset()" data-bs-toggle="modal" data-bs-target="#addProfilModal">
+            <i class="fas fa-plus me-2"></i>Ajouter un profil
+        </button>
+    </div>
+
+    <div class="settings-table-wrapper">
+        <table class="settings-table table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Intitulé</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of listProfilEnseignant(); track $index) {
+                    <tr>
+                        <td>{{f.id}}</td>
+                        <td><span>{{f.intitule}}</span></td>
+                        
+                        <td class="text-end">
+                            <button class="settings-btn-action settings-btn-edit"
+                                    (click)="profilEnseignantFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addProfilModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="settings-btn-action settings-btn-delete"
+                                    (click)="profilEnseignantFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteProfilModal">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (listProfilEnseignant().length === 0) {
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">Aucun profil trouvé.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+    <!-- Modals for Niveau -->
+    <!-- Add Niveau Modal -->
+    <div class="modal fade" id="addProfilModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content settings-modal">
+                <div class="modal-header settings-modal-header">
+                    <h5 class="modal-title">Ajouter un niveau</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="profilEnseignantFb">
+                        <div class="mb-3">
+                            <label class="settings-form-label">Nom du profil</label>
+                            <input type="text" formControlName="intitule" class="settings-form-control form-control" placeholder="Ex: 6ème">
+                        </div>
+                       
+                    </form>
+                </div>
+                <div class="modal-footer settings-modal-footer">
+                    <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="settings-btn-primary" (click)="createProfilEnseignant()" data-bs-dismiss="modal">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Delete Niveau Modal -->
+    <div class="modal fade" id="deleteProfilModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content settings-modal">
+                <div class="modal-header settings-modal-header">
+                    <h5 class="modal-title">Supprimer le profil </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer ce profil ? Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer settings-modal-footer">
+                    <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="settings-btn-danger" (click)="deleteProfilEnseignant(profilEnseignantFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+

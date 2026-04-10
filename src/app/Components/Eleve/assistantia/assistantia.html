@@ -1,0 +1,209 @@
+
+  <div class="assistant-ia-container">
+    <!-- Header -->
+    <div class="assistant-ia-header">
+      <h1>
+        <i class="fas fa-robot"></i>
+        Assistant IA de Recherche
+      </h1>
+      <p class="assistant-ia-subtitle">
+        Posez vos questions, je suis là pour vous aider dans vos recherches !
+      </p>
+    </div>
+
+    <!-- Chat Wrapper -->
+    <div class="assistant-ia-chat-wrapper">
+      <!-- Messages Area -->
+      <div class="assistant-ia-messages" #messagesContainer>
+        
+        <!-- Empty State -->
+        @if (showEmptyState()) {
+          <div class="assistant-ia-empty">
+            <i class="fas fa-comments"></i>
+            <h3>Bienvenue sur votre Assistant IA</h3>
+            <p>
+              Je suis là pour vous aider dans vos recherches académiques. 
+              Posez-moi des questions sur n'importe quel sujet !
+            </p>
+            
+            <div class="assistant-ia-suggestions">
+              <div class="suggestion-card" (click)="sendSuggestion('Explique-moi la photosynthèse')">
+                <i class="fas fa-leaf"></i>
+                <p>Explique-moi la photosynthèse</p>
+              </div>
+              <div class="suggestion-card" (click)="sendSuggestion('Comment résoudre une équation du second degré ?')">
+                <i class="fas fa-calculator"></i>
+                <p>Équations du second degré</p>
+              </div>
+              <div class="suggestion-card" (click)="sendSuggestion('Quelles sont les causes de la Révolution française ?')">
+                <i class="fas fa-landmark"></i>
+                <p>La Révolution française</p>
+              </div>
+              <div class="suggestion-card" (click)="sendSuggestion('Comment fonctionne un atome ?')">
+                <i class="fas fa-atom"></i>
+                <p>Structure de l'atome</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Messages -->
+        @for (message of messages(); track message.id) {
+          <div class="message-bubble" 
+               [class.user]="message.type === 'user'" 
+               [class.assistant]="message.type === 'assistant'">
+            <div class="message-header">
+              <i [class.fa-user]="message.type === 'user'" 
+                 [class.fa-robot]="message.type === 'assistant'" 
+                 class="fas"></i>
+              <span>{{ message.type === 'user' ? 'Vous' : 'Assistant IA' }}</span>
+            </div>
+            
+            <!-- Contenu utilisateur (simple) -->
+            @if (message.type === 'user') {
+              <div class="message-content">
+                {{ message.content }}
+              </div>
+            }
+            
+            <!-- Contenu assistant (formaté) -->
+            @if (message.type === 'assistant' && message.formattedContent) {
+              <div class="message-content">
+                @for (block of message.formattedContent; track block.id) {
+                  <!-- Titre -->
+                  @if (block.type === 'title') {
+                    <h3 class="response-title">
+                      {{ block.content }}
+                    </h3>
+                  }
+                  
+                  <!-- Bloc mathématique (display mode) -->
+                  @if (block.type === 'math-block') {
+                    <div class="math-block">
+                      <div class="math-content display-math" 
+                           [attr.data-latex]="block.rawLatex">
+                        {{ block.content }}
+                      </div>
+                    </div>
+                  }
+                  
+                  <!-- Paragraphe avec formatage inline (texte + math + gras) -->
+                  @if (block.type === 'paragraph') {
+                    <p class="response-paragraph">
+                      @for (part of formatInlineText(block.content); track $index) {
+                        @if (part.isMath) {
+                          <span class="math-content inline-math" 
+                                [attr.data-latex]="part.rawLatex">
+                            {{ part.text }}
+                          </span>
+                        } @else if (part.isBold) {
+                          <strong>{{ part.text }}</strong>
+                        } @else {
+                          <span>{{ part.text }}</span>
+                        }
+                      }
+                    </p>
+                  }
+                }
+              </div>
+            }
+            
+            <!-- Fallback si pas de formattedContent -->
+            @if (message.type === 'assistant' && !message.formattedContent) {
+              <div class="message-content">
+                {{ message.content }}
+              </div>
+            }
+            
+            <div class="message-time">{{ message.time }}</div>
+          </div>
+        }
+
+        <!-- Typing Indicator -->
+        @if (isTyping()) {
+          <div class="typing-indicator active">
+            <div class="message-bubble assistant typing-bubble">
+              <div class="message-header">
+                <i class="fas fa-robot"></i>
+                <span>Assistant IA</span>
+              </div>
+              <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Input Area -->
+      <div class="assistant-ia-input-area">
+        <div class="info-badge">
+          <i class="fas fa-lightbulb"></i>
+          <span>Conseil : Soyez précis dans vos questions pour obtenir de meilleures réponses</span>
+        </div>
+
+        <div class="input-wrapper">
+          <div class="input-group-custom">
+            <textarea 
+              [value]="userInput()"
+              (input)="updateUserInput($any($event.target).value); autoResize($event)"
+              (keypress)="handleKeyPress($event)"
+              [disabled]="isTyping()"
+              placeholder="Posez votre question ici..."
+              rows="1"
+              #inputTextarea></textarea>
+            <button class="attach-btn" 
+                    (click)="attachFile()" 
+                    [disabled]="isTyping()"
+                    title="Joindre un fichier">
+              <i class="fas fa-paperclip"></i>
+            </button>
+          </div>
+          <button class="send-btn" 
+                  [disabled]="!userInput().trim() || isTyping()" 
+                  (click)="sendMessage()"
+                  [title]="isTyping() ? 'Veuillez attendre...' : 'Envoyer le message'">
+            <i class="fas" 
+               [class.fa-paper-plane]="!isTyping()"
+               [class.fa-circle-notch]="isTyping()"
+               [class.fa-spin]="isTyping()"></i>
+          </button>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-action-btn" 
+                  (click)="sendSuggestion('Résume-moi ce texte')"
+                  [disabled]="isTyping()">
+            <i class="fas fa-file-alt"></i>
+            Résumé
+          </button>
+          <button class="quick-action-btn" 
+                  (click)="sendSuggestion('Aide-moi avec mes devoirs')"
+                  [disabled]="isTyping()">
+            <i class="fas fa-book"></i>
+            Devoirs
+          </button>
+          <button class="quick-action-btn" 
+                  (click)="sendSuggestion('Explique-moi ce concept')"
+                  [disabled]="isTyping()">
+            <i class="fas fa-question-circle"></i>
+            Explication
+          </button>
+          <button class="quick-action-btn" 
+                  (click)="sendSuggestion('Donne-moi des exemples')"
+                  [disabled]="isTyping()">
+            <i class="fas fa-list"></i>
+            Exemples
+          </button>
+          <button class="quick-action-btn" 
+                  (click)="clearChat()"
+                  [disabled]="isTyping()">
+            <i class="fas fa-trash"></i>
+            Effacer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

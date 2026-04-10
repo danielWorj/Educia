@@ -1,0 +1,90 @@
+ <div class="settings-section">
+    <div class="settings-section-header">
+        <h2 class="settings-section-title">Gestion des Section</h2>
+        <button class="settings-btn-add" (click)="sectionFb.reset()" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+            <i class="fas fa-plus me-2"></i>Ajouter une Section
+        </button>
+    </div>
+
+    <div class="settings-table-wrapper">
+        <table class="settings-table table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Intitulé</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of listSection(); track $index) {
+                    <tr>
+                        <td>{{f.id}}</td>
+                        <td><span class="settings-badge">{{f.intitule}}</span></td>
+                        
+                        <td class="text-end">
+                            <button class="settings-btn-action settings-btn-edit"
+                                    (click)="sectionFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="settings-btn-action settings-btn-delete"
+                                    (click)="sectionFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteFiliereModal">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+                @if (listSection().length === 0) {
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">Aucune filière trouvée.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Add section Modal -->
+<div class="modal fade" id="addSectionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Ajouter une Section</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="sectionFb" (ngSubmit)="createSection()">
+                    <div class="mb-3">
+                        <label class="settings-form-label">Nom de la filière</label>
+                        <input type="text" formControlName="intitule" class="settings-form-control form-control" placeholder="Ex: Sciences">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="settings-btn-primary" (click)="createSection()" data-bs-dismiss="modal">Ajouter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Filière Modal -->
+<div class="modal fade" id="deleteFiliereModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content settings-modal">
+            <div class="modal-header settings-modal-header">
+                <h5 class="modal-title">Supprimer la filière</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette filière ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer settings-modal-footer">
+                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="settings-btn-danger" (click)="deleteSection(sectionFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>

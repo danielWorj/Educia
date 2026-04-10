@@ -1,0 +1,75 @@
+ <div class="container-fluid p-0 overflow-hidden">
+        <div class="row g-0 login-container">
+            
+            <div class="col-lg-6 login-visual">
+                <div class="visual-content">
+                    <h1 class="display-4 fw-bold mb-3">L'excellence scolaire à portée de main.</h1>
+                    <p class="lead mb-4">Suivez l'evolution de vos travaux, le tout sur une seule plateforme.</p>
+                    <div class="visual-quote">
+                        "L'éducation est l'arme la plus puissante qu'on puisse utiliser pour changer le monde."
+                        <div class="mt-2 fs-6 opacity-75">— Nelson Mandela</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 login-form-container">
+                <div class="login-wrapper">
+                    
+                    <div class="text-center mb-4">
+                        <div class="logo-text">
+                            <i class="fas fa-graduation-cap"></i> EduFreelance
+                        </div>
+                        <h2 class="login-title">Bienvenue</h2>
+                        <p class="login-subtitle">Connectez-vous à votre espace parent</p>
+                    </div>
+
+                    <form [formGroup]="loginForm" (ngSubmit)="loginD()">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control border-end" id="emailInput" formControlName="email" placeholder="name@example.com"  >
+                            <label for="emailInput">Adresse Email</label>
+                        </div>
+
+                        <div class="input-group mb-4">
+                            <div class="form-floating flex-grow-1">
+                                <input type="password" class="form-control" id="passwordInput" placeholder="Mot de passe" formControlName="password" >
+                                <label for="passwordInput">Mot de passe</label>
+                            </div>
+                            <span class="input-group-text border rounded-end" >
+                                <i class="far fa-eye" id="toggleIcon"></i>
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" checked>
+                                <label class="form-check-label text-muted small" for="rememberMe">
+                                    Se souvenir de moi
+                                </label>
+                            </div>
+                            <a href="#" class="forgot-pass">Mot de passe oublié ?</a>
+                        </div>
+
+                        <button type="submit" class="btn-primary-custom mb-4" >
+                            Se connecter <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+
+                        <div class="text-center">
+                            <p class="text-muted small">
+                                Pas encore de compte ? 
+                                <a href="#" class="register-link">Inscrire mon établissement</a>
+                                <br> ou 
+                                <a href="#" class="register-link">Créer un compte parent</a>
+                            </p>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <small class="text-muted opacity-50">&copy; 2024 EduFreelance v2.7.0</small>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>

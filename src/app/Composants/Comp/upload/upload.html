@@ -1,0 +1,66 @@
+<!-- photo-profil-upload.component.html -->
+<div class="photo-upload-wrapper">
+  <!-- Zone d'upload -->
+  @if (!photoPreviewUrl) {
+    <div 
+      class="upload-container" 
+      [class.dragover]="isDragOver"
+      [class.uploading]="isUploading"
+      [class.has-photo]="photoPreviewUrl"
+      (click)="onUploadAreaClick()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)">
+      
+      <div class="upload-icon">
+        <i class="fas fa-camera"></i>
+      </div>
+      
+      <div class="upload-text">Cliquez pour télécharger votre photo</div>
+      <div class="upload-subtext">ou glissez-déposez votre fichier ici</div>
+      
+      <button class="btn-upload" type="button">
+        <i class="fas fa-upload me-2"></i>Sélectionner une photo
+      </button>
+      
+      <div class="upload-restrictions">
+        <i class="fas fa-info-circle me-1"></i>
+        Formats acceptés: JPG, PNG, JPEG • Taille max: 5 MB
+      </div>
+      
+      <input 
+        type="file" 
+        id="photoInput" 
+        class="file-input" 
+        accept="image/jpeg,image/png,image/jpg"
+        (change)="onFileSelected($event)">
+    </div>
+  }
+
+
+  <!-- Prévisualisation -->
+  @if (photoPreviewUrl) {
+    <div class="preview-container">
+      <div class="preview-card">
+        <img 
+          [src]="photoPreviewUrl" 
+          alt="Photo de profil" 
+          class="photo-preview-circle">
+        
+        <div class="preview-info">
+          <div class="file-name">{{ fileName }}</div>
+          <div class="file-size">{{ fileSize }}</div>
+        </div>
+        
+        <div class="preview-actions">
+          <button class="btn-change" type="button" (click)="changePhoto()">
+            <i class="fas fa-sync-alt me-2"></i>Changer la photo
+          </button>
+          <button class="btn-remove" type="button" (click)="removePhoto()">
+            <i class="fas fa-trash me-2"></i>Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

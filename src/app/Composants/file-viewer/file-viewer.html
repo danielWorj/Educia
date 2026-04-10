@@ -1,0 +1,32 @@
+<!-- file-viewer.component.html -->
+<div class="file-viewer-container">
+  <!-- Affichage des images -->
+  <div *ngIf="fileType === 'image'" class="image-container">
+    <img [src]="fileUrl" [alt]="fileName" class="img-fluid" />
+  </div>
+
+  <!-- Affichage des PDF -->
+  <div *ngIf="fileType === 'pdf'" class="pdf-container">
+    <iframe 
+      [src]="safePdfUrl" 
+      class="pdf-viewer"
+      frameborder="0">
+    </iframe>
+    <div class="pdf-actions mt-2">
+      <button class="btn btn-primary" (click)="downloadFile()">
+        <i class="bi bi-download"></i> Télécharger le PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Autres types de fichiers -->
+  <div *ngIf="fileType === 'other'" class="other-file-container">
+    <div class="alert alert-info">
+      <i class="bi bi-file-earmark"></i>
+      <p>Type de fichier non pris en charge pour l'aperçu</p>
+      <button class="btn btn-primary" (click)="downloadFile()">
+        <i class="bi bi-download"></i> Télécharger {{ fileName }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,231 @@
+<section class="hero">
+    <div class="container">
+        <div class="text-center">
+            <h1><i class="fas fa-chalkboard-teacher me-3"></i>Nos offres de répétition</h1>
+            <p>Découvrez 500+ offres sur notre plateforme vérifiés et expérimentés</p>
+        </div>
+    </div>
+</section>
+
+<div class="main-container my-5">
+    <!-- Liste des offres -->
+    <div class="offres-list" [class.d-none]="showDetail() && isMobile">
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-filter me-2"></i>Filtrer par matière
+            </div>
+            <div>
+                <button class="filter-btn active" data-filter="all">Toutes</button>
+                <button class="filter-btn" data-filter="maths">Mathématiques</button>
+                <button class="filter-btn" data-filter="physique">Physique</button>
+                <button class="filter-btn" data-filter="anglais">Anglais</button>
+                <button class="filter-btn" data-filter="francais">Français</button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-graduation-cap me-2"></i>Niveau
+            </div>
+            <div>
+                <button class="filter-btn active" data-level="all">Tous</button>
+                <button class="filter-btn" data-level="primaire">Primaire</button>
+                <button class="filter-btn" data-level="college">Collège</button>
+                <button class="filter-btn" data-level="lycee">Lycée</button>
+            </div>
+        </div>
+
+        <hr style="border-color: var(--light); margin: 1.5rem 0;">
+
+        <div id="offresList">
+            @if (listOffreRepetition().length !== 0) {
+                @for (o of listOffreRepetition(); track o.id) {
+                    <div 
+                        class="offre-card" 
+                        [class.active]="selectedOffreId === o.id"
+                        (click)="showDetails(o)">
+                        <div class="offre-header">
+                            <h3 class="offre-title">{{ o.intitule }}</h3>
+                            <span class="offre-badge badge-nouveau">Nouveau</span>
+                        </div>
+                        <div class="offre-meta">
+                            @if (o.eleve!.niveau.intitule) {
+                                <div class="meta-item">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>{{ o.eleve!.niveau.intitule }}</span>
+                                </div>
+                            }
+                            @if (o.eleve!.parent.localisation) {
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ o.eleve!.parent.localisation }}</span>
+                                </div>
+                            }
+                        </div>
+                        <p class="offre-description">
+                            {{ o.bio }}
+                        </p>
+                        <div class="offre-footer">
+                            <div class="offre-price">{{ o.salaireMax }} FCFA/h</div>
+                            <div class="offre-date">
+                                <i class="fas fa-clock me-1"></i>{{ o.dateCreation }}
+                            </div>
+                        </div>
+                    </div>
+                }
+            } @else {
+                <div class="d-flex justify-content-center p-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Panneau de détails -->
+    <!-- Overlay pour mobile -->
+    <div class="mobile-overlay" 
+        [class.show]="showDetail() && isMobile"
+        (click)="closeDetails()">
+    </div>
+
+    <!-- Panneau de détails -->
+    <div class="details-panel" 
+        id="detailsPanel" 
+        [class.show]="showDetail() && isMobile">
+        
+        <!-- Bouton retour sur mobile uniquement -->
+        @if (isMobile && showDetail()) {
+            <div class="mobile-close-btn">
+                <button class="btn-back-mobile" (click)="closeDetails()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour aux offres</span>
+                </button>
+            </div>
+        }
+
+        @if (offreRepetitionSelected() == undefined && !isLoadingDetails()) {
+            <div class="details-empty">
+                <i class="fas fa-hand-pointer"></i>
+                <h3>Sélectionnez une offre</h3>
+                <p>Cliquez sur une offre à gauche pour voir les détails</p>
+            </div>
+        }
+
+        @if (isLoadingDetails()) {
+            <div class="loading-container">
+                <div class="spinner-wrapper">
+                    <div class="spinner-custom"></div>
+                    <p class="loading-text">Chargement des détails...</p>
+                </div>
+            </div>
+        }
+
+        @if (offreRepetitionSelected() != undefined && !isLoadingDetails()) {
+            <div class="details-content">
+                <div class="details-header">
+                    <h2 class="details-title">{{ offreRepetitionSelected()?.intitule }}</h2>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-light text-dark border">
+                            <i class="fas fa-clock me-1 text-warning"></i> 
+                            {{ offreRepetitionSelected()?.dateCreation }}
+                        </span>
+                        @if (offreRepetitionSelected()?.eleve?.localisation) {
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-map-marker-alt me-1 text-danger"></i> 
+                                {{ offreRepetitionSelected()?.eleve?.localisation }}
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="details-meta-grid">
+                    <div class="section-block bg-white border d-flex align-items-center gap-3 p-3">
+                        <div class="detail-icon"><i class="fas fa-book-open"></i></div>
+                        <div class="detail-info">
+                            <span>Matière</span>
+                            <strong>{{ offreRepetitionSelected()?.intitule }}</strong>
+                        </div>
+                    </div>
+                    @if (offreRepetitionSelected()?.eleve!.niveau.intitule) {
+                        <div class="section-block bg-white border d-flex align-items-center gap-3 p-3">
+                            <div class="detail-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="detail-info">
+                                <span>Niveau</span>
+                                <strong>{{ offreRepetitionSelected()?.eleve!.niveau.intitule }}</strong>
+                            </div>
+                        </div>
+                    }
+                    <div class="section-block bg-white border d-flex align-items-center gap-3 p-3">
+                        <div class="detail-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="detail-info">
+                            <span>Tarif horaire</span>
+                            <strong>{{ offreRepetitionSelected()?.salaireMax }} F CFA</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="section-block">
+                            <h4 class="section-title"><i class="fas fa-align-left"></i>Contexte & Besoins</h4>
+                            <p class="section-content">{{ offreRepetitionSelected()?.bio }}</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        @if (offreRepetitionSelected()?.frequence || offreRepetitionSelected()?.duree) {
+                            <div class="section-block">
+                                <h4 class="section-title fs-5"><i class="fas fa-info-circle"></i>Détails pratiques</h4>
+                                @if (offreRepetitionSelected()?.frequence) {
+                                    <div class="info-row">
+                                        <span class="info-label">Fréquence: </span>
+                                        <span class="info-value text-end">{{ offreRepetitionSelected()?.frequence }} fois / Semaine</span>
+                                    </div>
+                                }
+                                @if (offreRepetitionSelected()?.duree) {
+                                    <div class="info-row">
+                                        <span class="info-label">Durée: </span>
+                                        <span class="info-value text-end">{{ offreRepetitionSelected()?.duree }} H / Séance</span>
+                                    </div>
+                                }
+                                <div class="info-row">
+                                    <span class="info-label">Début: </span>
+                                    <span class="info-value text-end text-success">Dès que possible</span>
+                                </div>
+                            </div>
+                        }
+
+                        @if (offreRepetitionSelected()?.eleve?.parent) {
+                            <div class="parent-info flex-column align-items-start gap-3">
+                                <div class="d-flex align-items-center gap-3 w-100 border-bottom pb-3 mb-2">
+                                    <div class="parent-details">
+                                        <h4>{{ offreRepetitionSelected()?.eleve!.parent.nomComplet }}</h4>
+                                        @if (offreRepetitionSelected()?.eleve!.parent.profession) {
+                                            <p>{{ offreRepetitionSelected()?.eleve!.parent.profession }}</p>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between w-100">
+                                    <span class="text-muted">Fiabilité</span>
+                                    <span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>7.8</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="action-buttons sticky-bottom bg-white pt-3 pb-3 border-top mt-4">
+                    <button class="btn-postuler">
+                        <i class="fas fa-paper-plane me-2"></i>Postuler maintenant
+                    </button>
+                   <button class="btn-close-details" (click)="closeDetails()">
+                        <i class="fas fa-arrow-left me-2"></i>Retour
+                    </button>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>

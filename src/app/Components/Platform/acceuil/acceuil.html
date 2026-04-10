@@ -1,0 +1,530 @@
+@if (!isCreationAccount()) {
+        <section class="hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1>La plateforme éducative camerounaise de référence</h1>
+                        <p>Mettez en relation parents et enseignants qualifiés pour un soutien scolaire de qualité avec validation et évaluation.</p>
+                        <div class="d-flex gap-3 flex-wrap">
+                           
+                                <button class="btn btn-action text-white" (click)="toggleCreationAccountParent()">
+                                    <i class="fas fa-users me-2" ></i>Devenir Parent
+                                </button>
+                            
+                                <button class="btn btn-action text-white" (click)="toggleCreationAccountEnseignant()">
+                                    <i class="fas fa-chalkboard-teacher me-2"></i>Devenir Enseignant
+                                </button>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col-lg-6 text-center mt-5 mt-lg-0">
+                        <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 3rem;">
+                            <i class="fas fa-user-graduate" style="font-size: 10rem; color: var(--gold);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Enseignants Vérifiés</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number">2,500+</div>
+                            <div class="stat-label">Élèves Accompagnés</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Matières Disponibles</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">Satisfaction Parents</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">Comment ça marche ?</h2>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h4>Inscription</h4>
+                            <p>Créez votre compte parent ou enseignant en quelques clics</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <h4>Recherche</h4>
+                            <p>Trouvez l'enseignant parfait selon vos critères</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h4>Réservation</h4>
+                            <p>Réservez et payez en toute sécurité</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-card">
+                            <div class="step-number">4</div>
+                            <h4>Cours & Suivi</h4>
+                            <p>Suivez la progression et évaluez</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>Prêt à commencer ?</h2>
+                <p class="lead mb-4">Rejoignez des milliers de familles et d'enseignants qui nous font confiance</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <button class="btn btn-action-alt btn-lg" (click)="toggleCreationAccountParent()">
+                        <i class="fas fa-user-plus me-2"></i>Inscription Parent
+                    </button>
+                    <button class="btn btn-action btn-lg" (click)="toggleCreationAccountEnseignant()">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Inscription Enseignant
+                    </button>
+                </div>
+            </div>
+        </section>
+}
+@if(isCreationAccount()) {
+    @if (isParentCreation()) {
+       <section class="form-section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-chalkboard-teacher me-2"></i> Devenir Parent </h2>
+                    <form id="formEnseignant" [formGroup]="parentForm" (ngSubmit)="createParentAccount()">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Nom Complet *</label>
+                                <input type="text" class="form-control" required placeholder="Entrer votre nom" formControlName="nomComplet">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" placeholder="Ex: +237 6XX XX XX XX" required formControlName="telephone">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" required placeholder="xyz@gmail.com" formControlName="email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" required placeholder="••••••••" (change)="passwordChange($event)">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirmer le mot de passe *</label>
+                                <input type="password" class="form-control" required placeholder="••••••••" (change)="confirmPasswordChange($event)">
+                            </div>
+                            @if (showErrormessage()) {
+                                <div class="col-12">
+                                    <p class="alert alert-danger">{{this.messageErrorPassword()}}</p>
+                                </div>
+                            }
+                            <div class="col-md-6">
+                                <label class="form-label">Localisation *</label>
+                                <input type="text" class="form-control" required formControlName="localisation" placeholder="Localisation">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Profession *</label>
+                                <input type="text" class="form-control" required formControlName="profession" placeholder="Profession">
+                            </div>
+                            <!-- Photo de profil -->
+                            <div class="col-12">
+                                <label class="form-label">Photo de Profil  *</label>
+                                <div class="component-section compact">
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fetchPhotoState()){
+                                        <div class="upload-container" id="photoUploadArea" onclick="document.getElementById('photoInput').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-camera"></i>
+                                            </div>
+                                            <div class="upload-text">Cliquez pour télécharger votre photo</div>
+                                            <div class="upload-subtext">ou glissez-déposez votre fichier ici</div>
+                                            <button class="btn-upload" type="button">
+                                                <i class="fas fa-upload me-2"></i>Sélectionner une photo
+                                            </button>
+                                            <div class="upload-restrictions">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Formats acceptés: JPG, PNG, JPEG • Taille max: 5 MB
+                                            </div>
+                                            <input type="file" id="photoInput" class="file-input" accept="image/jpeg,image/png,image/jpg" (change)="selectPhotoUploaded($event)">
+                                        </div>
+                                    }
+
+                                    @if(fetchPhotoState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{photoFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+                            <!-- Carte Nationale d'identite -->
+                            <div class="col-12">
+                                <label class="form-label">CNI *</label>
+                                <div class="component-section compact">
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fecthCniState()){
+                                       <div class="upload-container" id="cniUploadArea" onclick="document.getElementById('cniInput').click()">
+                                        <div class="upload-icon">
+                                            <i class="fas fa-id-card"></i>
+                                        </div>
+                                        <div class="upload-text">Télécharger votre CNI (Recto & Verso)</div>
+                                        <div class="upload-subtext">Assurez-vous que les informations sont lisibles</div>
+                                        <button class="btn-upload" type="button">
+                                            <i class="fas fa-upload me-2"></i>Sélectionner votre CNI
+                                        </button>
+                                        <div class="upload-restrictions">
+                                            <i class="fas fa-shield-alt me-1"></i>
+                                            Formats: PDF, JPG, PNG • Max: 10 MB • Document sécurisé et confidentiel
+                                        </div>
+                                        <input type="file" id="cniInput" class="file-input" accept="image/*,application/pdf" (change)="onCniUploaded($event)">
+                                    </div>
+                                    }
+
+                                    @if(fecthCniState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{cniFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+
+                            <!-- Soumission du formulaire  -->
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        J'accepte les <a href="#" style="color: var(--primary);">conditions d'utilisation</a> et la <a href="#" style="color: var(--primary);">politique de confidentialité</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-submit text-white">
+                                    <i class="fas fa-check me-2"></i>Créer mon compte enseignant
+                                </button>
+                            </div>
+                            <div class="col-12 text-center">
+                                <p class="mb-0">Déjà inscrit ? <a href="#" style="color: var(--primary); font-weight: 600;">Se connecter</a></p>
+                            </div>
+
+                           
+                            
+                        
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    }
+    @if (isEnseignantCreation()) {
+        <section class="form-section">
+            <div class="container">
+                <div class="form-container">
+                    <h2><i class="fas fa-users me-2" ></i> Devenir Enseignant</h2>
+                    <form id="formEnseignant" [formGroup]="enseignantForm" (ngSubmit)="createEnseignantAccount()">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nom Complet *</label>
+                                <input type="text" class="form-control" required placeholder="Entrer votre nom" formControlName="nomComplet">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" placeholder="Ex: +237 6XX XX XX XX" required formControlName="telephone">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" required  placeholder="xyz@gmail.com" formControlName="email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" required placeholder="••••••••" (change)="passwordChange($event)">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirmer le mot de passe *</label>
+                                <input type="password" class="form-control" required placeholder="••••••••" (change)="confirmPasswordChange($event)">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Localisation *</label>
+                                <input type="text" class="form-control" required formControlName="localisation" placeholder="Localisation">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Annee Experience *</label>
+                                <input type="text" class="form-control" required formControlName="anneeexperience" placeholder="Annee Experience">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tarif Horaire *</label>
+                                <input type="text" class="form-control" required formControlName="tarifHoraire" placeholder="Tarif Horaire ">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Date Naissance *</label>
+                                <input type="date" class="form-control" required formControlName="dateNaissance" placeholder="Date Naissance">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Section *</label>
+                                <select class="form-select" required formControlName="section">
+                                    <option value="">Sélectionnez votre section</option>
+                                    @for (s of listSections(); track $index) {
+                                        <option value="{{s.id}}">{{s.intitule}}</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Profil Enseignant *</label>
+                                <select class="form-select" required formControlName="profilEnseignant">
+                                    <option value="">Sélectionnez votre profil enseignant</option>
+                                    @for (p of listProfilEnseignant(); track $index) {
+                                        <option value="{{p.id}}">{{p.intitule}}</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Diplome *</label>
+                                <select class="form-select" required formControlName="diplome">
+                                    <option value="">Sélectionnez votre diplome</option>
+                                    @for (d of listDiplomes(); track $index) {
+                                        <option value="{{d.id}}">{{d.intitule}}</option>
+                                    }
+                                </select>
+                            </div>
+                             <div class="col-md-6">
+                                <label class="form-label">Specialite *</label>
+                                <input type="text" class="form-control" required formControlName="specialite" placeholder="Indiquer la specialite de votre diplome ">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bio (Faites une breve description de votre profil) *</label>
+                                <textarea class="form-control" rows="5" placeholder="Definissez vous en quelques termes..." formControlName="bio"></textarea>
+
+                            </div>
+                            <!-- Upload de cni -->
+                            <div class="col-12">
+                                <label class="form-label">upload de la cni  *</label>
+                                <div class="component-section compact">
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fecthCniState()){
+                                         <div class="upload-container" id="cniUploadArea" onclick="document.getElementById('cniInput').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-id-card"></i>
+                                            </div>
+                                            <div class="upload-text">Télécharger votre cni </div>
+                                            <div class="upload-subtext">Assurez-vous que les informations sont lisibles</div>
+                                            <button class="btn-upload" type="button">
+                                                <i class="fas fa-upload me-2"></i>Sélectionner votre cni 
+                                            </button>
+                                            <div class="upload-restrictions">
+                                                <i class="fas fa-shield-alt me-1"></i>
+                                                Formats: PDF, JPG, PNG • Max: 10 MB • Document sécurisé et confidentiel
+                                            </div>
+                                            <input type="file" id="cniInput" class="file-input" accept="image/*,application/pdf" (change)="onCniUploaded($event)">
+                                        </div>
+                                    }
+
+                                    @if(fecthcvState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{cniFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+                            <!-- Photo de profil -->
+                            <div class="col-12">
+                                <label class="form-label">Photo de Profil  *</label>
+                                <div class="component-section compact">
+
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fetchPhotoState()){
+                                        <div class="upload-container" id="photoUploadArea" onclick="document.getElementById('photoInput').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-camera"></i>
+                                            </div>
+                                            <div class="upload-text">Cliquez pour télécharger votre photo</div>
+                                            <div class="upload-subtext">ou glissez-déposez votre fichier ici</div>
+                                            <button class="btn-upload" type="button">
+                                                <i class="fas fa-upload me-2"></i>Sélectionner une photo
+                                            </button>
+                                            <div class="upload-restrictions">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Formats acceptés: JPG, PNG, JPEG • Taille max: 5 MB
+                                            </div>
+                                            <input type="file" id="photoInput" class="file-input" accept="image/jpeg,image/png,image/jpg" (change)="selectPhotoUploaded($event)">
+                                        </div>
+                                    }
+
+                                    @if(fetchPhotoState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{photoFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+                             <!--Upload du cv -->
+                            <div class="col-12">
+                                <label class="form-label">upload du CV  *</label>
+                                <div class="component-section compact">
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fecthcvState()){
+                                         <div class="upload-container" id="cniUploadArea" onclick="document.getElementById('cniInput').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-id-card"></i>
+                                            </div>
+                                            <div class="upload-text">Télécharger votre cv </div>
+                                            <div class="upload-subtext">Assurez-vous que les informations sont lisibles</div>
+                                            <button class="btn-upload" type="button">
+                                                <i class="fas fa-upload me-2"></i>Sélectionner votre CV
+                                            </button>
+                                            <div class="upload-restrictions">
+                                                <i class="fas fa-shield-alt me-1"></i>
+                                                Formats: PDF, JPG, PNG • Max: 10 MB • Document sécurisé et confidentiel
+                                            </div>
+                                            <input type="file" id="cniInput" class="file-input" accept="image/*,application/pdf" (change)="oncvUploaded($event)">
+                                        </div>
+                                    }
+
+                                    @if(fecthcvState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{cvFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+                            <!-- Image du Diplome -->
+                            <div class="col-12">
+                                <label class="form-label">pload Diplôme / Certificat *</label>
+                                <div class="component-section compact">
+                                    
+                                    <!-- Zone d'UPLOAD -->
+                                    @if(!fecthDiplomeState()){
+                                        <div class="upload-container" id="diplomeUploadArea" onclick="document.getElementById('diplomeInput').click()">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-certificate"></i>
+                                            </div>
+                                            <div class="upload-text">Télécharger votre diplôme ou certificat</div>
+                                            <div class="upload-subtext">Attestations, diplômes universitaires, certificats professionnels</div>
+                                            <button class="btn-upload" type="button">
+                                                <i class="fas fa-upload me-2"></i>Sélectionner votre diplôme
+                                            </button>
+                                            <div class="upload-restrictions">
+                                                <i class="fas fa-award me-1"></i>
+                                                Formats: PDF, JPG, PNG • Max: 10 MB • Documents officiels uniquement
+                                            </div>
+                                            <input type="file" id="diplomeInput" class="file-input" accept="image/*,application/pdf" multiple (change)="onDiplomeUploaded($event)">
+                                        </div>
+                                    }
+
+                                    @if(fecthDiplomeState()){ 
+                                         <div class="preview-info">
+                                            <div>
+                                                <div class="file-name">{{diplomeFileName()}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button class="btn-remove" >
+                                                <i class="fas fa-trash me-2"></i>Supprimer ce document
+                                            </button>
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+
+                            <!-- Soumission du formulaire -->
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        J'accepte les <a href="#" style="color: var(--primary);">conditions d'utilisation</a> et la <a href="#" style="color: var(--primary);">politique de confidentialité</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-submit text-white">
+                                    <i class="fas fa-check me-2"></i>Créer mon compte enseignant
+                                </button>
+                            </div>
+                            <div class="col-12 text-center">
+                                <p class="mb-0">Déjà inscrit ? <a href="#" style="color: var(--primary); font-weight: 600;">Se connecter</a></p>
+                            </div>
+
+                            
+                        
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    }
+}
+
