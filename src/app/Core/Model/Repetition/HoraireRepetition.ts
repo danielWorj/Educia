@@ -1,4 +1,4 @@
-import { Repetition } from "../../../Components/Enseignant/repetition/repetition";
+import { Repetition } from "../../../Features/admin/admin-enseignant/repetition/repetition";
 
 export interface HoraireRepetition{
     id : number ; 

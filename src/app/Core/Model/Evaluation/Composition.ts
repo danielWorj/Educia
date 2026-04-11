@@ -1,5 +1,5 @@
 import { Session } from "node:inspector/promises";
-import { Repetition } from "../../../Components/Enseignant/repetition/repetition";
+import { Repetition } from "../../../Features/admin/admin-enseignant/repetition/repetition";
 import { Matiere } from "../Academie/Matiere";
 import { Enseignant } from "../Utilisateur/Enseignant/Enseignant";
 import { TypeEvaluation } from "./TypeEvaluation";
