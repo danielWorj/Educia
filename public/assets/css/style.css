@@ -76,8 +76,8 @@ body {
    UTILITAIRES
    ============================================================ */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.section { padding: 96px 0; }
-.section-sm { padding: 64px 0; }
+.section    { padding: 48px 0; }
+.section-sm { padding: 28px 0; }
 .text-center { text-align: center; }
 
 .tag {
@@ -925,35 +925,173 @@ tbody tr:hover { background: var(--bg-soft); }
   .stats-grid { grid-template-columns: 1fr; }
   .header-search { display: none; }
 }
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  margin-top: 48px;
+  position: relative;
+}
 
-/* css index.html du site */
- .levels-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
-    .level-card {
-      background:#fff; border:1px solid var(--border); border-radius:var(--radius);
-      padding:24px 20px; text-align:center; text-decoration:none; color:var(--text-dark);
-      transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .level-card:hover { border-color:var(--primary); box-shadow:var(--shadow-md); transform:translateY(-4px); }
-    .level-icon { font-size:2.2rem; margin-bottom:10px; display:block; }
-    .level-name { font-weight:700; margin-bottom:4px; }
-    .level-sub { font-size:13px; color:var(--text-light); }
-    .process-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
-    .process-steps::before {
-      content:''; position:absolute; top:40px; left:12%; right:12%; height:2px;
-      background:linear-gradient(90deg,var(--primary),var(--accent)); z-index:0;
-    }
-    .process-step { text-align:center; padding:20px 16px; position:relative; z-index:1; }
-    .process-icon {
-      width:80px; height:80px; border-radius:50%; border:3px solid var(--primary);
-      background:#fff; display:flex; align-items:center; justify-content:center;
-      font-size:1.8rem; margin:0 auto 20px; position:relative;
-    }
-    .process-icon .step-num {
-      position:absolute; top:-4px; right:-4px; width:24px; height:24px;
-      background:var(--accent); color:#fff; border-radius:50%; font-size:11px; font-weight:700;
-      display:flex; align-items:center; justify-content:center;
-    }
-    @media(max-width:768px){
-      .process-steps { grid-template-columns:1fr 1fr; }
-      .process-steps::before { display:none; }
-    }
+/* La ligne horizontale entre les étapes */
+.process-steps::before {
+  content: '';
+  position: absolute;
+  top: 36px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--primary);
+  z-index: 0;
+}
+
+.process-step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.process-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 16px;
+  position: relative;
+}
+
+.step-num {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ============================================================
+   NIVEAUX
+   ============================================================ */
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 16px;
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.level-card:hover,
+.level-card.active {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.level-card.active {
+  background: var(--primary-light);
+}
+
+.level-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.level-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.level-sub {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+/* Responsive niveaux */
+@media (max-width: 900px) {
+  .levels-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .levels-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+/* ============================================================
+   RESPONSIVE MOBILE (site public)
+   ============================================================ */
+
+/* Empêche le débordement horizontal sur mobile */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+
+  /* Réduire les formes de fond qui débordent */
+  .hero-shape-1 { width: 300px; height: 300px; right: -80px; top: -80px; }
+  .hero-shape-2 { width: 200px; height: 200px; }
+  .hero-shape-3 { display: none; }
+
+  /* Hero */
+  .hero { padding: 60px 0 40px; }
+  .hero p { font-size: 1rem; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .hero-stats { gap: 20px; }
+  .hero-stat-num { font-size: 1.4rem; }
+
+  /* Sections */
+  .section    { padding: 48px 0; }
+  .section-sm { padding: 32px 0; }
+  .section-header { margin-bottom: 32px; }
+
+  /* Grilles qui passent en 1 colonne */
+  .subjects-grid      { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .tutors-grid        { grid-template-columns: 1fr; }
+  .market-grid        { grid-template-columns: 1fr; }
+  .testimonials-grid  { grid-template-columns: 1fr; }
+  .stats-band-grid    { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+  /* Niveaux : 2 par ligne sur mobile */
+  .levels-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  /* CTA band */
+  .cta-band .btn-group { flex-direction: column; align-items: center; }
+  .cta-band .btn { width: 100%; max-width: 300px; }
+}
+
+@media (max-width: 400px) {
+  .subjects-grid { grid-template-columns: 1fr 1fr; }
+  .levels-grid   { grid-template-columns: 1fr 1fr; }
+}
