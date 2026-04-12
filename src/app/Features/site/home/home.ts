@@ -11,9 +11,9 @@ export class Home {
   constructor(private animationService : AnimationsService){ 
 
   }
-  ngAfterViewInit() {
-    this.animationService.initReveal();
-    this.animationService.initCounters();
-    this.animationService.initProgressBars();
-  }
+  // ngAfterViewInit() {
+  //   this.animationService.initReveal();
+  //   this.animationService.initCounters();
+  //   this.animationService.initProgressBars();
+  // }
 }

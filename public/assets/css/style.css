@@ -1095,3 +1095,739 @@ html, body {
   .subjects-grid { grid-template-columns: 1fr 1fr; }
   .levels-grid   { grid-template-columns: 1fr 1fr; }
 }
+
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+  display: none;               /* caché par défaut */
+  position: fixed;
+  inset: 0;                    /* couvre tout l'écran */
+  background: rgba(0, 0, 0, 0.55);  /* fond sombre semi-transparent */
+  backdrop-filter: blur(4px);  /* flou élégant derrière */
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Quand le modal est ouvert */
+.modal-overlay.open {
+  display: flex;               /* flex pour centrer le contenu */
+}
+
+/* ===== MODAL BOX ===== */
+.modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+
+/* Animation d'entrée */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Bouton fermer */
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover {
+  background: #e5e7eb;
+}
+
+
+/* ============================================================
+   EDUCIA — forms.css
+   Styles partagés pour les formulaires :
+     · Publier une offre (parent)
+     · Créer un compte répétiteur (enseignant)
+   À importer après style.css
+   ============================================================ */
+
+
+/* ── 1. LAYOUT PAGE ─────────────────────────────────────── */
+
+.page-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.page-intro {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.page-intro .tag { margin-bottom: 14px; }
+.page-intro h2  { margin-bottom: 8px; }
+.page-intro p   { font-size: 15px; max-width: 520px; margin: 0 auto; }
+
+
+/* ── 2. NOTICE BAND ─────────────────────────────────────── */
+/* Override du notice-band global de style.css pour les pages de formulaire */
+
+.page-wrapper .notice-band {
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 24px;
+  color: var(--text-mid);
+}
+.page-wrapper .notice-band strong { color: var(--primary); }
+
+/* Variante accent (ex : page répétiteur) */
+.page-wrapper .notice-band.notice-accent {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+.page-wrapper .notice-band.notice-accent strong { color: var(--accent); }
+
+
+/* ── 3. FORM CARD (fond blanc) ───────────────────────────── */
+
+.form-card {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 36px 40px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bandeau dégradé en haut de chaque carte */
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.form-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-card-icon {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.form-card-icon.accent { background: var(--accent-light); }
+
+.form-card-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.form-card-subtitle {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+
+/* ── 4. CHAMPS DE FORMULAIRE ─────────────────────────────── */
+
+/* Surcharge des règles globales de style.css pour les pages formulaires */
+.page-wrapper .form-group { margin-bottom: 20px; }
+.page-wrapper .form-group:last-child { margin-bottom: 0; }
+
+.page-wrapper .form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+.form-label .req { color: var(--accent); margin-left: 2px; }
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 5px;
+  display: block;
+}
+
+/* Inputs / selects / textareas */
+.page-wrapper .form-input,
+.page-wrapper .form-select,
+.page-wrapper .form-textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-dark);
+  background: var(--bg-soft);
+  transition: all 0.2s;
+  outline: none;
+  appearance: none;
+}
+.page-wrapper .form-input:focus,
+.page-wrapper .form-select:focus,
+.page-wrapper .form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(10,79,255,0.1);
+  background: #fff;
+}
+.page-wrapper .form-input::placeholder { color: var(--text-light); }
+.page-wrapper .form-textarea { min-height: 120px; resize: vertical; }
+
+/* Select : flèche personnalisée */
+.page-wrapper .form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394A3B8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 42px;
+  cursor: pointer;
+}
+
+/* Grilles de colonnes */
+.form-row   { display: grid; grid-template-columns: 1fr 1fr;     gap: 20px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+
+/* ── 5. INPUT NUMÉRIQUE AVEC UNITÉ ───────────────────────── */
+
+.input-number-wrap {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-soft);
+  transition: all 0.2s;
+}
+.input-number-wrap:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(10,79,255,0.1);
+  background: #fff;
+}
+.input-number-wrap input[type="number"] {
+  flex: 1;
+  padding: 13px 16px;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-dark);
+  background: transparent;
+  -moz-appearance: textfield;
+}
+.input-number-wrap input[type="number"]::-webkit-inner-spin-button,
+.input-number-wrap input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.input-number-unit {
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  background: var(--bg-soft);
+  border-left: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+
+/* ── 6. MOT DE PASSE AVEC TOGGLE ─────────────────────────── */
+
+.password-wrap { position: relative; }
+.password-wrap .form-input { padding-right: 48px; }
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+  color: var(--text-light);
+  transition: color 0.2s;
+}
+.password-toggle:hover { color: var(--primary); }
+
+/* Barre de force du mot de passe */
+.password-strength { margin-top: 8px; display: none; }
+.strength-bar {
+  height: 4px;
+  border-radius: 100px;
+  background: var(--border);
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.3s, background 0.3s;
+  width: 0%;
+}
+.strength-label { font-size: 11px; color: var(--text-light); }
+
+
+/* ── 7. COMPOSANT UPLOAD ─────────────────────────────────── */
+
+.upload-id-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  transition: all 0.2s;
+}
+.upload-id-wrapper:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.upload-id-wrapper.has-file {
+  border-color: var(--green);
+  background: var(--green-light);
+  border-style: solid;
+}
+
+.upload-id-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.upload-id-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.upload-id-wrapper.has-file .upload-id-icon { background: var(--green-light); }
+
+.upload-id-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.upload-id-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.upload-id-wrapper.has-file .upload-id-title { color: #15803D; }
+
+.upload-id-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 100px;
+  border: 2px solid var(--primary);
+  background: #fff;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+}
+.upload-id-btn:hover { background: var(--primary); color: #fff; }
+.upload-id-wrapper.has-file .upload-id-btn { border-color: var(--green); color: #15803D; }
+.upload-id-wrapper.has-file .upload-id-btn:hover { background: var(--green); color: #fff; }
+
+
+/* ── 8. RADIO CARDS — TYPE D'ENSEIGNANT ──────────────────── */
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.type-card input[type="radio"] { display: none; }
+
+.type-card label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.type-card label:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.type-card input[type="radio"]:checked + label {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(10,79,255,0.15);
+}
+
+.type-card-icon { font-size: 1.6rem; }
+.type-card-name {
+  font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font-display);
+  color: var(--text-dark);
+}
+.type-card-desc { font-size: 11px; color: var(--text-light); line-height: 1.4; }
+.type-card input[type="radio"]:checked + label .type-card-name { color: var(--primary); }
+
+
+/* ── 9. SÉPARATEUR DE SECTION ───────────────────────────── */
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 20px;
+}
+.section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.section-divider-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+
+/* ── 10. COMPTE CARD (fond bleu — commun aux deux formulaires) */
+
+.compte-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: var(--radius-xl);
+  padding: 36px 40px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Texture de fond */
+.compte-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M20 20h20v20H20zM0 0h20v20H0z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.compte-inner { position: relative; z-index: 1; }
+
+.compte-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.compte-icon {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.compte-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+.compte-subtitle { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+/* Labels et hints dans le bloc bleu */
+.compte-card .form-label  { color: rgba(255,255,255,0.9); }
+.compte-card .req         { color: #FFB347; }
+.compte-card .form-hint   { color: rgba(255,255,255,0.4); }
+
+/* Inputs dans le bloc bleu */
+.compte-card .form-input,
+.compte-card .form-select {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+.compte-card .form-input::placeholder { color: rgba(255,255,255,0.35); }
+.compte-card .form-input:focus,
+.compte-card .form-select:focus {
+  border-color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.16);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
+}
+
+/* Select flèche blanche */
+.compte-card .form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' fill-opacity='0.5' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.compte-card option { background: var(--primary-dark); color: #fff; }
+
+/* Input numérique dans le bloc bleu */
+.compte-card .input-number-wrap {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+.compte-card .input-number-wrap:focus-within {
+  border-color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.16);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
+}
+.compte-card .input-number-wrap input[type="number"] { color: #fff; }
+.compte-card .input-number-wrap input[type="number"]::placeholder { color: rgba(255,255,255,0.35); }
+.compte-card .input-number-unit {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.5);
+}
+
+/* Upload dans le bloc bleu */
+.compte-card .upload-id-wrapper {
+  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+}
+.compte-card .upload-id-wrapper:hover {
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.14);
+}
+.compte-card .upload-id-wrapper.has-file {
+  border-color: #86EFAC;
+  background: rgba(34,197,94,0.12);
+  border-style: solid;
+}
+.compte-card .upload-id-icon  { background: rgba(255,255,255,0.15); }
+.compte-card .upload-id-title { color: rgba(255,255,255,0.95); }
+.compte-card .upload-id-sub   { color: rgba(255,255,255,0.4); }
+.compte-card .upload-id-wrapper.has-file .upload-id-title { color: #86EFAC; }
+.compte-card .upload-id-btn {
+  border-color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.compte-card .upload-id-btn:hover { background: rgba(255,255,255,0.22); }
+.compte-card .upload-id-wrapper.has-file .upload-id-btn { border-color: #86EFAC; color: #86EFAC; }
+
+/* Séparateur dans le bloc bleu */
+.compte-card .section-divider-line  { background: rgba(255,255,255,0.15); }
+.compte-card .section-divider-label { color: rgba(255,255,255,0.35); }
+
+/* Toggle mot de passe dans le bloc bleu */
+.compte-card .password-toggle { color: rgba(255,255,255,0.4); }
+.compte-card .password-toggle:hover { color: #fff; }
+.compte-card .strength-label { color: rgba(255,255,255,0.5); }
+.compte-card .strength-bar { background: rgba(255,255,255,0.15); }
+
+
+/* ── 11. CGU ─────────────────────────────────────────────── */
+
+.cgu-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  margin-top: 8px;
+}
+.cgu-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  margin-top: 3px;
+  accent-color: #fff;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.cgu-row label {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  line-height: 1.6;
+}
+.cgu-row label a { color: #fff; font-weight: 600; }
+
+
+/* ── 12. BOUTON SOUMISSION ───────────────────────────────── */
+
+.btn-submit {
+  width: 100%;
+  justify-content: center;
+  background: rgba(255,255,255,0.16);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+}
+.btn-submit:hover {
+  background: rgba(255,255,255,0.26);
+  transform: translateY(-2px);
+}
+
+
+/* ── 13. MODAL SUCCÈS ────────────────────────────────────── */
+
+.modal-box {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  max-width: 460px;
+  width: 100%;
+  padding: 48px 36px;
+  text-align: center;
+}
+.modal-box h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin: 12px 0;
+}
+
+
+/* ── 14. RESPONSIVE ──────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .page-wrapper { padding: 24px 16px 60px; }
+  .form-card,
+  .compte-card  { padding: 24px 20px; }
+  .form-row,
+  .form-row-3   { grid-template-columns: 1fr; gap: 16px; }
+  .type-grid    { grid-template-columns: 1fr; }
+  .upload-id-wrapper { flex-direction: column; align-items: flex-start; }
+}
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;         /* espace autour du modal sur mobile */
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+/* ===== MODAL BOX ===== */
+.modal-box {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 600px;        /* ✅ plus large pour les formulaires à 2 colonnes */
+  max-height: 85vh;        /* ✅ ne dépasse jamais l'écran */
+  overflow-y: auto;        /* ✅ scroll interne si contenu long */
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: modalIn 0.3s ease;
+
+  /* Scrollbar discrète */
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+.modal-box::-webkit-scrollbar {
+  width: 5px;
+}
+.modal-box::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== RESPONSIVE MOBILE ===== */
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: 1rem;
+    align-items: flex-end;   /* modal collé en bas sur mobile */
+  }
+
+  .modal-box {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;  /* style sheet bottom sur mobile */
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+.profile-form-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; align-items:start; }
+    .profile-preview {
+      background:#fff; border:1px solid var(--border); border-radius:var(--radius-xl);
+      padding:32px; text-align:center; position:sticky; top:calc(var(--nav-h)+24px);
+    }
+    .preview-avatar {
+      width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--accent));
+      margin:0 auto 16px; display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:2rem; font-family:var(--font-display); font-weight:800;
+    }
+    .income-calc { background:var(--primary-light); border-radius:var(--radius); padding:24px; margin-top:24px; }
+    .income-num { font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--primary); }
+    .steps-apply { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+    @media(max-width:900px){ .profile-form-grid { grid-template-columns:1fr; } .profile-preview { position:static; } .steps-apply { grid-template-columns:1fr; } }
+  
