@@ -1,1 +1,205 @@
-<p>gparent works!</p>
+
+      <div class="page-title-bar fade-up">
+        <div>
+          <h1>Parents & Étudiants</h1>
+          <div class="breadcrumb"><a href="../index.html">Accueil</a><span>›</span><span>Parents / Étudiants</span></div>
+        </div>
+        <button class="btn btn-primary" data-modal-open="addParentModal"><i class="fas fa-plus"></i> Ajouter un compte</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid fade-up">
+        <div class="stat-card" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div><div class="stat-value" data-target="847">0</div><div class="stat-label">Total comptes</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+          <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+          <div><div class="stat-value" data-target="612">0</div><div class="stat-label">Parents</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#FF6B35;--stat-bg:#FFF0EA;">
+          <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+          <div><div class="stat-value" data-target="235">0</div><div class="stat-label">Étudiants</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div><div class="stat-value" data-target="1024">0</div><div class="stat-label">Réservations totales</div></div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-bar fade-up">
+        <button class="filter-chip active" data-filter="all">Tous</button>
+        <button class="filter-chip" data-filter="parent">Parents</button>
+        <button class="filter-chip" data-filter="etudiant">Étudiants</button>
+        <button class="filter-chip" data-filter="actif">Actifs</button>
+        <button class="filter-chip" data-filter="inactif">Inactifs</button>
+        <div style="margin-left:auto;"><button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter CSV</button></div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="card fade-up">
+        <div class="card-header">
+          <div class="card-title">Liste des comptes <span class="badge badge-blue" style="margin-left:8px;">847</span></div>
+        </div>
+        <div class="table-wrapper">
+          <table id="parentsTable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" /></th>
+                <th>Utilisateur</th>
+                <th>Type</th>
+                <th>Enfants / Niveau</th>
+                <th>Réservations</th>
+                <th>Dépensé</th>
+                <th>Statut</th>
+                <th>Inscription</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-category="parent">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#0A4FFF,#22C55E);">FK</div><div><div class="user-name">Fanta Koné</div><div class="user-email">fanta.kone@email.cm</div></div></div></td>
+                <td><span class="badge badge-blue">Parent</span></td>
+                <td>2 enfants · Lycée</td>
+                <td>14</td>
+                <td style="font-weight:700;color:var(--green);">210 000 FCFA</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td>15/01/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="parentDetailModal"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="etudiant">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#A855F7,#FF6B35);">DC</div><div><div class="user-name">Diallo Cheick</div><div class="user-email">diallo.c@email.cm</div></div></div></td>
+                <td><span class="badge badge-orange">Étudiant</span></td>
+                <td>Terminale C</td>
+                <td>8</td>
+                <td style="font-weight:700;color:var(--green);">96 000 FCFA</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td>20/02/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="parentDetailModal"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="parent">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#22C55E,#F59E0B);">NP</div><div><div class="user-name">Nguemo Patricia</div><div class="user-email">nguemo.p@email.cm</div></div></div></td>
+                <td><span class="badge badge-blue">Parent</span></td>
+                <td>1 enfant · 6ème</td>
+                <td>5</td>
+                <td style="font-weight:700;color:var(--green);">60 000 FCFA</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td>10/03/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="parentDetailModal"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="etudiant">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#EF4444,#A855F7);">MM</div><div><div class="user-name">Mama Cissé</div><div class="user-email">mama.c@email.cm</div></div></div></td>
+                <td><span class="badge badge-orange">Étudiant</span></td>
+                <td>1ère A</td>
+                <td>3</td>
+                <td style="font-weight:700;color:var(--text-mid);">36 000 FCFA</td>
+                <td><span class="badge badge-red">Inactif</span></td>
+                <td>28/03/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="parentDetailModal"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="parent">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#0A4FFF,#A855F7);">DF</div><div><div class="user-name">Diallo Fatou</div><div class="user-email">diallo.f@email.cm</div></div></div></td>
+                <td><span class="badge badge-blue">Parent</span></td>
+                <td>3 enfants · Primaire & Collège</td>
+                <td>21</td>
+                <td style="font-weight:700;color:var(--green);">315 000 FCFA</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td>05/01/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="parentDetailModal"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;color:var(--text-light);">Affichage de 1–5 sur 847</span>
+          <div class="pagination">
+            <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="padding:0 4px;color:var(--text-light);">...</span>
+            <button class="page-btn">170</button>
+            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+<!-- MODAL: Parent Detail -->
+<div class="modal-overlay" id="parentDetailModal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <span class="modal-title">Détail du compte</span>
+      <button class="modal-close" data-modal-close="parentDetailModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div class="user-avatar-sm" style="width:56px;height:56px;font-size:1.2rem;border-radius:14px;background:linear-gradient(135deg,#0A4FFF,#22C55E);">FK</div>
+        <div>
+          <div style="font-weight:800;font-size:1rem;font-family:var(--font-display);">Fanta Koné</div>
+          <div style="color:var(--text-light);font-size:12px;">Parent · Inscrit le 15/01/2025</div>
+          <span class="badge badge-green" style="margin-top:6px;">Actif</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Email</div><div style="font-weight:600;font-size:13px;">fanta.kone@email.cm</div></div>
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Téléphone</div><div style="font-weight:600;font-size:13px;">+237 699 123 456</div></div>
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Ville</div><div style="font-weight:600;font-size:13px;">Douala</div></div>
+        <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Dépensé</div><div style="font-weight:700;font-size:13px;color:var(--green);">210 000 FCFA</div></div>
+      </div>
+      <div style="margin-top:20px;padding:16px;background:var(--bg);border-radius:10px;">
+        <div style="font-weight:700;font-size:13px;font-family:var(--font-display);margin-bottom:12px;">Enfants enregistrés</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;"><div class="user-avatar-sm" style="width:32px;height:32px;font-size:11px;">AK</div><div><div style="font-weight:600;">Amadou Koné</div><div style="color:var(--text-light);font-size:12px;">Terminale C · Lycée de Douala</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;"><div class="user-avatar-sm" style="width:32px;height:32px;font-size:11px;background:linear-gradient(135deg,#FF6B35,#F59E0B);">MK</div><div><div style="font-weight:600;">Mariam Koné</div><div style="color:var(--text-light);font-size:12px;">4ème · Collège Notre-Dame</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="parentDetailModal">Fermer</button>
+      <button class="btn btn-primary"><i class="fas fa-envelope"></i> Envoyer un message</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Parent -->
+<div class="modal-overlay" id="addParentModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <span class="modal-title">Créer un compte</span>
+      <button class="modal-close" data-modal-close="addParentModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form">
+        <div class="form-group">
+          <label class="form-label">Type de compte</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner...</option>
+            <option>Parent</option>
+            <option>Étudiant</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" type="text" placeholder="Prénom" required /></div>
+          <div class="form-group"><label class="form-label">Nom</label><input class="form-input" type="text" placeholder="Nom" required /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="email@example.cm" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" type="tel" placeholder="+237 6XX XXX XXX" /></div>
+          <div class="form-group"><label class="form-label">Ville</label><input class="form-input" type="text" placeholder="ex: Douala" /></div>
+        </div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
+          <button type="button" class="btn btn-ghost" data-modal-close="addParentModal">Annuler</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Créer le compte</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+      

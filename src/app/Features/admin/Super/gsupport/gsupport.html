@@ -1,1 +1,313 @@
-<p>gsupport works!</p>
+
+      <div class="page-title-bar fade-up">
+        <div>
+          <h1>Supports Pédagogiques</h1>
+          <div class="breadcrumb"><a href="../index.html">Accueil</a><span>›</span><span>Supports</span></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost btn-sm" data-view="table"><i class="fas fa-list"></i> Tableau</button>
+          <button class="btn btn-primary btn-sm" data-view="grid"><i class="fas fa-th"></i> Grille</button>
+          <button class="btn btn-accent" data-modal-open="addSupportModal"><i class="fas fa-plus"></i> Ajouter</button>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid fade-up">
+        <div class="stat-card" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+          <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+          <div><div class="stat-value" data-target="316">0</div><div class="stat-label">Total supports</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div><div class="stat-value" data-target="289">0</div><div class="stat-label">Publiés</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div><div class="stat-value" data-target="18">0</div><div class="stat-label">En révision</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#FF6B35;--stat-bg:#FFF0EA;">
+          <div class="stat-icon"><i class="fas fa-download"></i></div>
+          <div><div class="stat-value" data-target="4820">0</div><div class="stat-label">Téléchargements</div></div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-bar fade-up">
+        <button class="filter-chip active" data-filter="all">Tous</button>
+        <button class="filter-chip" data-filter="cours">Cours</button>
+        <button class="filter-chip" data-filter="exercice">Exercices</button>
+        <button class="filter-chip" data-filter="correction">Corrections</button>
+        <button class="filter-chip" data-filter="sujet">Sujets d'examen</button>
+        <select class="form-select" style="width:auto;padding:7px 14px;font-size:13px;border-radius:100px;margin-left:auto;">
+          <option>Toutes matières</option>
+          <option>Mathématiques</option>
+          <option>Physique-Chimie</option>
+          <option>Français</option>
+          <option>SVT</option>
+        </select>
+      </div>
+
+      <!-- GRID VIEW (default) -->
+      <div class="view-grid fade-up">
+        <div class="support-grid" id="supportsGrid">
+
+          <div class="support-card" data-category="cours">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#EEF3FF,#F0FFF4);">📐</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Cours d'Algèbre – Terminale C</div>
+              <div class="support-card-meta">Par <strong>Essama Marc</strong> · Maths · 2.4 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-blue">Cours</span>
+                <span class="badge badge-green">Publié</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 342 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="support-card" data-category="exercice">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#FFF0EA,#FEF3C7);">🧪</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Exercices de Chimie Organique</div>
+              <div class="support-card-meta">Par <strong>Lobe Francine</strong> · Physique-Chimie · 1.1 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-orange">Exercice</span>
+                <span class="badge badge-green">Publié</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 218 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="support-card" data-category="sujet">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#DCFCE7,#EEF3FF);">📝</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Sujet BAC 2024 – Série C (Maths)</div>
+              <div class="support-card-meta">Par <strong>Admin Educia</strong> · Mathématiques · 0.8 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-yellow">Sujet examen</span>
+                <span class="badge badge-green">Publié</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 891 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="support-card" data-category="correction">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#FEE2E2,#FEF3C7);">✅</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Correction Bac Français 2024</div>
+              <div class="support-card-meta">Par <strong>Biya Arouna</strong> · Français · 1.6 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-gray">Correction</span>
+                <span class="badge badge-yellow">En révision</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 0 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-success btn-sm btn-icon" title="Approuver"><i class="fas fa-check"></i></button>
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="support-card" data-category="cours">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#EEF3FF,#FFF0EA);">🔬</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Introduction à la Biologie Cellulaire</div>
+              <div class="support-card-meta">Par <strong>Ngono Clara</strong> · SVT · 3.2 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-blue">Cours</span>
+                <span class="badge badge-green">Publié</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 156 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="support-card" data-category="exercice">
+            <div class="support-card-thumb" style="background:linear-gradient(135deg,#DCFCE7,#EEF3FF);">💻</div>
+            <div class="support-card-body">
+              <div class="support-card-title">Exercices Python – Niveau Débutant</div>
+              <div class="support-card-meta">Par <strong>Lobe Francine</strong> · Informatique · 0.5 MB</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="badge badge-orange">Exercice</span>
+                <span class="badge badge-green">Publié</span>
+              </div>
+            </div>
+            <div class="support-card-footer">
+              <span style="font-size:12px;color:var(--text-light);"><i class="fas fa-download"></i> 423 téléchargements</span>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce support ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TABLE VIEW (hidden by default) -->
+      <div class="view-table fade-up" style="display:none;">
+        <div class="card">
+          <div class="table-wrapper">
+            <table id="supportsTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" /></th>
+                  <th>Titre</th>
+                  <th>Type</th>
+                  <th>Matière</th>
+                  <th>Auteur</th>
+                  <th>Taille</th>
+                  <th>Téléchargements</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-category="cours"><td><input type="checkbox"/></td><td><div style="font-weight:600;">Cours d'Algèbre – Terminale C</div></td><td><span class="badge badge-blue">Cours</span></td><td>Mathématiques</td><td>Essama Marc</td><td>2.4 MB</td><td>342</td><td><span class="badge badge-green">Publié</span></td><td>01/04/2025</td><td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td></tr>
+                <tr data-category="exercice"><td><input type="checkbox"/></td><td><div style="font-weight:600;">Exercices de Chimie Organique</div></td><td><span class="badge badge-orange">Exercice</span></td><td>Physique-Chimie</td><td>Lobe Francine</td><td>1.1 MB</td><td>218</td><td><span class="badge badge-green">Publié</span></td><td>28/03/2025</td><td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td></tr>
+                <tr data-category="sujet"><td><input type="checkbox"/></td><td><div style="font-weight:600;">Sujet BAC 2024 – Série C (Maths)</div></td><td><span class="badge badge-yellow">Sujet</span></td><td>Mathématiques</td><td>Admin Educia</td><td>0.8 MB</td><td>891</td><td><span class="badge badge-green">Publié</span></td><td>20/03/2025</td><td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td></tr>
+                <tr data-category="correction"><td><input type="checkbox"/></td><td><div style="font-weight:600;">Correction Bac Français 2024</div></td><td><span class="badge badge-gray">Correction</span></td><td>Français</td><td>Biya Arouna</td><td>1.6 MB</td><td>0</td><td><span class="badge badge-yellow">En révision</span></td><td>07/04/2025</td><td><div class="action-group"><button class="btn btn-success btn-sm btn-icon"><i class="fas fa-check"></i></button><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:24px;">
+        <div class="pagination">
+          <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+
+
+      
+<!-- MODAL: Add Support -->
+<div class="modal-overlay" id="addSupportModal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <span class="modal-title">Ajouter un support pédagogique</span>
+      <button class="modal-close" data-modal-close="addSupportModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form">
+        <div class="form-group"><label class="form-label">Titre du support</label><input class="form-input" type="text" placeholder="ex: Cours d'Algèbre – Terminale" required /></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select" required>
+              <option value="">Sélectionner...</option>
+              <option>Cours</option>
+              <option>Exercice</option>
+              <option>Correction</option>
+              <option>Sujet d'examen</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Matière</label>
+            <select class="form-select">
+              <option>Mathématiques</option>
+              <option>Physique-Chimie</option>
+              <option>Français</option>
+              <option>SVT</option>
+              <option>Informatique</option>
+              <option>Histoire-Géo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Niveau</label>
+            <select class="form-select">
+              <option>Primaire</option>
+              <option>Collège</option>
+              <option selected>Lycée</option>
+              <option>Université</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prix (FCFA)</label>
+            <input class="form-input" type="number" placeholder="0 = gratuit" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" placeholder="Décrivez le contenu du support..." style="min-height:80px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fichier</label>
+          <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:var(--text-light);margin-bottom:8px;display:block;"></i>
+            <div style="font-weight:600;font-size:14px;">Glissez votre fichier ici</div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:4px;">PDF, DOCX, PPT (max 10 MB)</div>
+            <input type="file" style="display:none;" />
+          </div>
+        </div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
+          <button type="button" class="btn btn-ghost" data-modal-close="addSupportModal">Annuler</button>
+          <button type="submit" class="btn btn-accent"><i class="fas fa-upload"></i> Publier le support</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Support -->
+<div class="modal-overlay" id="editSupportModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <span class="modal-title">Modifier le support</span>
+      <button class="modal-close" data-modal-close="editSupportModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form">
+        <div class="form-group"><label class="form-label">Titre</label><input class="form-input" type="text" value="Cours d'Algèbre – Terminale C" required /></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select"><option selected>Cours</option><option>Exercice</option><option>Correction</option><option>Sujet d'examen</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <select class="form-select"><option selected>Publié</option><option>En révision</option><option>Archivé</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" style="min-height:80px;">Cours complet d'algèbre pour les terminales C.</textarea></div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
+          <button type="button" class="btn btn-ghost" data-modal-close="editSupportModal">Annuler</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
