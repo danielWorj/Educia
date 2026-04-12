@@ -1,1 +1,41 @@
-<p>admin-layout works!</p>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <<app-admin-sidebar></app-admin-sidebar>
+  <div class="sidebar-overlay"></div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- HEADER -->
+    <header class="top-header">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button class="hamburger-admin" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="header-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Rechercher..." />
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="header-date"></span>
+        <a href="#" class="header-btn" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot"></span>
+        </a>
+        <a href="#" class="header-btn" title="Messages">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <div class="header-avatar" title="Profil">SA</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+        <router-outlet></router-outlet>
+    </div>
+    <!-- /page-body -->
+
+  </div><!-- /main-content -->
+</div><!-- /admin-layout -->

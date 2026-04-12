@@ -1,0 +1,529 @@
+<div class="page-body">
+      <div class="page-title-bar fade-up">
+        <div>
+          <h1>Gestion des Enseignants</h1>
+          <div class="breadcrumb"><a href="../index.html">Accueil</a><span>›</span><span>Enseignants</span></div>
+        </div>
+        <button class="btn btn-primary" data-modal-open="addTeacherModal"><i class="fas fa-plus"></i> Ajouter un enseignant</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card fade-up" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div><div class="stat-value" data-target="142">0</div><div class="stat-label">Total enseignants</div></div>
+        </div>
+        <div class="stat-card fade-up fade-up-1" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+          <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+          <div><div class="stat-value" data-target="128">0</div><div class="stat-label">Approuvés</div></div>
+        </div>
+        <div class="stat-card fade-up fade-up-2" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+          <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
+          <div><div class="stat-value" data-target="5">0</div><div class="stat-label">En attente</div></div>
+        </div>
+        <div class="stat-card fade-up fade-up-3" style="--stat-color:#EF4444;--stat-bg:#FEE2E2;">
+          <div class="stat-icon"><i class="fas fa-user-times"></i></div>
+          <div><div class="stat-value" data-target="9">0</div><div class="stat-label">Suspendus</div></div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-bar fade-up">
+        <span style="font-size:13px;font-weight:600;color:var(--text-mid);">Filtrer :</span>
+        <button class="filter-chip active" data-filter="all">Tous</button>
+        <button class="filter-chip" data-filter="approuve">Approuvés</button>
+        <button class="filter-chip" data-filter="attente">En attente</button>
+        <button class="filter-chip" data-filter="suspendu">Suspendus</button>
+        <div style="margin-left:auto;display:flex;gap:10px;">
+          <button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter</button>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="card fade-up">
+        <div class="card-header">
+          <div class="card-title">Liste des enseignants <span class="badge badge-blue" style="margin-left:8px;">142</span></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm btn-icon" title="Vue tableau"><i class="fas fa-list"></i></button>
+            <button class="btn btn-ghost btn-sm btn-icon" title="Vue grille"><i class="fas fa-th"></i></button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="teachersTable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" /></th>
+                <th>Enseignant</th>
+                <th>Matière(s)</th>
+                <th>Niveau</th>
+                <th>Note</th>
+                <th>Documents</th>
+                <th>Statut</th>
+                <th>Inscription</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-category="attente">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm">KN</div><div><div class="user-name">Kengne Nathalie</div><div class="user-email">k.nathalie@email.cm</div></div></div></td>
+                <td>Mathématiques</td>
+                <td>Lycée</td>
+                <td><span style="color:#F59E0B;font-weight:700;">★ 4.7</span></td>
+                <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Kengne Nathalie')"><i class="fas fa-folder-open"></i> 3 docs</button></td>
+                <td><span class="badge badge-yellow">En attente</span></td>
+                <td>08/04/2025</td>
+                <td><div class="action-group"><button class="btn btn-success btn-sm" data-approve>✓</button><button class="btn btn-danger btn-sm" data-reject>✗</button><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Kengne Nathalie','Mathématiques','Lycée','k.nathalie@email.cm','+237 677 001 002','Yaoundé')"><i class="fas fa-eye"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="attente">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#FF6B35,#F59E0B);">BA</div><div><div class="user-name">Biya Arouna</div><div class="user-email">biya.a@email.cm</div></div></div></td>
+                <td>Français, Littérature</td>
+                <td>Collège & Lycée</td>
+                <td><span style="color:#F59E0B;font-weight:700;">★ 4.5</span></td>
+                <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Biya Arouna')"><i class="fas fa-folder-open"></i> 2 docs</button></td>
+                <td><span class="badge badge-yellow">En attente</span></td>
+                <td>03/04/2025</td>
+                <td><div class="action-group"><button class="btn btn-success btn-sm" data-approve>✓</button><button class="btn btn-danger btn-sm" data-reject>✗</button><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Biya Arouna','Français','Collège & Lycée','biya.a@email.cm','+237 699 123 456','Douala')"><i class="fas fa-eye"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="approuve">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#22C55E,#0A4FFF);">EM</div><div><div class="user-name">Essama Marc</div><div class="user-email">essama.marc@email.cm</div></div></div></td>
+                <td>Physique-Chimie</td>
+                <td>Lycée</td>
+                <td><span style="color:#F59E0B;font-weight:700;">★ 4.9</span></td>
+                <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Essama Marc')"><i class="fas fa-folder-open"></i> 4 docs</button></td>
+                <td><span class="badge badge-green">Approuvé</span></td>
+                <td>05/04/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Essama Marc','Physique-Chimie','Lycée','essama.marc@email.cm','+237 655 789 012','Yaoundé')"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="approuve">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#A855F7,#0A4FFF);">LF</div><div><div class="user-name">Lobe Francine</div><div class="user-email">lobe.f@email.cm</div></div></div></td>
+                <td>Informatique, TIC</td>
+                <td>Lycée & Université</td>
+                <td><span style="color:#F59E0B;font-weight:700;">★ 4.8</span></td>
+                <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Lobe Francine')"><i class="fas fa-folder-open"></i> 3 docs</button></td>
+                <td><span class="badge badge-green">Approuvé</span></td>
+                <td>01/04/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Lobe Francine','Informatique','Lycée & Univ.','lobe.f@email.cm','+237 677 345 678','Bafoussam')"><i class="fas fa-eye"></i></button><button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr data-category="suspendu">
+                <td><input type="checkbox" /></td>
+                <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#EF4444,#F59E0B);">TD</div><div><div class="user-name">Tali Dieudonne</div><div class="user-email">tali.d@email.cm</div></div></div></td>
+                <td>SVT</td>
+                <td>Collège</td>
+                <td><span style="color:#94A3B8;font-weight:700;">★ 2.1</span></td>
+                <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Tali Dieudonne')"><i class="fas fa-folder-open"></i> 1 doc</button></td>
+                <td><span class="badge badge-red">Suspendu</span></td>
+                <td>12/03/2025</td>
+                <td><div class="action-group"><button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Tali Dieudonne','SVT','Collège','tali.d@email.cm','+237 688 901 234','Garoua')"><i class="fas fa-eye"></i></button><button class="btn btn-success btn-sm btn-icon" title="Réactiver"><i class="fas fa-undo"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;color:var(--text-light);">Affichage de 1–5 sur 142</span>
+          <div class="pagination">
+            <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="padding:0 4px;color:var(--text-light);">...</span>
+            <button class="page-btn">29</button>
+            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+ <div class="page-body">
+  <div class="page-title-bar fade-up">
+    <div>
+      <h1>Gestion des Enseignants</h1>
+      <div class="breadcrumb"><a href="../index.html">Accueil</a><span>›</span><span>Enseignants</span></div>
+    </div>
+    <button class="btn btn-primary" data-modal-open="addTeacherModal"><i class="fas fa-plus"></i> Ajouter un enseignant</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card fade-up" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div><div class="stat-value" data-target="142">0</div><div class="stat-label">Total enseignants</div></div>
+    </div>
+    <div class="stat-card fade-up fade-up-1" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+      <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+      <div><div class="stat-value" data-target="128">0</div><div class="stat-label">Approuvés</div></div>
+    </div>
+    <div class="stat-card fade-up fade-up-2" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+      <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
+      <div><div class="stat-value" data-target="5">0</div><div class="stat-label">En attente</div></div>
+    </div>
+    <div class="stat-card fade-up fade-up-3" style="--stat-color:#EF4444;--stat-bg:#FEE2E2;">
+      <div class="stat-icon"><i class="fas fa-user-times"></i></div>
+      <div><div class="stat-value" data-target="9">0</div><div class="stat-label">Suspendus</div></div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar fade-up">
+    <span style="font-size:13px;font-weight:600;color:var(--text-mid);">Filtrer :</span>
+    <button class="filter-chip active" data-filter="all">Tous</button>
+    <button class="filter-chip" data-filter="approuve">Approuvés</button>
+    <button class="filter-chip" data-filter="attente">En attente</button>
+    <button class="filter-chip" data-filter="suspendu">Suspendus</button>
+    <div style="margin-left:auto;display:flex;gap:10px;">
+      <button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter</button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card fade-up">
+    <div class="card-header">
+      <div class="card-title">Liste des enseignants <span class="badge badge-blue" style="margin-left:8px;">142</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm btn-icon" title="Vue tableau"><i class="fas fa-list"></i></button>
+        <button class="btn btn-ghost btn-sm btn-icon" title="Vue grille"><i class="fas fa-th"></i></button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table id="teachersTable">
+        <thead>
+          <tr>
+            <th><input type="checkbox" /></th>
+            <th>Enseignant</th>
+            <th>Matière(s)</th>
+            <th>Niveau</th>
+            <th>Note</th>
+            <th>Documents</th>
+            <th>Statut</th>
+            <th>Inscription</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-category="attente">
+            <td><input type="checkbox" /></td>
+            <td><div class="user-cell"><div class="user-avatar-sm">KN</div><div><div class="user-name">Kengne Nathalie</div><div class="user-email">k.nathalie@email.cm</div></div></div></td>
+            <td>Mathématiques</td>
+            <td>Lycée</td>
+            <td><span style="color:#F59E0B;font-weight:700;">★ 4.7</span></td>
+            <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Kengne Nathalie')"><i class="fas fa-folder-open"></i> 3 docs</button></td>
+            <td><span class="badge badge-yellow">En attente</span></td>
+            <td>08/04/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-success btn-sm" data-approve>✓</button>
+                <button class="btn btn-danger btn-sm" data-reject>✗</button>
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Kengne Nathalie','Mathématiques','Lycée','k.nathalie@email.cm','+237 677 001 002','Yaoundé')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr data-category="attente">
+            <td><input type="checkbox" /></td>
+            <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#FF6B35,#F59E0B);">BA</div><div><div class="user-name">Biya Arouna</div><div class="user-email">biya.a@email.cm</div></div></div></td>
+            <td>Français, Littérature</td>
+            <td>Collège & Lycée</td>
+            <td><span style="color:#F59E0B;font-weight:700;">★ 4.5</span></td>
+            <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Biya Arouna')"><i class="fas fa-folder-open"></i> 2 docs</button></td>
+            <td><span class="badge badge-yellow">En attente</span></td>
+            <td>03/04/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-success btn-sm" data-approve>✓</button>
+                <button class="btn btn-danger btn-sm" data-reject>✗</button>
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Biya Arouna','Français','Collège & Lycée','biya.a@email.cm','+237 699 123 456','Douala')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr data-category="approuve">
+            <td><input type="checkbox" /></td>
+            <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#22C55E,#0A4FFF);">EM</div><div><div class="user-name">Essama Marc</div><div class="user-email">essama.marc@email.cm</div></div></div></td>
+            <td>Physique-Chimie</td>
+            <td>Lycée</td>
+            <td><span style="color:#F59E0B;font-weight:700;">★ 4.9</span></td>
+            <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Essama Marc')"><i class="fas fa-folder-open"></i> 4 docs</button></td>
+            <td><span class="badge badge-green">Approuvé</span></td>
+            <td>05/04/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Essama Marc','Physique-Chimie','Lycée','essama.marc@email.cm','+237 655 789 012','Yaoundé')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr data-category="approuve">
+            <td><input type="checkbox" /></td>
+            <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#A855F7,#0A4FFF);">LF</div><div><div class="user-name">Lobe Francine</div><div class="user-email">lobe.f@email.cm</div></div></div></td>
+            <td>Informatique, TIC</td>
+            <td>Lycée & Université</td>
+            <td><span style="color:#F59E0B;font-weight:700;">★ 4.8</span></td>
+            <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Lobe Francine')"><i class="fas fa-folder-open"></i> 3 docs</button></td>
+            <td><span class="badge badge-green">Approuvé</span></td>
+            <td>01/04/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Lobe Francine','Informatique','Lycée & Univ.','lobe.f@email.cm','+237 677 345 678','Bafoussam')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-outline btn-sm btn-icon"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr data-category="suspendu">
+            <td><input type="checkbox" /></td>
+            <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#EF4444,#F59E0B);">TD</div><div><div class="user-name">Tali Dieudonne</div><div class="user-email">tali.d@email.cm</div></div></div></td>
+            <td>SVT</td>
+            <td>Collège</td>
+            <td><span style="color:#94A3B8;font-weight:700;">★ 2.1</span></td>
+            <td><button class="btn btn-ghost btn-sm" data-modal-open="docsModal" onclick="setDocModal('Tali Dieudonne')"><i class="fas fa-folder-open"></i> 1 doc</button></td>
+            <td><span class="badge badge-red">Suspendu</span></td>
+            <td>12/03/2025</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="profileModal" onclick="setProfile('Tali Dieudonne','SVT','Collège','tali.d@email.cm','+237 688 901 234','Garoua')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-success btn-sm btn-icon" title="Réactiver"><i class="fas fa-undo"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:13px;color:var(--text-light);">Affichage de 1–5 sur 142</span>
+      <div class="pagination">
+        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span style="padding:0 4px;color:var(--text-light);">...</span>
+        <button class="page-btn">29</button>
+        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  MODAL : Profil enseignant                                   -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <span class="modal-title">Profil de l'enseignant</span>
+      <button class="modal-close" data-modal-close="profileModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+        <div class="user-avatar-sm" id="profileAvatar" style="width:64px;height:64px;font-size:1.4rem;border-radius:16px;">KN</div>
+        <div>
+          <div style="font-weight:800;font-size:1.1rem;font-family:var(--font-display);" id="profileName">Kengne Nathalie</div>
+          <div style="color:var(--text-light);font-size:13px;" id="profileSubject">Mathématiques · Lycée</div>
+          <div style="margin-top:8px;display:flex;gap:8px;">
+            <span class="badge badge-green">Vérifiée</span>
+            <span style="color:#F59E0B;font-weight:700;font-size:13px;">★ 4.7</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:20px;">
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Email</div>
+          <div style="font-weight:600;font-size:14px;" id="profileEmail">k.nathalie@email.cm</div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Téléphone</div>
+          <div style="font-weight:600;font-size:14px;" id="profilePhone">+237 677 001 002</div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Ville</div>
+          <div style="font-weight:600;font-size:14px;" id="profileCity">Yaoundé</div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Cours donnés</div>
+          <div style="font-weight:600;font-size:14px;">47</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:12px;font-family:var(--font-display);">Documents uploadés</div>
+        <ul class="doc-list">
+          <li class="doc-item">
+            <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
+            <div><div class="doc-name">Diplôme - Licence Mathématiques.pdf</div><div class="doc-size">1.2 MB</div></div>
+            <div class="doc-actions">
+              <button class="btn btn-ghost btn-sm btn-icon" title="Aperçu"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-ghost btn-sm btn-icon" title="Télécharger"><i class="fas fa-download"></i></button>
+            </div>
+          </li>
+          <li class="doc-item">
+            <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
+            <div><div class="doc-name">CV - Nathalie Kengne.pdf</div><div class="doc-size">0.8 MB</div></div>
+            <div class="doc-actions">
+              <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></button>
+            </div>
+          </li>
+          <li class="doc-item">
+            <div class="doc-icon" style="background:#DCFCE7;color:#15803D;"><i class="fas fa-image"></i></div>
+            <div><div class="doc-name">Photo CNI (recto).jpg</div><div class="doc-size">0.4 MB</div></div>
+            <div class="doc-actions">
+              <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div><!-- /modal-body -->
+    <!-- FIX: footer hors du modal-body -->
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="profileModal">Fermer</button>
+      <button class="btn btn-danger btn-sm" data-reject>Rejeter</button>
+      <button class="btn btn-primary" data-approve>✓ Approuver</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  MODAL : Documents                                           -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="docsModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <span class="modal-title">Documents — <span id="docsModalName"></span></span>
+      <button class="modal-close" data-modal-close="docsModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <ul class="doc-list">
+        <li class="doc-item">
+          <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
+          <div><div class="doc-name">Diplôme universitaire.pdf</div><div class="doc-size">1.2 MB · Uploadé le 08/04/2025</div></div>
+          <div class="doc-actions">
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></button>
+          </div>
+        </li>
+        <li class="doc-item">
+          <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
+          <div><div class="doc-name">Curriculum Vitae.pdf</div><div class="doc-size">0.9 MB · Uploadé le 08/04/2025</div></div>
+          <div class="doc-actions">
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></button>
+          </div>
+        </li>
+        <li class="doc-item">
+          <div class="doc-icon" style="background:#EEF3FF;color:#0A4FFF;"><i class="fas fa-image"></i></div>
+          <div><div class="doc-name">Pièce d'identité.jpg</div><div class="doc-size">0.5 MB · Uploadé le 08/04/2025</div></div>
+          <div class="doc-actions">
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></button>
+          </div>
+        </li>
+      </ul>
+    </div><!-- /modal-body -->
+    <!-- FIX: footer hors du modal-body -->
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="docsModal">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  MODAL : Ajouter un enseignant                               -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="addTeacherModal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <span class="modal-title">Ajouter un enseignant</span>
+      <button class="modal-close" data-modal-close="addTeacherModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- FIX: form avec id, sans footer imbriqué dedans -->
+      <form class="admin-form" id="addTeacherForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Prénom</label>
+            <input class="form-input" type="text" placeholder="ex: Nathalie" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nom</label>
+            <input class="form-input" type="text" placeholder="ex: Kengne" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="email@example.cm" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Téléphone</label>
+            <input class="form-input" type="tel" placeholder="+237 6XX XXX XXX" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ville</label>
+            <input class="form-input" type="text" placeholder="ex: Yaoundé" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Matière principale</label>
+            <select class="form-select" required>
+              <option value="">Sélectionner...</option>
+              <option>Mathématiques</option>
+              <option>Physique-Chimie</option>
+              <option>Français</option>
+              <option>Anglais</option>
+              <option>SVT</option>
+              <option>Informatique</option>
+              <option>Histoire-Géo</option>
+              <option>Philosophie</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Niveau</label>
+            <select class="form-select">
+              <option>Primaire</option>
+              <option>Collège</option>
+              <option selected>Lycée</option>
+              <option>Université</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bio courte</label>
+          <textarea class="form-textarea" placeholder="Décrivez l'enseignant..." style="min-height:80px;"></textarea>
+        </div>
+      </form>
+    </div><!-- /modal-body -->
+    <!-- FIX: footer hors du modal-body et du form, bouton submit lié au form par attribut "form" -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" data-modal-close="addTeacherModal">Annuler</button>
+      <button type="submit" form="addTeacherForm" class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  Fonctions utilitaires pour remplir les modals dynamiquement -->
+<!-- ============================================================ -->
+<script>
+function setProfile(name, subject, level, email, phone, city) {
+  const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileSubject').textContent = subject + ' · ' + level;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('profilePhone').textContent = phone;
+  document.getElementById('profileCity').textContent = city;
+}
+
+function setDocModal(name) {
+  document.getElementById('docsModalName').textContent = name;
+}
+</script>
