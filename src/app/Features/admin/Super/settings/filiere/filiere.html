@@ -1,70 +1,75 @@
   <div class="section-toolbar">
-          <div class="section-toolbar-left">
-            <div class="section-icon" style="background:var(--primary-light);color:var(--primary);"><i class="fas fa-sitemap"></i></div>
-            <div class="section-search">
-              <i class="fas fa-search"></i>
-              <input type="text" placeholder="Rechercher une filière..." class="settings-search-input" data-panel="filiere" />
-            </div>
-          </div>
-          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-filiere">
-            <i class="fas fa-plus"></i> Ajouter une filière
-          </button>
+    <div class="section-toolbar-left">
+      <div class="section-icon" style="background:var(--primary-light);color:var(--primary);"><i class="fas fa-sitemap"></i></div>
+      <div class="section-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher une filière..." class="settings-search-input" data-panel="filiere" />
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('add-filiere')" >
+      <i class="fas fa-plus"></i> Ajouter une filière
+    </button>
+  </div>
+  <div class="config-table-wrap">
+    <table class="config-table" id="table-filiere">
+      <thead>
+        <tr>
+          <th style="width:80px;">ID</th>
+          <th>Intitulé</th>
+          <th>Section</th>
+          <th style="width:130px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (f of listFiliere(); track $index) {
+           <tr>
+            <td><span class="config-id">#FIL-{{$index+1}}</span></td>
+            <td><span class="config-intitule">{{f.intitule}}</span></td>
+            <td><span class="config-desc">{{f.section.intitule}}</span></td>
+            <td>
+              <div class="config-actions">
+                <button class="btn btn-ghost btn-sm btn-icon" title="Modifier" data-edit-row><i class="fas fa-pen"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" data-confirm-delete="Supprimer cette filière ?"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        }
+       
+      </tbody>
+    </table>
+  </div>
+
+
+
+        <!-- MODAL ADD FILIÈRE -->
+<div class="modal-overlay" id="add-filiere">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><i class="fas fa-sitemap" style="color:var(--primary);margin-right:8px;"></i>Nouvelle filière</span>
+      <button class="modal-close" onclick="closeModal('add-filiere')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form" [formGroup]="filiereFb" id="form-filiere">
+        <div class="form-group">
+          <label class="form-label">Intitulé <span style="color:var(--red);">*</span></label>
+          <input type="text" class="form-input" formControlName="intitule" placeholder="Ex : Sciences, Lettres…" required />
         </div>
-        <div class="config-table-wrap">
-          <table class="config-table" id="table-filiere">
-            <thead>
-              <tr>
-                <th style="width:80px;">ID</th>
-                <th>Intitulé</th>
-                <th>Description</th>
-                <th style="width:130px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="config-id">#FIL-001</span></td>
-                <td><span class="config-intitule">Sciences</span></td>
-                <td><span class="config-desc">Filière scientifique incluant maths, physique et SVT</span></td>
-                <td>
-                  <div class="config-actions">
-                    <button class="btn btn-ghost btn-sm btn-icon" title="Modifier" data-edit-row><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" data-confirm-delete="Supprimer cette filière ?"><i class="fas fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#FIL-002</span></td>
-                <td><span class="config-intitule">Lettres & Arts</span></td>
-                <td><span class="config-desc">Filière littéraire : français, histoire-géographie, philosophie</span></td>
-                <td>
-                  <div class="config-actions">
-                    <button class="btn btn-ghost btn-sm btn-icon" title="Modifier" data-edit-row><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" data-confirm-delete="Supprimer cette filière ?"><i class="fas fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#FIL-003</span></td>
-                <td><span class="config-intitule">Technique</span></td>
-                <td><span class="config-desc">Filière technique et professionnelle (mécanique, électronique…)</span></td>
-                <td>
-                  <div class="config-actions">
-                    <button class="btn btn-ghost btn-sm btn-icon" title="Modifier" data-edit-row><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" data-confirm-delete="Supprimer cette filière ?"><i class="fas fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#FIL-004</span></td>
-                <td><span class="config-intitule">Commerce & Gestion</span></td>
-                <td><span class="config-desc">Comptabilité, économie, management des entreprises</span></td>
-                <td>
-                  <div class="config-actions">
-                    <button class="btn btn-ghost btn-sm btn-icon" title="Modifier" data-edit-row><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" data-confirm-delete="Supprimer cette filière ?"><i class="fas fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="form-group">
+          <label class="form-label">Section</label>
+          <select class="form-select" formControlName="section">
+            <option value="">--Choisir la section--</option>
+            @for (s of listSection(); track $index) {
+              <option value="{{s.id}}">{{s.intitule}}</option>
+            }
+          </select>
         </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-filiere')">Annuler</button>
+      <button class="btn btn-primary" (click)="createFiliere()">
+        <i class="fas fa-save"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>

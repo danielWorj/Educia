@@ -1,44 +1,59 @@
  <div class="section-toolbar">
-          <div class="section-toolbar-left">
-            <div class="section-icon" style="background:#E0F2FE;color:#0369A1;"><i class="fas fa-id-badge"></i></div>
-            <div class="section-search">
-              <i class="fas fa-search"></i>
-              <input type="text" placeholder="Rechercher un profil enseignant..." class="settings-search-input" data-panel="profil-ens" />
-            </div>
-          </div>
-          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-profil-ens">
-            <i class="fas fa-plus"></i> Ajouter un profil
-          </button>
+    <div class="section-toolbar-left">
+      <div class="section-icon" style="background:#E0F2FE;color:#0369A1;"><i class="fas fa-id-badge"></i></div>
+      <div class="section-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher un profil enseignant..." class="settings-search-input" data-panel="profil-ens" />
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-add-profil-ens')">
+      <i class="fas fa-plus"></i> Ajouter un profil
+    </button>
+  </div>
+  <div class="config-table-wrap">
+    <table class="config-table" id="table-profil-ens">
+      <thead>
+        <tr>
+          <th style="width:80px;">ID</th>
+          <th>Intitulé</th>
+          <th style="width:130px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of listProfilEnseignant(); track $index) {
+          <tr>
+            <td><span class="config-id">#PRF-{{$index+1}}</span></td>
+            <td><span class="config-intitule">{{p.intitule}}</span></td>
+            <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
+          </tr>
+       
+        }
+      </tbody>
+    </table>
+  </div>
+
+
+        <!-- MODAL ADD PROFIL ENSEIGNANT -->
+<div class="modal-overlay" id="modal-add-profil-ens">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><i class="fas fa-id-badge" style="color:#0369A1;margin-right:8px;"></i>Nouveau profil enseignant</span>
+      <button class="modal-close" onclick="closeModal('modal-add-profil-ens')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form" [formGroup]="profilEnseignantFb" id="form-profil-ens">
+        <div class="form-group">
+          <label class="form-label">Intitulé <span style="color:var(--red);">*</span></label>
+          <input type="text" class="form-input" formControlName="intitule" placeholder="Ex : Titulaire, Vacataire…" required />
         </div>
-        <div class="config-table-wrap">
-          <table class="config-table" id="table-profil-ens">
-            <thead>
-              <tr>
-                <th style="width:80px;">ID</th>
-                <th>Intitulé</th>
-                <th>Description</th>
-                <th style="width:130px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="config-id">#PRF-001</span></td>
-                <td><span class="config-intitule">Titulaire</span></td>
-                <td><span class="config-desc">Enseignant fonctionnaire avec poste permanent</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#PRF-002</span></td>
-                <td><span class="config-intitule">Vacataire</span></td>
-                <td><span class="config-desc">Enseignant intervenant à temps partiel ou ponctuel</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#PRF-003</span></td>
-                <td><span class="config-intitule">Répétiteur</span></td>
-                <td><span class="config-desc">Enseignant spécialisé dans le soutien scolaire individuel</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+     
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-profil-ens')">Annuler</button>
+      <button class="btn btn-primary" (click)="createProfilEnseignant()">
+        <i class="fas fa-save"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>

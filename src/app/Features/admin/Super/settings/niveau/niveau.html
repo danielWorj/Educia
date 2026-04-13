@@ -1,62 +1,69 @@
 <div class="section-toolbar">
-          <div class="section-toolbar-left">
-            <div class="section-icon" style="background:var(--yellow-light);color:#92400E;"><i class="fas fa-layer-group"></i></div>
-            <div class="section-search">
-              <i class="fas fa-search"></i>
-              <input type="text" placeholder="Rechercher un niveau..." class="settings-search-input" data-panel="niveau" />
-            </div>
-          </div>
-          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-niveau">
-            <i class="fas fa-plus"></i> Ajouter un niveau
-          </button>
+    <div class="section-toolbar-left">
+      <div class="section-icon" style="background:var(--yellow-light);color:#92400E;"><i class="fas fa-layer-group"></i></div>
+      <div class="section-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher un niveau..." class="settings-search-input" data-panel="niveau" />
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-add-niveau')" >
+      <i class="fas fa-plus"></i> Ajouter un niveau
+    </button>
+  </div>
+  <div class="config-table-wrap">
+    <table class="config-table" id="table-niveau">
+      <thead>
+        <tr>
+          <th style="width:80px;">ID</th>
+          <th>Intitulé</th>
+          <th>Section</th>
+          <th style="width:130px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (n of listNiveau(); track $index) {
+          <tr>
+            <td><span class="config-id">#NIV-{{$index+1}}</span></td>
+            <td><span class="config-intitule">{{n.intitule}}</span></td>
+            <td><span class="config-desc">{{n.section.intitule}}</span></td>
+            <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
+          </tr>
+        }
+       
+        
+      </tbody>
+    </table>
+  </div>
+
+
+<div class="modal-overlay" id="modal-add-niveau">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><i class="fas fa-layer-group" style="color:#92400E;margin-right:8px;"></i>Nouveau niveau</span>
+      <button class="modal-close" onclick="closeModal('modal-add-niveau')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form" [formGroup]="niveauFb" id="form-niveau">
+        <div class="form-group">
+          <label class="form-label">Intitulé <span style="color:var(--red);">*</span></label>
+          <input type="text" class="form-input" formControlName="intitule" placeholder="Ex : 3ème, Terminale…" required />
         </div>
-        <div class="config-table-wrap">
-          <table class="config-table" id="table-niveau">
-            <thead>
-              <tr>
-                <th style="width:80px;">ID</th>
-                <th>Intitulé</th>
-                <th>Description</th>
-                <th style="width:130px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="config-id">#NIV-001</span></td>
-                <td><span class="config-intitule">6ème</span></td>
-                <td><span class="config-desc">Premier niveau du collège, entrée en secondaire</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#NIV-002</span></td>
-                <td><span class="config-intitule">5ème</span></td>
-                <td><span class="config-desc">Deuxième année du collège</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#NIV-003</span></td>
-                <td><span class="config-intitule">4ème</span></td>
-                <td><span class="config-desc">Troisième année du collège</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#NIV-004</span></td>
-                <td><span class="config-intitule">3ème</span></td>
-                <td><span class="config-desc">Dernière année du collège — préparation au BEPC</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#NIV-005</span></td>
-                <td><span class="config-intitule">Seconde</span></td>
-                <td><span class="config-desc">Première année du lycée</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-              <tr>
-                <td><span class="config-id">#NIV-006</span></td>
-                <td><span class="config-intitule">Terminale</span></td>
-                <td><span class="config-desc">Dernière année du lycée — préparation au Baccalauréat</span></td>
-                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce niveau ?"><i class="fas fa-trash"></i></button></div></td>
-              </tr>
-            </tbody>
-          </table>
+         <div class="form-group">
+          <label class="form-label">Section</label>
+          <select class="form-select" formControlName="section">
+            <option value="">--Choisir la section--</option>
+            @for (s of listSection(); track $index) {
+              <option value="{{s.id}}">{{s.intitule}}</option>
+            }
+          </select>
         </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-niveau')">Annuler</button>
+      <button class="btn btn-primary" (click)="createNiveau()">
+        <i class="fas fa-save"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>

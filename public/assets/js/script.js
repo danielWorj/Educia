@@ -144,7 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
           row.style.transition = 'opacity 0.3s, transform 0.3s';
           row.style.opacity = '0';
           row.style.transform = 'scale(0.97)';
-          setTimeout(() => row.remove(), 320);
+          setTimeout(() => {
+            row.remove();
+            // Update tab count after delete
+            updateSettingsTabCounts();
+          }, 320);
         }
         showToast('Élément supprimé', 'error');
       }
@@ -179,17 +183,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('form.admin-form').forEach(form => {
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const btn = form.querySelector('[type=submit]');
-      const orig = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-      btn.disabled = true;
+      const btn = form.closest('.modal')?.querySelector('[type=submit]') ||
+                  form.closest('.modal-overlay')?.querySelector('.btn-primary:not(.modal-close)') ||
+                  form.querySelector('[type=submit]');
+      const orig = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        btn.disabled = true;
+      }
       setTimeout(() => {
-        btn.innerHTML = orig;
-        btn.disabled = false;
+        if (btn) { btn.innerHTML = orig; btn.disabled = false; }
         const modalEl = form.closest('.modal-overlay');
         if (modalEl) { modalEl.classList.remove('open'); document.body.style.overflow = ''; }
         showToast('Enregistré avec succès !', 'success');
         form.reset();
+        updateSettingsTabCounts();
       }, 1200);
     });
   });
@@ -213,5 +221,120 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  // ===========================
+  // ===== SETTINGS TABS =====
+  // ===========================
+
+  const settingsTabBar = document.getElementById('settingsTabBar');
+
+  if (settingsTabBar) {
+
+    const tabs = settingsTabBar.querySelectorAll('.settings-tab');
+
+    // --- Switch tab ---
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetPanel = tab.dataset.tab;
+
+        // Deactivate all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        // Deactivate all panels
+        document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+
+        // Activate selected
+        tab.classList.add('active');
+        const panel = document.getElementById(`panel-${targetPanel}`);
+        if (panel) panel.classList.add('active');
+      });
+    });
+
+    // --- Settings inline search ---
+    document.querySelectorAll('.settings-search-input').forEach(input => {
+      input.addEventListener('input', () => {
+        const query = input.value.toLowerCase().trim();
+        const panelId = input.dataset.panel;
+        const table = document.getElementById(`table-${panelId}`);
+        if (!table) return;
+        table.querySelectorAll('tbody tr').forEach(row => {
+          const match = row.textContent.toLowerCase().includes(query);
+          row.style.display = match ? '' : 'none';
+        });
+      });
+    });
+
+    // --- Edit row ---
+    document.querySelectorAll('[data-edit-row]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const row = btn.closest('tr');
+        if (!row) return;
+        const intitule = row.querySelector('.config-intitule')?.textContent || '';
+        const desc = row.querySelector('.config-desc')?.textContent || '';
+
+        // Pre-fill generic edit modal
+        const editIntitule = document.getElementById('edit-intitule');
+        const editDesc = document.getElementById('edit-description');
+        if (editIntitule) editIntitule.value = intitule;
+        if (editDesc) editDesc.value = desc;
+
+        // Store reference to row for update on submit
+        const editForm = document.getElementById('form-edit-generic');
+        if (editForm) editForm.dataset.targetRow = '';
+        editForm._targetRow = row;
+
+        openModal('modal-edit-generic');
+      });
+    });
+
+    // Handle edit form submit — update the row in place
+    const editForm = document.getElementById('form-edit-generic');
+    if (editForm) {
+      editForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const row = editForm._targetRow;
+        const newIntitule = document.getElementById('edit-intitule')?.value || '';
+        const newDesc = document.getElementById('edit-description')?.value || '';
+        if (row) {
+          const intEl = row.querySelector('.config-intitule');
+          const descEl = row.querySelector('.config-desc');
+          if (intEl) intEl.textContent = newIntitule;
+          if (descEl) descEl.textContent = newDesc;
+          // Highlight updated row briefly
+          row.style.transition = 'background 0.3s';
+          row.style.background = 'var(--primary-light)';
+          setTimeout(() => { row.style.background = ''; }, 800);
+        }
+        closeModal('modal-edit-generic');
+        showToast('Mis à jour avec succès !', 'success');
+        editForm.reset();
+        editForm._targetRow = null;
+      });
+    }
+
+    // --- Helper: update tab counts from actual table rows ---
+    window.updateSettingsTabCounts = function() {
+      const mapping = [
+        { tab: 'filiere',    table: 'table-filiere' },
+        { tab: 'niveau',     table: 'table-niveau' },
+        { tab: 'section',    table: 'table-section' },
+        { tab: 'categorie',  table: 'table-categorie' },
+        { tab: 'matiere',    table: 'table-matiere' },
+        { tab: 'diplome',    table: 'table-diplome' },
+        { tab: 'profil-ens', table: 'table-profil-ens' },
+      ];
+      mapping.forEach(({ tab, table }) => {
+        const tbl = document.getElementById(table);
+        const countEl = document.getElementById(`count-${tab}`);
+        if (tbl && countEl) {
+          const visibleRows = tbl.querySelectorAll('tbody tr');
+          countEl.textContent = visibleRows.length;
+        }
+      });
+    };
+
+    // Init counts on load
+    updateSettingsTabCounts();
+
+  } // end if settingsTabBar
 
 });
