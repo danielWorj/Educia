@@ -17,7 +17,11 @@ export const edulearnDashboard = {
         login : `${userapi}/login`, 
     }, 
     Parent :{
+        all : `${userapi}/parent/all`,
         create : `${userapi}/parent/create`,
+        findById : `${userapi}/parent/findById/`,
+        changestatus : `${userapi}/parent/status/`,
+        delete : `${userapi}/parent/delete/`,
     }, 
     Enseignant :{
         all : `${userapi}/enseignant/all`,

@@ -72,6 +72,10 @@ export const routes: Routes = [
           path: 'supports', 
           loadComponent: () => import('./Features/admin/Super/gsupport/gsupport').then(m => m.GSupport) 
           },
+          { 
+          path: 'settings', 
+          loadComponent: () => import('./Features/admin/Super/settings/settings').then(s => s.Settings) 
+          }
      ]
   }
  

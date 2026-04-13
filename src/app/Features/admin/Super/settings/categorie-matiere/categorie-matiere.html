@@ -1,101 +1,56 @@
-<div class="settings-section">
-    <div class="settings-section-header">
-        <h2 class="settings-section-title">Gestion des Categorie Matiere</h2>
-        <button class="settings-btn-add" (click)="categorieMatiereFb.reset()" data-bs-toggle="modal" data-bs-target="#addCategorieModal">
-            <i class="fas fa-plus me-2"></i>Ajouter une categorie
-        </button>
-    </div>
-
-    <div class="settings-table-wrapper">
-        <table class="settings-table table">
+ <div class="section-toolbar">
+          <div class="section-toolbar-left">
+            <div class="section-icon" style="background:var(--green-light);color:#15803D;"><i class="fas fa-tags"></i></div>
+            <div class="section-search">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Rechercher une catégorie..." class="settings-search-input" data-panel="categorie" />
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-categorie">
+            <i class="fas fa-plus"></i> Ajouter une catégorie
+          </button>
+        </div>
+        <div class="config-table-wrap">
+          <table class="config-table" id="table-categorie">
             <thead>
-                <tr>
-                    <th>Intitulé</th>
-                    <th>Section</th>
-                    <th class="text-end">Actions</th>
-                </tr>
+              <tr>
+                <th style="width:80px;">ID</th>
+                <th>Intitulé</th>
+                <th>Description</th>
+                <th style="width:130px;">Actions</th>
+              </tr>
             </thead>
             <tbody>
-                @for (f of listCategorieMatiere(); track $index) {
-                    <tr>
-                        <td  ><span >{{f.intitule}}</span></td>
-                        <td><span class="settings-badge">{{f.section.intitule}}</span></td>
-                        
-                        <td class="text-end">
-                            <button class="settings-btn-action settings-btn-edit"
-                                    (click)="categorieMatiereFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addCategorieModal">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="settings-btn-action settings-btn-delete"
-                                    (click)="categorieMatiereFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteCategorieModal">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-                @if (listCategorieMatiere().length === 0) {
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">Aucune Categorie trouvée.</td>
-                    </tr>
-                }
+              <tr>
+                <td><span class="config-id">#CAT-001</span></td>
+                <td><span class="config-intitule">Sciences exactes</span></td>
+                <td><span class="config-desc">Mathématiques, physique, chimie et sciences de la nature</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette catégorie ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#CAT-002</span></td>
+                <td><span class="config-intitule">Sciences humaines</span></td>
+                <td><span class="config-desc">Histoire, géographie, philosophie, éducation civique</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette catégorie ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#CAT-003</span></td>
+                <td><span class="config-intitule">Langues</span></td>
+                <td><span class="config-desc">Français, anglais, langues étrangères</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette catégorie ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#CAT-004</span></td>
+                <td><span class="config-intitule">Techniques & Informatique</span></td>
+                <td><span class="config-desc">Matières techniques, informatique, numérique éducatif</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette catégorie ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#CAT-005</span></td>
+                <td><span class="config-intitule">Arts & Culture</span></td>
+                <td><span class="config-desc">Dessin, musique, éducation artistique</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette catégorie ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
             </tbody>
-        </table>
-    </div>
-</div>
-
-
-
-<!-- Modals for Niveau -->
-<!-- Add Niveau Modal -->
-<div class="modal fade" id="addCategorieModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Ajouter une Categorie</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="categorieMatiereFb" >
-                    <div class="mb-3">
-                        <label class="settings-form-label">Nom </label>
-                        <input type="text" formControlName="intitule" class="settings-form-control form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="settings-form-label">Section</label>
-                        <select name="" class="form-control" formControlName="section" id="">
-                            @for (s of listSection(); track $index) {
-                            <option value="{{s.id}}">{{s.intitule}}</option>
-                            }
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="submit" class="settings-btn-primary" (click)="createCategorieMatiere()"  data-bs-dismiss="modal">Enregistrer</button>
-            </div>
+          </table>
         </div>
-    </div>
-</div>
-
-
-<!-- Delete Niveau Modal -->
-<div class="modal fade" id="deleteCategorieModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Supprimer la categorie </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer cette categorie ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="settings-btn-danger" (click)="deleteCategorieMatiere(categorieMatiereFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-

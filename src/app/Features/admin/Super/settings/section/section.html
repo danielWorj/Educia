@@ -1,90 +1,44 @@
- <div class="settings-section">
-    <div class="settings-section-header">
-        <h2 class="settings-section-title">Gestion des Section</h2>
-        <button class="settings-btn-add" (click)="sectionFb.reset()" data-bs-toggle="modal" data-bs-target="#addSectionModal">
-            <i class="fas fa-plus me-2"></i>Ajouter une Section
-        </button>
-    </div>
-
-    <div class="settings-table-wrapper">
-        <table class="settings-table table">
+<div class="section-toolbar">
+          <div class="section-toolbar-left">
+            <div class="section-icon" style="background:#F3E8FF;color:#7C3AED;"><i class="fas fa-object-group"></i></div>
+            <div class="section-search">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Rechercher une section..." class="settings-search-input" data-panel="section" />
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-section">
+            <i class="fas fa-plus"></i> Ajouter une section
+          </button>
+        </div>
+        <div class="config-table-wrap">
+          <table class="config-table" id="table-section">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Intitulé</th>
-                    <th class="text-end">Actions</th>
-                </tr>
+              <tr>
+                <th style="width:80px;">ID</th>
+                <th>Intitulé</th>
+                <th>Description</th>
+                <th style="width:130px;">Actions</th>
+              </tr>
             </thead>
             <tbody>
-                @for (f of listSection(); track $index) {
-                    <tr>
-                        <td>{{f.id}}</td>
-                        <td><span class="settings-badge">{{f.intitule}}</span></td>
-                        
-                        <td class="text-end">
-                            <button class="settings-btn-action settings-btn-edit"
-                                    (click)="sectionFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addSectionModal">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="settings-btn-action settings-btn-delete"
-                                    (click)="sectionFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteFiliereModal">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-                @if (listSection().length === 0) {
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">Aucune filière trouvée.</td>
-                    </tr>
-                }
+              <tr>
+                <td><span class="config-id">#SEC-001</span></td>
+                <td><span class="config-intitule">Francophone</span></td>
+                <td><span class="config-desc">Enseignement dispensé en langue française</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette section ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#SEC-002</span></td>
+                <td><span class="config-intitule">Anglophone</span></td>
+                <td><span class="config-desc">Enseignement dispensé en langue anglaise</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette section ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#SEC-003</span></td>
+                <td><span class="config-intitule">Bilingue</span></td>
+                <td><span class="config-desc">Enseignement combiné en français et en anglais</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cette section ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
             </tbody>
-        </table>
-    </div>
-</div>
-
-
-<!-- Add section Modal -->
-<div class="modal fade" id="addSectionModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Ajouter une Section</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="sectionFb" (ngSubmit)="createSection()">
-                    <div class="mb-3">
-                        <label class="settings-form-label">Nom de la filière</label>
-                        <input type="text" formControlName="intitule" class="settings-form-control form-control" placeholder="Ex: Sciences">
-                    </div>
-                    
-                </form>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="settings-btn-primary" (click)="createSection()" data-bs-dismiss="modal">Ajouter</button>
-            </div>
+          </table>
         </div>
-    </div>
-</div>
-
-
-<!-- Delete Filière Modal -->
-<div class="modal fade" id="deleteFiliereModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Supprimer la filière</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer cette filière ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="settings-btn-danger" (click)="deleteSection(sectionFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
-            </div>
-        </div>
-    </div>
-</div>

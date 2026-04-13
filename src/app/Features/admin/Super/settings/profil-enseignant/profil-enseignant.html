@@ -1,92 +1,44 @@
-<div class="settings-section">
-    <div class="settings-section-header">
-        <h2 class="settings-section-title">Gestion des Profils</h2>
-        <button class="settings-btn-add" (click)="profilEnseignantFb.reset()" data-bs-toggle="modal" data-bs-target="#addProfilModal">
-            <i class="fas fa-plus me-2"></i>Ajouter un profil
-        </button>
-    </div>
-
-    <div class="settings-table-wrapper">
-        <table class="settings-table table">
+ <div class="section-toolbar">
+          <div class="section-toolbar-left">
+            <div class="section-icon" style="background:#E0F2FE;color:#0369A1;"><i class="fas fa-id-badge"></i></div>
+            <div class="section-search">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Rechercher un profil enseignant..." class="settings-search-input" data-panel="profil-ens" />
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-profil-ens">
+            <i class="fas fa-plus"></i> Ajouter un profil
+          </button>
+        </div>
+        <div class="config-table-wrap">
+          <table class="config-table" id="table-profil-ens">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Intitulé</th>
-                    <th class="text-end">Actions</th>
-                </tr>
+              <tr>
+                <th style="width:80px;">ID</th>
+                <th>Intitulé</th>
+                <th>Description</th>
+                <th style="width:130px;">Actions</th>
+              </tr>
             </thead>
             <tbody>
-                @for (f of listProfilEnseignant(); track $index) {
-                    <tr>
-                        <td>{{f.id}}</td>
-                        <td><span>{{f.intitule}}</span></td>
-                        
-                        <td class="text-end">
-                            <button class="settings-btn-action settings-btn-edit"
-                                    (click)="profilEnseignantFb.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addProfilModal">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="settings-btn-action settings-btn-delete"
-                                    (click)="profilEnseignantFb.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteProfilModal">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-                @if (listProfilEnseignant().length === 0) {
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">Aucun profil trouvé.</td>
-                    </tr>
-                }
+              <tr>
+                <td><span class="config-id">#PRF-001</span></td>
+                <td><span class="config-intitule">Titulaire</span></td>
+                <td><span class="config-desc">Enseignant fonctionnaire avec poste permanent</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#PRF-002</span></td>
+                <td><span class="config-intitule">Vacataire</span></td>
+                <td><span class="config-desc">Enseignant intervenant à temps partiel ou ponctuel</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#PRF-003</span></td>
+                <td><span class="config-intitule">Répétiteur</span></td>
+                <td><span class="config-desc">Enseignant spécialisé dans le soutien scolaire individuel</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce profil ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
             </tbody>
-        </table>
-    </div>
-</div>
-
-
-    <!-- Modals for Niveau -->
-    <!-- Add Niveau Modal -->
-    <div class="modal fade" id="addProfilModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content settings-modal">
-                <div class="modal-header settings-modal-header">
-                    <h5 class="modal-title">Ajouter un niveau</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form [formGroup]="profilEnseignantFb">
-                        <div class="mb-3">
-                            <label class="settings-form-label">Nom du profil</label>
-                            <input type="text" formControlName="intitule" class="settings-form-control form-control" placeholder="Ex: 6ème">
-                        </div>
-                       
-                    </form>
-                </div>
-                <div class="modal-footer settings-modal-footer">
-                    <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="settings-btn-primary" (click)="createProfilEnseignant()" data-bs-dismiss="modal">Ajouter</button>
-                </div>
-            </div>
+          </table>
         </div>
-    </div>
-
-
-    <!-- Delete Niveau Modal -->
-    <div class="modal fade" id="deleteProfilModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content settings-modal">
-                <div class="modal-header settings-modal-header">
-                    <h5 class="modal-title">Supprimer le profil </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer ce profil ? Cette action est irréversible.</p>
-                </div>
-                <div class="modal-footer settings-modal-footer">
-                    <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="settings-btn-danger" (click)="deleteProfilEnseignant(profilEnseignantFb.value.id)" data-bs-dismiss="modal">Supprimer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-

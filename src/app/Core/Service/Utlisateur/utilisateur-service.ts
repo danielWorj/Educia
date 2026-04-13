@@ -5,6 +5,7 @@ import { Enseignant } from '../../Model/Utilisateur/Enseignant/Enseignant';
 import { ResponseServer } from '../../Model/Server/ResponseServer';
 import { edulearnDashboard } from '../../Constant/EndPoints';
 import { Eleve } from '../../Model/Utilisateur/Eleve/Eleve';
+import { Parent } from '../../Model/Utilisateur/Parents';
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,26 @@ export class UtilisateurService {
   createParent(request:any): Observable<number> {
     return this.http.post<number>(`${edulearnDashboard.Parent.create}`, request);
   }
+
+  changeStatusParent(id:number):Observable<ResponseServer>{
+    return this.http.get<ResponseServer>(edulearnDashboard.Parent.changestatus+id);
+  }
+
+  findParentById(id: number): Observable<Parent> {
+    return this.http.get<Parent>(`${edulearnDashboard.Parent.findById}${id}`);
+  }
+
+
+  findAllParent():Observable<Parent[]> {
+    return this.http.get<Parent[]>(`${edulearnDashboard.Parent.all}`);
+  }
+
+  deleteParent(id:number):Observable<ResponseServer> {
+    return this.http.get<ResponseServer>(edulearnDashboard.Parent.delete+id);
+  }
+
+  
+
 
 
 

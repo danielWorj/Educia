@@ -1,94 +1,56 @@
-<div class="settings-section">
-    <div class="settings-section-header">
-        <h2 class="settings-section-title">Gestion des Diplomes</h2>
-        <button class="settings-btn-add" (click)="diplomeFB.reset()" data-bs-toggle="modal" data-bs-target="#addDiplomeModal">
-            <i class="fas fa-plus me-2"></i>Ajouter un diplome
-        </button>
-    </div>
-
-    <div class="settings-table-wrapper">
-        <table class="settings-table table">
+ <div class="section-toolbar">
+          <div class="section-toolbar-left">
+            <div class="section-icon" style="background:var(--accent-light);color:var(--accent);"><i class="fas fa-graduation-cap"></i></div>
+            <div class="section-search">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Rechercher un diplôme..." class="settings-search-input" data-panel="diplome" />
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" data-modal-open="modal-add-diplome">
+            <i class="fas fa-plus"></i> Ajouter un diplôme
+          </button>
+        </div>
+        <div class="config-table-wrap">
+          <table class="config-table" id="table-diplome">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Intitulé</th>
-                    <th class="text-end">Actions</th>
-                </tr>
+              <tr>
+                <th style="width:80px;">ID</th>
+                <th>Intitulé</th>
+                <th>Description</th>
+                <th style="width:130px;">Actions</th>
+              </tr>
             </thead>
             <tbody>
-                @for (f of listDiplome(); track $index) {
-                    <tr>
-                        <td>{{f.id}}</td>
-                        <td><span class="settings-badge">{{f.intitule}}</span></td>
-                        
-                        <td class="text-end">
-                            <button class="settings-btn-action settings-btn-edit"
-                                    (click)="diplomeFB.patchValue(f)" data-bs-toggle="modal" data-bs-target="#addDiplomeModal">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="settings-btn-action settings-btn-delete"
-                                    (click)="diplomeFB.patchValue({id: f.id})" data-bs-toggle="modal" data-bs-target="#deleteDiplomeModal">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-                @if (listDiplome().length === 0) {
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">Aucun diplome trouvé.</td>
-                    </tr>
-                }
+              <tr>
+                <td><span class="config-id">#DIP-001</span></td>
+                <td><span class="config-intitule">CEPE</span></td>
+                <td><span class="config-desc">Certificat d'études primaires élémentaires</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce diplôme ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#DIP-002</span></td>
+                <td><span class="config-intitule">BEPC</span></td>
+                <td><span class="config-desc">Brevet d'études du premier cycle du secondaire</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce diplôme ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#DIP-003</span></td>
+                <td><span class="config-intitule">Probatoire</span></td>
+                <td><span class="config-desc">Examen de fin de classe de Première</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce diplôme ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#DIP-004</span></td>
+                <td><span class="config-intitule">Baccalauréat</span></td>
+                <td><span class="config-desc">Diplôme de fin d'études secondaires — accès à l'université</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce diplôme ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><span class="config-id">#DIP-005</span></td>
+                <td><span class="config-intitule">Licence</span></td>
+                <td><span class="config-desc">Premier grade universitaire (Bac+3)</span></td>
+                <td><div class="config-actions"><button class="btn btn-ghost btn-sm btn-icon" data-edit-row><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer ce diplôme ?"><i class="fas fa-trash"></i></button></div></td>
+              </tr>
             </tbody>
-        </table>
-    </div>
-</div>
-
-
-
-<!-- Modals for Niveau -->
-<!-- Add Niveau Modal -->
-<div class="modal fade" id="addDiplomeModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Ajouter une Filiere</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="diplomeFB" >
-                    <div class="mb-3">
-                        <label class="settings-form-label">Nom du Diplome</label>
-                        <input type="text" formControlName="intitule" class="settings-form-control form-control">
-                    </div>
-                    
-                </form>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="submit" class="settings-btn-primary" (click)="createDiplome()"  data-bs-dismiss="modal">Enregistrer</button>
-            </div>
+          </table>
         </div>
-    </div>
-</div>
-
-
-<!-- Delete Niveau Modal -->
-<div class="modal fade" id="deleteDiplomeModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content settings-modal">
-            <div class="modal-header settings-modal-header">
-                <h5 class="modal-title">Supprimer le niveau</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer ce diplome ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-footer settings-modal-footer">
-                <button type="button" class="settings-btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="settings-btn-danger" (click)="deleteDiplome(diplomeFB.value.id)" data-bs-dismiss="modal">Supprimer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
