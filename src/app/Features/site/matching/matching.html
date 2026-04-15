@@ -1,0 +1,371 @@
+<!-- CONTENT -->
+    <section class="results-content">
+      <div class="container">
+
+        <!-- Toolbar -->
+        <div class="results-toolbar">
+          <h2>Top <span>5</span> enseignants recommandés</h2>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <select class="sort-select" aria-label="Trier par">
+              <option>Trier par : Score IA</option>
+              <option>Trier par : Note des élèves</option>
+              <option>Trier par : Prix croissant</option>
+              <option>Trier par : Expérience</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="match-grid" id="matchGrid">
+
+          <!-- ===== CARD 1 ===== -->
+          <div class="tutor-card-match top-match reveal" style="animation-delay:0s">
+            <div class="rank-badge rank-1">🥇</div>
+            <div class="tutor-card-match-inner">
+
+              <!-- Avatar -->
+              <div class="tutor-card-avatar-col">
+                <div class="tutor-avatar" style="background:linear-gradient(135deg,#0A4FFF,#FF6B35);">AM</div>
+              </div>
+
+              <!-- Main info -->
+              <div class="tutor-card-main">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 class="tutor-name" style="margin:0;">Armel Mbarga</h3>
+                  <span class="ia-score-badge"><span class="score-dot"></span>IA : 97 %</span>
+                  <span class="avail-chip">Disponible dès demain</span>
+                </div>
+                <p class="tutor-subject" style="margin-bottom:8px;">Mathématiques · Physique-Chimie · Terminale C &amp; D</p>
+                <div class="tutor-rating">
+                  ★★★★★ <span style="color:var(--text-mid); font-weight:400; margin-left:4px;">5.0 (48 avis)</span>
+                </div>
+
+                <!-- Match bar -->
+                <div class="match-score-wrap">
+                  <div class="match-score-label">
+                    <span>Compatibilité avec votre demande</span>
+                    <span>97 %</span>
+                  </div>
+                  <div class="match-bar"><div class="match-bar-fill" style="width:97%;"></div></div>
+                </div>
+
+                <!-- Tags -->
+                <div class="tutor-badges">
+                  <span class="tag">📐 Maths</span>
+                  <span class="tag">🧪 Physique</span>
+                  <span class="tag-green">✅ Vérifié</span>
+                  <span class="tag-accent">🏆 Top Répétiteur</span>
+                </div>
+
+                <!-- Stats -->
+                <div class="tutor-stats">
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">8 ans</div>
+                    <div class="tutor-stat-lbl">Expérience</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">120+</div>
+                    <div class="tutor-stat-lbl">Élèves formés</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">94 %</div>
+                    <div class="tutor-stat-lbl">Taux de réussite</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">Akwa</div>
+                    <div class="tutor-stat-lbl">Zone</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Side: price + actions -->
+              <div class="tutor-card-side">
+                <div class="tutor-price" style="flex-direction:column; align-items:flex-end; gap:2px; padding:0; border:none; margin:0;">
+                  <div style="display:flex; align-items:baseline; gap:4px;">
+                    <span class="tutor-price-num">5 000</span>
+                    <span class="tutor-price-label">FCFA/h</span>
+                  </div>
+                  <span style="font-size:12px; color:var(--text-light);">soit ~10 000/séance</span>
+                </div>
+                <div class="card-actions" style="flex-direction:column; border:none; padding:0; margin:0; gap:8px;">
+                  <button class="btn btn-primary btn-sm btn-contact" onclick="openModal('Armel Mbarga','AM','Mathématiques · Physique-Chimie')">
+                    📩 Contacter
+                  </button>
+                  <a href="#" class="btn btn-outline btn-sm" style="justify-content:center;">Voir le profil →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== CARD 2 ===== -->
+          <div class="tutor-card-match reveal" style="animation-delay:0.1s">
+            <div class="rank-badge rank-2">🥈</div>
+            <div class="tutor-card-match-inner">
+              <div class="tutor-card-avatar-col">
+                <div class="tutor-avatar" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">CN</div>
+              </div>
+              <div class="tutor-card-main">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 class="tutor-name" style="margin:0;">Clarisse Nkomo</h3>
+                  <span class="ia-score-badge"><span class="score-dot"></span>IA : 93 %</span>
+                  <span class="avail-chip">Disponible ce soir</span>
+                </div>
+                <p class="tutor-subject" style="margin-bottom:8px;">Mathématiques · Statistiques · Terminale C, D &amp; ES</p>
+                <div class="tutor-rating">
+                  ★★★★★ <span style="color:var(--text-mid); font-weight:400; margin-left:4px;">4.9 (35 avis)</span>
+                </div>
+                <div class="match-score-wrap">
+                  <div class="match-score-label">
+                    <span>Compatibilité avec votre demande</span>
+                    <span>93 %</span>
+                  </div>
+                  <div class="match-bar"><div class="match-bar-fill" style="width:93%;"></div></div>
+                </div>
+                <div class="tutor-badges">
+                  <span class="tag">📐 Maths</span>
+                  <span class="tag">📊 Statistiques</span>
+                  <span class="tag-green">✅ Vérifié</span>
+                </div>
+                <div class="tutor-stats">
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">6 ans</div>
+                    <div class="tutor-stat-lbl">Expérience</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">80+</div>
+                    <div class="tutor-stat-lbl">Élèves formés</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">91 %</div>
+                    <div class="tutor-stat-lbl">Taux de réussite</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">Bonanjo</div>
+                    <div class="tutor-stat-lbl">Zone</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tutor-card-side">
+                <div style="display:flex; align-items:baseline; gap:4px;">
+                  <span class="tutor-price-num">4 500</span>
+                  <span class="tutor-price-label">FCFA/h</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-light);">soit ~9 000/séance</div>
+                <div class="card-actions" style="flex-direction:column; border:none; padding:0; margin:0; gap:8px;">
+                  <button class="btn btn-primary btn-sm btn-contact" onclick="openModal('Clarisse Nkomo','CN','Mathématiques · Statistiques')">
+                    📩 Contacter
+                  </button>
+                  <a href="#" class="btn btn-outline btn-sm" style="justify-content:center;">Voir le profil →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== CARD 3 ===== -->
+          <div class="tutor-card-match reveal" style="animation-delay:0.2s">
+            <div class="rank-badge rank-3">🥉</div>
+            <div class="tutor-card-match-inner">
+              <div class="tutor-card-avatar-col">
+                <div class="tutor-avatar" style="background:linear-gradient(135deg,#059669,#10B981);">JE</div>
+              </div>
+              <div class="tutor-card-main">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 class="tutor-name" style="margin:0;">Jean-Paul Essomba</h3>
+                  <span class="ia-score-badge"><span class="score-dot"></span>IA : 88 %</span>
+                  <span class="avail-chip">Disponible ce weekend</span>
+                </div>
+                <p class="tutor-subject" style="margin-bottom:8px;">Mathématiques · Informatique · Terminale C</p>
+                <div class="tutor-rating">
+                  ★★★★☆ <span style="color:var(--text-mid); font-weight:400; margin-left:4px;">4.7 (52 avis)</span>
+                </div>
+                <div class="match-score-wrap">
+                  <div class="match-score-label">
+                    <span>Compatibilité avec votre demande</span>
+                    <span>88 %</span>
+                  </div>
+                  <div class="match-bar"><div class="match-bar-fill" style="width:88%;"></div></div>
+                </div>
+                <div class="tutor-badges">
+                  <span class="tag">📐 Maths</span>
+                  <span class="tag">💻 Informatique</span>
+                  <span class="tag-green">✅ Vérifié</span>
+                  <span class="tag-accent">🎓 Ingénieur</span>
+                </div>
+                <div class="tutor-stats">
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">10 ans</div>
+                    <div class="tutor-stat-lbl">Expérience</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">200+</div>
+                    <div class="tutor-stat-lbl">Élèves formés</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">89 %</div>
+                    <div class="tutor-stat-lbl">Taux de réussite</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">Makepe</div>
+                    <div class="tutor-stat-lbl">Zone</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tutor-card-side">
+                <div style="display:flex; align-items:baseline; gap:4px;">
+                  <span class="tutor-price-num">6 000</span>
+                  <span class="tutor-price-label">FCFA/h</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-light);">soit ~12 000/séance</div>
+                <div class="card-actions" style="flex-direction:column; border:none; padding:0; margin:0; gap:8px;">
+                  <button class="btn btn-primary btn-sm btn-contact" onclick="openModal('Jean-Paul Essomba','JE','Mathématiques · Informatique')">
+                    📩 Contacter
+                  </button>
+                  <a href="#" class="btn btn-outline btn-sm" style="justify-content:center;">Voir le profil →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== CARD 4 ===== -->
+          <div class="tutor-card-match reveal" style="animation-delay:0.3s">
+            <div class="rank-badge rank-4">4</div>
+            <div class="tutor-card-match-inner">
+              <div class="tutor-card-avatar-col">
+                <div class="tutor-avatar" style="background:linear-gradient(135deg,#DC2626,#F97316);">FK</div>
+              </div>
+              <div class="tutor-card-main">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 class="tutor-name" style="margin:0;">Fatima Kamga</h3>
+                  <span class="ia-score-badge"><span class="score-dot"></span>IA : 84 %</span>
+                  <span class="avail-chip">Disponible lundi</span>
+                </div>
+                <p class="tutor-subject" style="margin-bottom:8px;">Mathématiques · Terminale A4 &amp; C</p>
+                <div class="tutor-rating">
+                  ★★★★☆ <span style="color:var(--text-mid); font-weight:400; margin-left:4px;">4.8 (29 avis)</span>
+                </div>
+                <div class="match-score-wrap">
+                  <div class="match-score-label">
+                    <span>Compatibilité avec votre demande</span>
+                    <span>84 %</span>
+                  </div>
+                  <div class="match-bar"><div class="match-bar-fill" style="width:84%;"></div></div>
+                </div>
+                <div class="tutor-badges">
+                  <span class="tag">📐 Maths</span>
+                  <span class="tag-green">✅ Vérifié</span>
+                  <span class="tag">🎓 Agrégée</span>
+                </div>
+                <div class="tutor-stats">
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">5 ans</div>
+                    <div class="tutor-stat-lbl">Expérience</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">60+</div>
+                    <div class="tutor-stat-lbl">Élèves formés</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">87 %</div>
+                    <div class="tutor-stat-lbl">Taux de réussite</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">Deido</div>
+                    <div class="tutor-stat-lbl">Zone</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tutor-card-side">
+                <div style="display:flex; align-items:baseline; gap:4px;">
+                  <span class="tutor-price-num">4 000</span>
+                  <span class="tutor-price-label">FCFA/h</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-light);">soit ~8 000/séance</div>
+                <div class="card-actions" style="flex-direction:column; border:none; padding:0; margin:0; gap:8px;">
+                  <button class="btn btn-primary btn-sm btn-contact" onclick="openModal('Fatima Kamga','FK','Mathématiques')">
+                    📩 Contacter
+                  </button>
+                  <a href="#" class="btn btn-outline btn-sm" style="justify-content:center;">Voir le profil →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== CARD 5 ===== -->
+          <div class="tutor-card-match reveal" style="animation-delay:0.4s">
+            <div class="rank-badge rank-5">5</div>
+            <div class="tutor-card-match-inner">
+              <div class="tutor-card-avatar-col">
+                <div class="tutor-avatar" style="background:linear-gradient(135deg,#7C3AED,#A855F7);">PN</div>
+              </div>
+              <div class="tutor-card-main">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 class="tutor-name" style="margin:0;">Patrick Ngongang</h3>
+                  <span class="ia-score-badge"><span class="score-dot"></span>IA : 80 %</span>
+                  <span class="avail-chip">Disponible demain</span>
+                </div>
+                <p class="tutor-subject" style="margin-bottom:8px;">Mathématiques · Sciences Physiques · Bac C &amp; D</p>
+                <div class="tutor-rating">
+                  ★★★★☆ <span style="color:var(--text-mid); font-weight:400; margin-left:4px;">4.6 (41 avis)</span>
+                </div>
+                <div class="match-score-wrap">
+                  <div class="match-score-label">
+                    <span>Compatibilité avec votre demande</span>
+                    <span>80 %</span>
+                  </div>
+                  <div class="match-bar"><div class="match-bar-fill" style="width:80%;"></div></div>
+                </div>
+                <div class="tutor-badges">
+                  <span class="tag">📐 Maths</span>
+                  <span class="tag">⚗️ Sciences Physiques</span>
+                  <span class="tag-green">✅ Vérifié</span>
+                </div>
+                <div class="tutor-stats">
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">7 ans</div>
+                    <div class="tutor-stat-lbl">Expérience</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">95+</div>
+                    <div class="tutor-stat-lbl">Élèves formés</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">85 %</div>
+                    <div class="tutor-stat-lbl">Taux de réussite</div>
+                  </div>
+                  <div class="tutor-stat">
+                    <div class="tutor-stat-num">Bali</div>
+                    <div class="tutor-stat-lbl">Zone</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tutor-card-side">
+                <div style="display:flex; align-items:baseline; gap:4px;">
+                  <span class="tutor-price-num">4 500</span>
+                  <span class="tutor-price-label">FCFA/h</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-light);">soit ~9 000/séance</div>
+                <div class="card-actions" style="flex-direction:column; border:none; padding:0; margin:0; gap:8px;">
+                  <button class="btn btn-primary btn-sm btn-contact" onclick="openModal('Patrick Ngongang','PN','Mathématiques · Sciences Physiques')">
+                    📩 Contacter
+                  </button>
+                  <a href="#" class="btn btn-outline btn-sm" style="justify-content:center;">Voir le profil →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /match-grid -->
+
+        <!-- Bottom CTA -->
+        <div style="text-align:center; margin-top:48px; padding:40px; background:#fff; border-radius:var(--radius-xl); border:1px solid var(--border);">
+          <div class="tag" style="margin-bottom:16px;">💡 Vous n'avez pas trouvé le bon profil ?</div>
+          <h3 style="margin-bottom:10px;">Affiner votre recherche</h3>
+          <p style="max-width:500px; margin:0 auto 24px;">Modifiez vos critères ou laissez notre IA chercher parmi 3 000+ enseignants partenaires sur tout le Cameroun.</p>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="#" class="btn btn-primary">🔄 Relancer le matching</a>
+            <a href="#" class="btn btn-outline">📋 Tous les enseignants</a>
+          </div>
+        </div>
+
+      </div>
+    </section>

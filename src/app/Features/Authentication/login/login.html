@@ -1,1 +1,111 @@
-<p>login works!</p>
+ <!-- LEFT -->
+  <div class="login-left">
+    <div class="brand">
+      <div class="brand-icon">E</div>
+      <div>
+        <span class="brand-name">edu<span>cia</span></span>
+        <span class="brand-badge">ADMIN</span>
+      </div>
+    </div>
+
+    <div class="left-headline">
+      <h2>La plateforme<br/>éducative <span>nouvelle<br/>génération</span></h2>
+      <p>Gérez vos formations, suivez vos apprenants et pilotez vos performances depuis un seul espace centralisé.</p>
+
+      <div class="left-stats">
+        <div class="stat-item">
+          <div class="stat-num">12k+</div>
+          <div class="stat-label">Apprenants actifs</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">340</div>
+          <div class="stat-label">Formations</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Satisfaction</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="testimonial">
+        <p class="testimonial-text">"Educia a transformé notre façon de former nos équipes. Un outil puissant et très intuitif."</p>
+        <div class="testimonial-author">
+          <div class="t-avatar">AM</div>
+          <div>
+            <div class="t-name">Aminata Mbaye</div>
+            <div class="t-role">Responsable formation · DHL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="login-right">
+    <div class="login-card">
+      <div class="card-top-accent"></div>
+
+      <div class="card-header">
+        <div class="card-welcome">Bienvenue</div>
+        <h1 class="card-title">Connexion</h1>
+        <p class="card-subtitle">Accédez à votre espace Educia</p>
+      </div>
+
+      <div id="loginForm">
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse e-mail</label>
+          <div class="input-wrap">
+            <input class="form-input" type="email" id="email" placeholder="votre@email.com" autocomplete="email"/>
+            <i class="input-icon fa-regular fa-envelope"></i>
+          </div>
+          <div class="form-error" id="emailError"><i class="fa-solid fa-circle-exclamation"></i> Email invalide</div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <div class="input-wrap pw-wrap">
+            <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+            <i class="input-icon fa-solid fa-lock"></i>
+            <button class="pw-toggle" type="button" id="pwToggle" aria-label="Afficher le mot de passe">
+              <i class="fa-regular fa-eye" id="pwIcon"></i>
+            </button>
+          </div>
+          <div class="form-error" id="passwordError"><i class="fa-solid fa-circle-exclamation"></i> Mot de passe requis</div>
+        </div>
+
+        <!-- Options -->
+        <div class="form-options">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="remember"/>
+            <span>Se souvenir de moi</span>
+          </label>
+          <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn-login" id="loginBtn" type="button">
+          <span id="btnText">Se connecter</span>
+          <i class="fa-solid fa-arrow-right" id="btnArrow"></i>
+          <div class="spinner" id="btnSpinner"></div>
+        </button>
+
+        <div class="login-divider"><span>ou</span></div>
+
+        <!-- SSO -->
+        <button class="btn-sso" type="button">
+          <div class="sso-icon">E</div>
+          Connexion avec SSO d'entreprise
+        </button>
+      </div>
+
+      <div class="card-footer">
+        <p>Pas encore de compte ? <a href="#">Contacter l'administration</a></p>
+      </div>
+    </div>
+  </div>

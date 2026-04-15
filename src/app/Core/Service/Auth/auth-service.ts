@@ -12,6 +12,11 @@ export class AuthService {
 
   }
 
+  isAuthenticated(): boolean {
+    const id = localStorage.getItem('id');
+    return !!id; // Returns true if id exists, false otherwise
+  }
+
   login(request :any):Observable<AuthData>{
     return this.httpClient.post<AuthData>(edulearnDashboard.Auth.login , request); 
   }
