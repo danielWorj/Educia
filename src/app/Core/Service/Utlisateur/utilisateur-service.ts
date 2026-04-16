@@ -13,6 +13,11 @@ import { Parent } from '../../Model/Utilisateur/Parents';
 export class UtilisateurService {
   constructor(private http :HttpClient){}
 
+  //NEW METHODS 
+  publicationOffre(request: any): Observable<ResponseServer> {
+    return this.http.post<ResponseServer>("http://localhost:8080/edulearn/api/repetition/new/offre/create", request);
+  }
+
   //Enseignant related methods
   findAllEnseignants():Observable<Enseignant[]> {
     return this.http.get<Enseignant[]>(edulearnDashboard.Enseignant.all);

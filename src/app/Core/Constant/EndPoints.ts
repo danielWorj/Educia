@@ -44,6 +44,7 @@ export const edulearnDashboard = {
         findById : `${repetitionapi}/offre/findById/`,
         findByCode : `${repetitionapi}/offre/findByCode/`,
         create : `${repetitionapi}/offre/create`,
+        createnew : `${repetitionapi}/new/offre/create`,
         update : `${repetitionapi}/offre/update`,
         delete : `${repetitionapi}/offre/delete/`,
         findByParent : `${repetitionapi}/offre/all/byparent/`,

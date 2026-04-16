@@ -39,27 +39,27 @@ export class Login {
           localStorage.setItem('role', `${data.role}`); 
           
           // Mapping rôle -> route
-          let dashboardRoute: string;
+          // let dashboardRoute: string;
           
-          switch(data.role) {
-            case 1:
-              dashboardRoute = '/dashboard-admin';
-              break;
-            case 2:
-              dashboardRoute = '/dashboard-enseignant';
-              break;
-            case 3:
-              dashboardRoute = '/dashboard-parent';
-              break;
-            case 4:
-              dashboardRoute = '/dashboard-eleve';
-              break;
-            default:
-              dashboardRoute = '/login';
-          }
+          // switch(data.role) {
+          //   case 1:
+          //     dashboardRoute = '/dashboard-admin';
+          //     break;
+          //   case 2:
+          //     dashboardRoute = '/dashboard-enseignant';
+          //     break;
+          //   case 3:
+          //     dashboardRoute = '/dashboard-parent';
+          //     break;
+          //   case 4:
+          //     dashboardRoute = '/dashboard-eleve';
+          //     break;
+          //   default:
+          //     dashboardRoute = '/login';
+          // }
           
-          // Redirection
-          this.router.navigate([dashboardRoute]);
+          // // Redirection
+          // this.router.navigate([dashboardRoute]);
         } else {
           alert('identifiant incorrect'); 
         }

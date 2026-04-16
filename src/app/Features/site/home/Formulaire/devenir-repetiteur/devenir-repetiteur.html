@@ -1,0 +1,430 @@
+<form [formGroup]="enseignantForm" (ngSubmit)="createEnseignantAccount()">
+
+  <!-- ── BLOC 1 : Informations personnelles ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-icon">👤</div>
+      <div>
+        <div class="form-card-title">Informations personnelles</div>
+        <div class="form-card-subtitle">Identité, coordonnées et localisation</div>
+      </div>
+    </div>
+
+    <!-- Nom complet -->
+    <div class="form-group">
+      <label class="form-label" for="nom_complet">Nom complet <span class="req">*</span></label>
+      <input
+        id="nom_complet"
+        type="text"
+        class="form-input"
+        placeholder="Ex : Jean-Baptiste Mbarga Essomba"
+        formControlName="nomComplet"
+      />
+    </div>
+
+    <!-- Email + Téléphone -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="email">Adresse email <span class="req">*</span></label>
+        <input
+          id="email"
+          type="email"
+          class="form-input"
+          placeholder="votre@email.com"
+          formControlName="email"
+        />
+        <span class="form-hint">Pour recevoir les demandes des parents</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="telephone">Téléphone <span class="req">*</span></label>
+        <input
+          id="telephone"
+          type="tel"
+          class="form-input"
+          placeholder="Ex : 691 23 45 67"
+          formControlName="telephone"
+        />
+        <span class="form-hint">MTN ou Orange Cameroun</span>
+      </div>
+    </div>
+
+    <!-- Localisation (ville + quartier fusionnés dans le champ localisation) -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="ville">Ville <span class="req">*</span></label>
+        <select
+          id="ville"
+          class="form-select"
+          formControlName="localisation"
+        >
+          <option value="" disabled>Choisir une ville</option>
+          <option value="douala">Douala</option>
+          <option value="yaounde">Yaoundé</option>
+          <option value="bafoussam">Bafoussam</option>
+          <option value="bamenda">Bamenda</option>
+          <option value="garoua">Garoua</option>
+          <option value="maroua">Maroua</option>
+          <option value="ngaoundere">Ngaoundéré</option>
+          <option value="bertoua">Bertoua</option>
+          <option value="ebolowa">Ebolowa</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="quartier">Quartier <span class="req">*</span></label>
+        <input
+          id="quartier"
+          type="text"
+          class="form-input"
+          placeholder="Ex : Akwa, Bastos..."
+        />
+      </div>
+    </div>
+
+    <!-- Date de naissance + Années d'expérience -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="date_naissance">Date de naissance <span class="req">*</span></label>
+        <input
+          id="date_naissance"
+          type="date"
+          class="form-input"
+          formControlName="dateNaissance"
+        />
+        <span class="form-hint">Vous devez avoir au moins 18 ans</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="experience">Années d'expérience <span class="req">*</span></label>
+        <div class="input-number-wrap">
+          <input
+            type="number"
+            id="experience"
+            min="0"
+            max="50"
+            step="1"
+            placeholder="Ex : 3"
+            formControlName="anneeexperience"
+          />
+          <span class="input-number-unit">an(s)</span>
+        </div>
+        <span class="form-hint">Nombre d'années d'enseignement ou de répétition</span>
+      </div>
+    </div>
+
+    <!-- Tarif horaire -->
+    <div class="form-group">
+      <label class="form-label" for="tarif">Tarif horaire <span class="req">*</span></label>
+      <div class="input-number-wrap" style="max-width: 320px;">
+        <input
+          type="number"
+          id="tarif"
+          min="500"
+          max="100000"
+          step="500"
+          placeholder="Ex : 3000"
+          formControlName="tarifHoraire"
+        />
+        <span class="input-number-unit">FCFA / heure</span>
+      </div>
+      <span class="form-hint">Montant que vous souhaitez recevoir par heure de cours</span>
+    </div>
+
+  </div>
+  <!-- fin bloc 1 -->
+
+  <!-- ── BLOC 2 : Photo de profil & CNI ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-icon accent">📎</div>
+      <div>
+        <div class="form-card-title">Documents d'identité</div>
+        <div class="form-card-subtitle">Photo de profil et pièce d'identité</div>
+      </div>
+    </div>
+
+    <!-- Photo de profil -->
+    <div class="form-group">
+      <label class="form-label">Photo de profil <span class="req">*</span></label>
+      <div class="upload-id-wrapper" [class.uploaded]="fetchPhotoState()">
+        <div class="upload-id-left">
+          <div class="upload-id-icon">🤳</div>
+          <div>
+            @if (fetchPhotoState()) {
+              <img [src]="fetchPhotoUrl()" alt="Aperçu photo" style="height:48px;border-radius:50%;object-fit:cover;" />
+              <div class="upload-id-title">{{ photoFileName() }}</div>
+            } @else {
+              <div class="upload-id-title">Téléverser votre photo</div>
+              <div class="upload-id-sub">Visage dégagé, fond neutre · JPG ou PNG · Max 5 Mo</div>
+            }
+          </div>
+        </div>
+        <label for="photo-input" class="upload-id-btn">📎 Choisir un fichier</label>
+        <input
+          type="file"
+          id="photo-input"
+          accept=".jpg,.jpeg,.png"
+          style="display:none"
+          (change)="selectPhotoUploaded($event)"
+        />
+      </div>
+      <span class="form-hint">Cette photo sera visible par les parents sur votre profil</span>
+    </div>
+
+    <!-- CNI -->
+    <div class="form-group">
+      <label class="form-label">Carte Nationale d'Identité <span class="req">*</span></label>
+      <div class="upload-id-wrapper">
+        <div class="upload-id-left">
+          <div class="upload-id-icon">🪪</div>
+          <div>
+            <div class="upload-id-title">Téléverser votre pièce d'identité</div>
+            <div class="upload-id-sub">CNI recto-verso · JPG, PNG ou PDF · Max 5 Mo</div>
+          </div>
+        </div>
+        <label for="cni-input" class="upload-id-btn">📎 Choisir un fichier</label>
+        <input
+          type="file"
+          id="cni-input"
+          accept=".jpg,.jpeg,.png,.pdf"
+          style="display:none"
+          (change)="onSelectCNI($event)"
+        />
+      </div>
+      <span class="form-hint">Utilisée uniquement pour vérifier votre identité — strictement confidentielle</span>
+    </div>
+
+  </div>
+  <!-- fin bloc 2 -->
+
+  <!-- ── BLOC 3 : Qualifications & Diplôme ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-icon">🎓</div>
+      <div>
+        <div class="form-card-title">Qualifications & Diplôme</div>
+        <div class="form-card-subtitle">Votre filière, votre plus haut diplôme et votre spécialité</div>
+      </div>
+    </div>
+
+    <!-- Type d'enseignant (Profil Enseignant) -->
+    <div class="form-group">
+      <label class="form-label">Type d'enseignant <span class="req">*</span></label>
+      <div class="type-grid">
+        @for (profil of listProfilEnseignant(); track profil.id) {
+          <div class="type-card">
+            <input
+              type="radio"
+              [id]="'profil-' + profil.id"
+              name="profilEnseignant"
+              [value]="profil.id"
+              (change)="enseignantForm.controls['profilEnseignant'].setValue(profil)"
+            />
+            <label [for]="'profil-' + profil.id">
+              <span class="type-card-name">{{ profil.intitule }}</span>
+            </label>
+          </div>
+        } @empty {
+          <!-- Fallback statique si la liste n'est pas encore chargée -->
+          <div class="type-card">
+            <input type="radio" id="type-lit" name="profilEnseignant" value="litteraire" />
+            <label for="type-lit">
+              <span class="type-card-icon">📖</span>
+              <span class="type-card-name">Littéraire</span>
+              <span class="type-card-desc">Français, Anglais, Philosophie, Histoire-Géo…</span>
+            </label>
+          </div>
+          <div class="type-card">
+            <input type="radio" id="type-sci" name="profilEnseignant" value="scientifique" />
+            <label for="type-sci">
+              <span class="type-card-icon">🔬</span>
+              <span class="type-card-name">Scientifique</span>
+              <span class="type-card-desc">Maths, Physique, SVT, Chimie…</span>
+            </label>
+          </div>
+          <div class="type-card">
+            <input type="radio" id="type-tech" name="profilEnseignant" value="technique" />
+            <label for="type-tech">
+              <span class="type-card-icon">⚙️</span>
+              <span class="type-card-name">Sciences Techniques</span>
+              <span class="type-card-desc">Informatique, Mécatronique, Génie Civil…</span>
+            </label>
+          </div>
+        }
+      </div>
+      <span class="form-hint">Sélectionnez la filière qui correspond à votre formation principale</span>
+    </div>
+
+    <!-- Niveau de diplôme + Spécialité -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="niveau_diplome">Plus haut diplôme obtenu <span class="req">*</span></label>
+        <select id="niveau_diplome" class="form-select" formControlName="diplome">
+          <option [ngValue]="null" disabled>Choisir un diplôme</option>
+          @for (diplome of listDiplomes(); track diplome.id) {
+            <option [ngValue]="diplome">{{ diplome.intitule }}</option>
+          } @empty {
+            <optgroup label="Enseignement secondaire">
+              <option value="bepc">BEPC / CAP</option>
+              <option value="probatoire">Probatoire</option>
+              <option value="bac">Baccalauréat</option>
+            </optgroup>
+            <optgroup label="Enseignement supérieur">
+              <option value="bts">BTS / DUT</option>
+              <option value="licence">Licence (Bac+3)</option>
+              <option value="master">Master (Bac+5)</option>
+              <option value="doctorat">Doctorat (Bac+8)</option>
+              <option value="ingenieur">Diplôme d'Ingénieur</option>
+              <option value="capes">CAPES / Agrégation</option>
+            </optgroup>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="specialite">Spécialité <span class="req">*</span></label>
+        <input
+          id="specialite"
+          type="text"
+          class="form-input"
+          placeholder="Ex : Informatique industrielle, Mécatronique…"
+          formControlName="specialite"
+        />
+        <span class="form-hint">Votre domaine de spécialisation principal</span>
+      </div>
+    </div>
+
+    <!-- Section -->
+    <div class="form-group">
+      <label class="form-label" for="section">Section <span class="req">*</span></label>
+      <select id="section" class="form-select" formControlName="section">
+        <option [ngValue]="null" disabled>Choisir une section</option>
+        @for (section of listSections(); track section.id) {
+          <option [ngValue]="section">{{ section.intitule }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Status Enseignant -->
+    <div class="form-group">
+      <label class="form-label" for="statusEnseignant">Statut <span class="req">*</span></label>
+      <select id="statusEnseignant" class="form-select" formControlName="statusEnseignant">
+        <option [ngValue]="null" disabled>Choisir un statut</option>
+        @for (status of listStatusEnseignant(); track status.id) {
+          <option [ngValue]="status">{{ status.intitule }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Upload CV -->
+    <div class="form-group">
+      <label class="form-label">CV <span class="req">*</span></label>
+      <div class="upload-id-wrapper">
+        <div class="upload-id-left">
+          <div class="upload-id-icon">📄</div>
+          <div>
+            <div class="upload-id-title">Téléverser votre CV</div>
+            <div class="upload-id-sub">PDF · Max 5 Mo</div>
+          </div>
+        </div>
+        <label for="cv-input" class="upload-id-btn">📎 Choisir un fichier</label>
+        <input
+          type="file"
+          id="cv-input"
+          accept=".pdf,.doc,.docx"
+          style="display:none"
+          (change)="onSelectCv($event)"
+        />
+      </div>
+    </div>
+
+    <!-- Upload Diplôme -->
+    <div class="form-group">
+      <label class="form-label">Téléverser votre diplôme <span class="req">*</span></label>
+      <div class="upload-id-wrapper">
+        <div class="upload-id-left">
+          <div class="upload-id-icon">📜</div>
+          <div>
+            <div class="upload-id-title">Téléverser votre diplôme</div>
+            <div class="upload-id-sub">Scan lisible · JPG, PNG ou PDF · Max 5 Mo</div>
+          </div>
+        </div>
+        <label for="diplome-input" class="upload-id-btn">📎 Choisir un fichier</label>
+        <input
+          type="file"
+          id="diplome-input"
+          accept=".jpg,.jpeg,.png,.pdf"
+          style="display:none"
+          (change)="onSelectDiplome($event)"
+        />
+      </div>
+      <span class="form-hint">Attestation ou relevé de notes acceptés si le diplôme n'est pas encore disponible</span>
+    </div>
+
+  </div>
+  <!-- fin bloc 3 -->
+
+  <!-- ── BLOC 4 : Création du compte ── -->
+  <div class="compte-card">
+    <div class="compte-inner">
+
+      <div class="compte-header">
+        <div class="compte-icon">🔐</div>
+        <div>
+          <div class="compte-title">Création de votre compte</div>
+          <div class="compte-subtitle">Ces informations restent strictement confidentielles</div>
+        </div>
+      </div>
+
+      <!-- Mot de passe + Confirmation -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe <span class="req">*</span></label>
+          <div class="password-wrap">
+            <input
+              id="password"
+              type="password"
+              class="form-input"
+              placeholder="Minimum 8 caractères"
+              (input)="passwordChange($event)"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password2">Confirmer le mot de passe <span class="req">*</span></label>
+          <div class="password-wrap">
+            <input
+              id="password2"
+              type="password"
+              class="form-input"
+              placeholder="Répétez le mot de passe"
+              (input)="confirmPasswordChange($event)"
+            />
+          </div>
+          @if (showErrormessage()) {
+            <span class="form-error">{{ messageErrorPassword() }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- CGU -->
+      <div class="cgu-row">
+        <input type="checkbox" id="cgu" name="cgu" />
+        <label for="cgu">
+          J'accepte les <a href="#">Conditions Générales d'Utilisation</a>
+          et la <a href="#">Politique de confidentialité</a> d'Educia.
+          Je certifie que toutes les informations fournies sont exactes.
+        </label>
+      </div>
+
+      <!-- Bouton soumission -->
+      <button type="submit" class="btn btn-lg btn-submit">
+        🚀 Créer mon compte répétiteur
+      </button>
+
+      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-top:16px;">
+        Déjà un compte ? <a href="login.html" style="color:#fff;font-weight:600;">Se connecter</a>
+      </p>
+
+    </div>
+  </div>
+  <!-- fin bloc 4 -->
+
+</form>

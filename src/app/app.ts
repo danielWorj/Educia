@@ -12,10 +12,10 @@ export class App {
 
   //Test
   constructor() {
-    this.initialiseIdToTest();
+   // this.initialiseIdToTest();
   }
 
   initialiseIdToTest(){
-    localStorage.setItem('id', '1');
+    sessionStorage.setItem('id', '1');
   }
 }

@@ -1,0 +1,199 @@
+<form [formGroup]="offreForm">
+
+  <!-- ── BLOC 1 : Détails de l'offre ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-icon">📚</div>
+      <div>
+        <div class="form-card-title">Détails de l'offre</div>
+        <div class="form-card-subtitle">Matière, fréquence, durée et budget</div>
+      </div>
+    </div>
+
+    <!-- Matières (cases à cocher — IDs à adapter selon votre base) -->
+    <div class="form-group">
+      <label class="form-label">Matière(s) <span class="req">*</span></label>
+      <div class="matieres-grid">
+        <select name="" id="" (change)="toggleMatiere($event)">
+            <option value="">--Selectionner la matiere--</option>
+            @for (m of listMatiere(); track $index) {
+                <option value="{{m.id}}">{{m.intitule}}</option>
+            }
+        </select>
+       
+      </div>
+    </div>
+
+    <!-- Fréquence + Durée -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="frequence">Fréquence (nbre fois/semaine) <span class="req">*</span></label>
+        <input type="number" id="frequence" formControlName="frequence" class="form-input" placeholder="Ex : 3" min="1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="duree">Durée des séances (en heures) <span class="req">*</span></label>
+        <input type="number" id="duree" formControlName="duree" class="form-input" placeholder="Ex : 2" min="1" />
+      </div>
+    </div>
+
+    <!-- Budget -->
+    <div class="form-group">
+      <label class="form-label" for="budget">Budget <span class="req">*</span></label>
+      <div class="input-number-wrap">
+        <input type="number" id="budget" formControlName="budget" class="form-input"
+               min="15000" max="100000" step="500" placeholder="Ex : 25000" />
+        <span class="input-number-unit">FCFA / h</span>
+      </div>
+      <span class="form-hint">Montant souhaité</span>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label class="form-label" for="description">Description du besoin <span class="req">*</span></label>
+      <textarea id="description" class="form-textarea" formControlName="bio"
+        placeholder="Ex : Mon fils est en Terminale C et a des difficultés en intégrales et en suites numériques. Il passe le BAC en juin. Nous cherchons un répétiteur patient et disponible les week-ends à Douala…"></textarea>
+      <span class="form-hint">Plus vous êtes précis, plus les répétiteurs pourront répondre à votre besoin</span>
+    </div>
+
+  </div>
+  <!-- fin bloc 1 -->
+
+
+  <!-- ── BLOC 2 : Informations du parent & Compte ── -->
+  <div class="compte-card">
+    <div class="compte-inner">
+
+      <div class="compte-header">
+        <div class="compte-icon">👤</div>
+        <div>
+          <div class="compte-title">Vos informations &amp; création de compte</div>
+          <div class="compte-subtitle">Ces informations restent strictement confidentielles</div>
+        </div>
+      </div>
+
+      <!-- Nom complet -->
+      <div class="form-group">
+        <label class="form-label" for="nom_complet">Nom complet <span class="req">*</span></label>
+        <input id="nom_complet" formControlName="nomComplet" type="text" class="form-input"
+               placeholder="Ex : Marie-Claire Nkeng Fouda" />
+      </div>
+
+      <!-- Téléphone + Email -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="telephone">Téléphone <span class="req">*</span></label>
+          <input id="telephone" formControlName="telephone" type="tel" class="form-input"
+                 placeholder="Ex : 691 23 45 67" />
+          <span class="form-hint">MTN / Orange / Camtel</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse email <span class="req">*</span></label>
+          <input id="email" formControlName="email" type="email" class="form-input"
+                 placeholder="votre@email.com" />
+          <span class="form-hint">Pour recevoir les confirmations</span>
+        </div>
+      </div>
+
+      <!-- Ville (localisation) + Profession -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="localisation">Ville / Quartier <span class="req">*</span></label>
+          <input id="localisation" formControlName="localisation" type="text" class="form-input"
+                 placeholder="Ex : Douala, Bonapriso" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="profession">Profession <span class="req">*</span></label>
+          <input id="profession" formControlName="profession" type="text" class="form-input"
+                 placeholder="Ex : Ingénieure, Commerçant…" />
+        </div>
+      </div>
+
+      <!-- Mot de passe + Confirmation -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe <span class="req">*</span></label>
+          <input id="password" type="password" class="form-input"
+                 placeholder="Minimum 8 caractères"
+                 (input)="passwordChange($event)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password2">Confirmer le mot de passe <span class="req">*</span></label>
+          <input id="password2" type="password" class="form-input"
+                 placeholder="Répétez le mot de passe"
+                 (input)="confirmPasswordChange($event)" />
+        </div>
+      </div>
+
+      <!-- Message d'erreur mot de passe -->
+      @if (showErrormessage()) {
+        <div class="error-message" style="color:red; font-size:13px; margin-top:-8px; margin-bottom:8px;">
+          ⚠️ {{ messageErrorPassword() }}
+        </div>
+      }
+
+      <!-- Upload Photo de profil -->
+      <div class="form-group">
+        <label class="form-label">Photo de profil <span class="req">*</span></label>
+        <div class="upload-id-wrapper">
+          <div class="upload-id-left">
+            @if (fetchPhotoState()) {
+              <img [src]="fetchPhotoUrl()" alt="Aperçu photo" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" />
+            } @else {
+              <div class="upload-id-icon">🖼️</div>
+            }
+            <div>
+              <div class="upload-id-title">
+                {{ fetchPhotoState() ? photoFileName() : 'Téléverser votre photo de profil' }}
+              </div>
+              <div class="upload-id-sub">JPG ou PNG · Max 5 Mo</div>
+            </div>
+          </div>
+          <label for="photo-input" class="upload-id-btn">📎 Choisir un fichier</label>
+          <input type="file" id="photo-input" accept=".jpg,.jpeg,.png"
+                 (change)="selectPhotoUploaded($event)" style="display:none;" />
+        </div>
+      </div>
+
+      <!-- Upload CNI -->
+      <div class="form-group">
+        <label class="form-label">Carte Nationale d'Identité <span class="req">*</span></label>
+        <div class="upload-id-wrapper">
+          <div class="upload-id-left">
+            <div class="upload-id-icon">🪪</div>
+            <div>
+              <div class="upload-id-title">
+                {{ showCNIName() || 'Téléverser votre pièce d\'identité' }}
+              </div>
+              <div class="upload-id-sub">CNI recto-verso · JPG, PNG ou PDF · Max 5 Mo</div>
+            </div>
+          </div>
+          <label for="cni-input" class="upload-id-btn">📎 Choisir un fichier</label>
+          <input type="file" id="cni-input" accept=".jpg,.jpeg,.png,.pdf"
+                 (change)="onSelectCNI($event)" style="display:none;" />
+        </div>
+        <span class="form-hint">Utilisée uniquement pour vérifier votre identité</span>
+      </div>
+
+      <!-- CGU -->
+      <div class="cgu-row">
+        <input type="checkbox" id="cgu" name="cgu" />
+        <label for="cgu">
+          J'accepte les <a href="#">Conditions Générales d'Utilisation</a>
+          et la <a href="#">Politique de confidentialité</a> d'Educia.
+        </label>
+      </div>
+
+      <!-- Bouton soumission -->
+      <button type="button" (click)="publierOffre()" class="btn btn-lg btn-submit">
+        🚀 Publier mon offre &amp; créer mon compte
+      </button>
+
+      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-top:16px;">
+        Déjà un compte ? <a href="login.html" style="color:#fff;font-weight:600;">Se connecter</a>
+      </p>
+
+    </div>
+  </div>
+  <!-- fin bloc 2 -->
+
+</form>
