@@ -40,22 +40,19 @@ export const edulearnDashboard = {
         create : `${userapi}/eleve/create`,
     }, 
     OffreRepetition :{
-        all : `${repetitionapi}/offre/all`,
-        findById : `${repetitionapi}/offre/findById/`,
-        findByCode : `${repetitionapi}/offre/findByCode/`,
-        create : `${repetitionapi}/offre/create`,
+        all : `${repetitionapi}/new/offre/all`,
         createnew : `${repetitionapi}/new/offre/create`,
-        update : `${repetitionapi}/offre/update`,
-        delete : `${repetitionapi}/offre/delete/`,
-        findByParent : `${repetitionapi}/offre/all/byparent/`,
-        
-        
-        
+        //Candidature
+        Candidature:{
+            all : `${repetitionapi}/candidature/all`,
+            create : `${repetitionapi}/candidature/create`,
+            update : `${repetitionapi}/candidature/update`,
+            delete : `${repetitionapi}/candidature/delete/`,
+            
+        }, 
         //Matiere offre
-
-
         MatiereOffre : {
-            allByOffre : `${repetitionapi}/offre/matiere-offre/allbyoffre/`,
+            allByOffre : `${repetitionapi}/new/matiere-offre/allbyoffre/`,
             create : `${repetitionapi}/offre/matiere-offre/create`,
         }
     }, 

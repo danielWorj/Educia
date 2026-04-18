@@ -2862,3 +2862,103 @@ html, body {
       .login-right { padding: 24px 16px; }
       .login-card { padding: 32px 24px; border-radius: var(--radius); }
     }
+
+
+
+    .cours-layout { display:grid; grid-template-columns:280px 1fr; gap:40px; align-items:start; }
+    .sidebar {
+      background:#fff; border:1px solid var(--border); border-radius:var(--radius-xl);
+      padding:28px; position:sticky; top:calc(var(--nav-h) + 24px);
+    }
+    .sidebar-title { font-family:var(--font-display); font-weight:700; margin-bottom:16px; font-size:14px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-light); }
+    .checkbox-list { list-style:none; }
+    .checkbox-list li { padding:6px 0; }
+    .checkbox-list label { display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; }
+    .checkbox-list input[type=checkbox] { accent-color:var(--primary); width:16px; height:16px; }
+    .range-slider { width:100%; accent-color:var(--primary); }
+    .sidebar-sep { border:none; border-top:1px solid var(--border); margin:20px 0; }
+    .subject-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:12px 20px; border:1px solid var(--border); border-radius:100px;
+      font-size:14px; font-weight:500; cursor:pointer; transition:all .2s; background:#fff; margin:4px;
+    }
+    .subject-pill:hover, .subject-pill.active { border-color:var(--primary); background:var(--primary-light); color:var(--primary); }
+    .pills-row { margin-bottom:32px; }
+
+    /* ===== SUBJECT TAGS SOUS DESCRIPTION ===== */
+    .subject-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .subject-tag {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:4px 12px; border-radius:100px;
+      font-size:12px; font-weight:600;
+      background:var(--primary-light); color:var(--primary);
+      border:1px solid rgba(10,79,255,0.15);
+    }
+
+    /* ===== BOUTONS CARTE ===== */
+    .card-actions { display:flex; gap:8px; flex-direction:column; align-items:flex-end; }
+    .btn-candidater {
+      margin-top:4px; padding:7px 16px; border-radius:8px;
+      font-size:13px; font-weight:600; cursor:pointer;
+      border:2px solid var(--primary); color:var(--primary);
+      background:transparent; transition:all .2s; white-space:nowrap;
+    }
+    .btn-candidater:hover { background:var(--primary); color:#fff; }
+
+    /* ===== MODAL OFFRE ===== */
+    .offer-modal { max-width:580px; width:95%; padding:0; border-radius:20px; overflow:hidden; }
+    .offer-modal-header {
+      background:linear-gradient(135deg,#0A4FFF,#6B8FFF);
+      padding:28px 32px 24px; color:#fff; position:relative;
+    }
+    .offer-modal-header .modal-close {
+      position:absolute; top:16px; right:16px;
+      background:rgba(255,255,255,0.2); border:none; color:#fff;
+      width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .offer-modal-header .modal-close:hover { background:rgba(255,255,255,0.35); }
+    .offer-modal-avatar {
+      width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,0.5);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:12px;
+    }
+    .offer-modal-name { font-size:1.3rem; font-weight:700; margin:0 0 4px; }
+    .offer-modal-sub { font-size:14px; opacity:.85; }
+    .offer-modal-rating { font-size:14px; margin-top:6px; opacity:.9; }
+
+    .offer-modal-body { padding:28px 32px; }
+    .offer-info-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px;
+    }
+    .offer-info-item {
+      background:#f8f9ff; border:1px solid #eef0ff; border-radius:12px;
+      padding:14px 16px;
+    }
+    .offer-info-label {
+      font-size:11px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.5px; color:var(--text-light); margin-bottom:4px;
+    }
+    .offer-info-value { font-size:15px; font-weight:600; color:var(--text); }
+
+    .offer-section-title {
+      font-size:13px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.5px; color:var(--text-light); margin:20px 0 10px;
+    }
+    .offer-description { font-size:14px; line-height:1.7; color:var(--text); }
+    .offer-subjects { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+    .offer-subject-tag {
+      padding:5px 14px; border-radius:100px; font-size:13px; font-weight:600;
+      background:var(--primary-light); color:var(--primary);
+      border:1px solid rgba(10,79,255,0.2);
+    }
+    .offer-modal-footer {
+      padding:16px 32px 28px; border-top:1px solid var(--border);
+      display:flex; gap:12px; justify-content:flex-end;
+    }
+
+    @media(max-width:900px){ .cours-layout { grid-template-columns:1fr; } .sidebar { position:static; } }
+    @media(max-width:580px){
+      .offer-info-grid { grid-template-columns:1fr; }
+      .offer-modal-body, .offer-modal-header, .offer-modal-footer { padding-left:20px; padding-right:20px; }
+    }
