@@ -62,6 +62,25 @@ export class GSupport {
 
  
 
+  fileSupport!:File ; 
+  onSelectSupportFile(photo: any): void { 
+    if (photo.target.files) {
+      let reader = new FileReader();
+      reader.readAsDataURL(photo.target.files[0]);
+      reader.onload=(event :any)=>{
+        this.fileSupport = photo.target.files[0];
+        console.log('Nom du ducoment :'+this.fileSupport.name); 
+      }
+    }
+  }
+
+  createSupport(){
+    
+  }
+   
+
+ 
+
 
 
 }

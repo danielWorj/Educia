@@ -7,7 +7,10 @@ import { TypeRessource } from "./TypeRessource";
 export interface Support{
     id:number ; 
     title : string ; 
+    resume : string; 
     prix : number ; 
+    statut : boolean ; 
+    date : string; 
     matiere : Matiere ; 
     niveau : Niveau ; 
     filiere : Filiere ; 

@@ -67,12 +67,11 @@
     </div>
   </div>
 </div>
-]]]]
- <button onclick="openModal('devenirrepetiteur')">Réserver</button>
+
 
     <div class="modal-overlay" id="devenirrepetiteur">
     <div class="modal-box">
-        <button class="modal-close" onclick="closeModal('devenirrepetiteur')">✕</button>
+        <button class="modal-close" onclick="closeModal('acheter')">✕</button>
         <span class="tag tag-green" style="margin-bottom:16px;">🎁 Gratuit</span>
         <h3>Devenir répétiteur</h3>
         <div id="repet-form-container">
@@ -80,7 +79,7 @@
         </div>
     </div>
     </div>
-uui
+
 <!-- DOCUMENT LIST -->
 <section class="doc-list-section">
   <div class="container">
@@ -100,10 +99,11 @@ uui
     <div class="doc-list" >
    @for (s of listSupport(); track $index) {
     <div class="doc-item reveal visible" (click)="openPayment(s)">
-        <div class="doc-type-badge "> <i class="fas fa-book"></i> </div>
+        <div class="doc-type-badge "> <i class="fas fa-book text-primary"></i> </div>
         
         <div class="doc-info">
         <div class="doc-title">{{s.title}}</div>
+        <div class="doc-resum">{{s.resume}}</div>
         <div class="doc-meta">
             @if (s.type.id==1) {
                 <!-- Epreuve -->
@@ -121,12 +121,22 @@ uui
         </div>
         </div>
 
-         <div class="doc-price-col">
+        <!-- <div class="doc-price-col">
+        <div class="doc-price text-info">Voir</div>
+        <button class="btn btn-info text-white btn-sm doc-buy-btn"
+                 onclick="openModal('acheter')">
+            <i class="fas fa-eye"></i> 
+            </button>
+        </div> -->
+
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error commodi molestiae quibusdam quod corrupti blanditiis quam? Quo ratione debitis praesentium.
+        <div class="doc-price-col">
         <div class="doc-price">{{ s.prix | number }} FCFA</div>
         <button class="btn btn-primary btn-sm doc-buy-btn"
-                (click)="openPayment(s); $event.stopPropagation()">
+                 onclick="openModal('acheter')">
             Acheter →
             </button>
+            
         </div>
 
     </div>
@@ -157,15 +167,13 @@ uui
   </div>
 </section>
 
-
-<div class="modal-overlay"
-     [class.open]="isModalOpen()"
-     (click)="closeOnOverlay($event)">
-  <div class="modal">
+<div class="modal-overlay" id="acheter">
+    
+    <div class="modal-box">
 
     <!-- Header -->
     <div class="modal-doc-header">
-      <button class="modal-close" (click)="closePaymentModal()">✕</button>
+      <button class="modal-close" (click)="closePaymentModal()" > <span onclick="closeModal('acheter')"> ✕</span></button>
       <span class="tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:11px;">
         {{ selectedSupport()?.type?.nom }}
       </span>
@@ -314,5 +322,6 @@ uui
       </div>
     }
 
-  </div>
+    </div>
 </div>
+

@@ -1,0 +1,229 @@
+<div class="page-body">
+
+    
+      <div class="page-title-bar fade-up">
+        <div>
+          <h1>Supports Pédagogiques</h1>
+          <div class="breadcrumb"><a href="../index.html">Accueil</a><span>›</span><span>Supports</span></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost btn-sm" data-view="table"><i class="fas fa-list"></i> Tableau</button>
+          <button class="btn btn-primary btn-sm" data-view="grid"><i class="fas fa-th"></i> Grille</button>
+          <button class="btn btn-accent" onclick="openModal('addSupportModal')"><i class="fas fa-plus"></i> Ajouter</button>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid fade-up">
+        <div class="stat-card" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+          <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+          <div><div class="stat-value" data-target="316">0</div><div class="stat-label">Total supports</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div><div class="stat-value" data-target="289">0</div><div class="stat-label">Publiés</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div><div class="stat-value" data-target="18">0</div><div class="stat-label">En révision</div></div>
+        </div>
+        <div class="stat-card" style="--stat-color:#FF6B35;--stat-bg:#FFF0EA;">
+          <div class="stat-icon"><i class="fas fa-download"></i></div>
+          <div><div class="stat-value" data-target="4820">0</div><div class="stat-label">Téléchargements</div></div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-bar fade-up">
+        <button class="filter-chip active" data-filter="all">Tous</button>
+        <button class="filter-chip" data-filter="cours">Cours</button>
+        <button class="filter-chip" data-filter="exercice">Exercices</button>
+        <button class="filter-chip" data-filter="correction">Corrections</button>
+        <button class="filter-chip" data-filter="sujet">Sujets d'examen</button>
+        <select class="form-select" style="width:auto;padding:7px 14px;font-size:13px;border-radius:100px;margin-left:auto;">
+          <option>Toutes matières</option>
+           @for (m of listMatiere(); track $index) {
+            <option>{{ m.intitule }}</option>
+           }
+        </select>
+      </div>
+
+
+      <!-- TABLE VIEW (hidden by default) -->
+      <div class="view-table fade-up">
+        <div class="card">
+          <div class="table-wrapper">
+            <table id="supportsTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" /></th>
+                  <th>Titre</th>
+                  <th>Type</th>
+                  <th>Matière</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                    @for (s of listSupport(); track $index) {
+                        <tr data-category="cours">
+                            <td><input type="checkbox"/></td>
+                            <td><div style="font-weight:600;">{{s.title}} – {{s.niveau.intitule}} {{s.filiere.intitule}}</div></td>
+                            <td>
+                                @if (s.type.id==1) {
+                                    <span class="badge badge-orange">{{s.type.nom}}</span>
+                                }
+                                @if (s.type.id==2) {
+                                    <span class="badge badge-yellow">{{s.type.nom}}</span>
+                                }
+                                @if (s.type.id==3) {
+                                    <span class="badge badge-blue">{{s.type.nom}}</span>
+                                }
+                            </td>
+                            <td>{{s.matiere.intitule}}</td>
+                            <td>
+                                @if (s.statut) {
+                                    <span class="badge badge-green">Publié</span>
+                                }
+                                @else {
+                                    <span class="badge badge-orange">Retiré</span>
+                                }
+                            </td>
+                            <td>{{s.date}}</td>
+                            <td>
+                                <div class="action-group">
+                                    <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:24px;">
+        <div class="pagination">
+          <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MODAL: Add Support -->
+<div class="modal-overlay" id="addSupportModal">
+  <div class="modal-box" >
+    <div class="modal-header">
+      <span class="modal-title">Ajouter un support pédagogique</span>
+      <button class="modal-close" data-modal-close="addSupportModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form" [formGroup]="supportFb" (ngSubmit)="createSupport()">
+        <div class="form-group">
+            <label class="form-label">Titre du support</label>
+            <input class="form-input" formControlName="title" type="text" placeholder="ex: Cours d'Algèbre – Terminale" required />
+        </div>
+        <div class="form-row">
+          
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select" required formControlName="type">
+              <option value="">Sélectionner...</option>
+                @for (t of listRessource(); track $index) {
+                    <option value="{{t.id}}">{{t.nom}}</option>
+                }
+              
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Matière</label>
+            <select class="form-select" formControlName="matiere">
+              <option>Selectionner </option>
+                @for (m of listMatiere(); track $index) {
+                     <option value="{{m.id}}">{{m.intitule}}</option>
+                }
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Niveau</label>
+            <select class="form-select" formControlName="niveau">
+              <option>Selectionner</option>
+              @for (n of listNiveau(); track $index) {
+              <option value="{{n.id}}">{{n.intitule}}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Filiere</label>
+            <select class="form-select" formControlName="filiere">
+              <option>Selectionner</option>
+              @for (f of listFiliere(); track $index) {
+              <option value="{{f.id}}">{{f.intitule}}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prix (FCFA)</label>
+            <input class="form-input" formControlName="prix" type="number" placeholder="0 = gratuit" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" formControlName="resume" placeholder="Décrivez le contenu du support..." style="min-height:80px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fichier</label>
+          <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:var(--text-light);margin-bottom:8px;display:block;"></i>
+            <div style="font-weight:600;font-size:14px;">Glissez votre fichier ici</div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:4px;">PDF, DOCX, PPT (max 10 MB)</div>
+            <input type="file"  (click)="onSelectSupportFile($event)" />
+          </div>
+        </div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('addSupportModal')">Annuler</button>
+          <button type="submit"  class="btn btn-accent"><i class="fas fa-upload"></i> Publier le support</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Support -->
+<div class="modal-overlay" id="editSupportModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <span class="modal-title">Modifier le support</span>
+      <button class="modal-close" data-modal-close="editSupportModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="admin-form">
+        <div class="form-group"><label class="form-label">Titre</label><input class="form-input" type="text" value="Cours d'Algèbre – Terminale C" required /></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select"><option selected>Cours</option><option>Exercice</option><option>Correction</option><option>Sujet d'examen</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <select class="form-select"><option selected>Publié</option><option>En révision</option><option>Archivé</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" style="min-height:80px;">Cours complet d'algèbre pour les terminales C.</textarea></div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
+          <button type="button" class="btn btn-ghost" data-modal-close="editSupportModal">Annuler</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

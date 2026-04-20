@@ -45,7 +45,7 @@ export const routes: Routes = [
    }, 
  
  // Dashboard  routes 
-  {
+   {
      path: 'admin',
      loadComponent: () => import('./Features/admin/Layout/admin-layout/admin-layout').then(m => m.AdminLayout),
      //canActivate: [authGuard],
@@ -79,7 +79,20 @@ export const routes: Routes = [
           loadComponent: () => import('./Features/admin/Super/settings/settings').then(s => s.Settings) 
           }
      ]
-  }
+   },
+  // Dashboard Enseignant 
+   {
+     path: 'admin/enseignant',
+     loadComponent: () => import('./Features/admin/Layout/admin-layout/admin-layout').then(m => m.AdminLayout),
+     //canActivate: [authGuard],
+     children: [
+          { 
+            path: 'support', 
+            loadComponent: () => import('./Features/admin/Enseignant/g-esupport/g-esupport').then(m => m.GEsupport) 
+          },
+          
+     ]
+   }
  
 ];
 
