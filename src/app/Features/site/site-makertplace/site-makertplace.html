@@ -1,1 +1,318 @@
-<p>site-makertplace works!</p>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <span class="tag" style="background:rgba(255,255,255,0.15);color:#fff;margin-bottom:16px;">📚 Ressources pédagogiques</span>
+    <h1>Banque des Sujets</h1>
+    <p>Épreuves officielles, corrections détaillées et supports enseignants pour tous les niveaux du programme camerounais.</p>
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" placeholder="Rechercher un sujet, une matière, un niveau…" id="searchInput">
+      <button class="btn btn-primary btn-sm" onclick="performSearch()">Rechercher</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="stats-strip-inner">
+      <div class="strip-stat">
+        <div class="strip-num">{{this.listRessource().length}}+</div>
+        <div class="strip-label">Documents disponibles</div>
+      </div>
+      <div class="strip-stat">
+        <div class="strip-num">{{this.listMatiere().length}}</div>
+        <div class="strip-label">Matières couvertes</div>
+      </div>
+      <div class="strip-stat">
+        <div class="strip-num">15 ans</div>
+        <div class="strip-label">D'archives (2009–2024)</div>
+      </div>
+      <div class="strip-stat">
+        <div class="strip-num">98%</div>
+        <div class="strip-label">Avis satisfaits</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER SECTION -->
+<div class="filter-section">
+  <div class="container">
+    <div class="filter-section-inner">
+      <span class="filter-label">Type :</span>
+      <div class="type-filters">
+        
+        <button class="type-chip active" data-type="all" (click)="reset()">
+          <span class="chip-icon">📋</span> Tous
+        </button>
+        @for (t of listRessource(); track $index) {
+            <button class="type-chip epreuve" data-type="epreuve" (click)="filterByTypeRessource(t.id)">
+                {{t.nom}}
+            </button>
+        }
+       
+      </div>
+      <div class="filter-right">
+        <span class="results-count"><strong id="countDisplay">28</strong> documents</span>
+      </div>
+    </div>
+    <div class="subject-filter-row" id="subjectFilters">
+
+      <button class="subj-chip active" data-subject="all" (click)="reset()">Toutes les matières</button>
+      @for (m of listMatiere(); track $index) {
+        <button class="subj-chip" data-subject="maths" (click)="filterByMatiere(m.id)">{{m.intitule}}</button>
+      }
+      
+    </div>
+  </div>
+</div>
+]]]]
+ <button onclick="openModal('devenirrepetiteur')">Réserver</button>
+
+    <div class="modal-overlay" id="devenirrepetiteur">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('devenirrepetiteur')">✕</button>
+        <span class="tag tag-green" style="margin-bottom:16px;">🎁 Gratuit</span>
+        <h3>Devenir répétiteur</h3>
+        <div id="repet-form-container">
+            <app-devenir-repetiteur></app-devenir-repetiteur>
+        </div>
+    </div>
+    </div>
+uui
+<!-- DOCUMENT LIST -->
+<section class="doc-list-section">
+  <div class="container">
+    <div class="list-header">
+      <h3 id="listTitle">Tous les documents</h3>
+      <select class="sort-select" onchange="sortDocuments(this.value)">
+        <option value="recent">Plus récents</option>
+        <option value="price-asc">Prix croissant</option>
+        <option value="price-desc">Prix décroissant</option>
+        <option value="popular">Plus populaires</option>
+      </select>
+    </div>
+
+   
+
+
+    <div class="doc-list" >
+   @for (s of listSupport(); track $index) {
+    <div class="doc-item reveal visible" (click)="openPayment(s)">
+        <div class="doc-type-badge "> <i class="fas fa-book"></i> </div>
+        
+        <div class="doc-info">
+        <div class="doc-title">{{s.title}}</div>
+        <div class="doc-meta">
+            @if (s.type.id==1) {
+                <!-- Epreuve -->
+                <span class="doc-tag epreuve">{{s.type.nom}}</span>
+            }
+            @if (s.type.id==2) {
+                <!-- Corrections -->
+                <span class="doc-tag corrections">{{s.type.nom}}</span>
+            }
+             @if (s.type.id==3) {
+                <!-- Epreuve -->
+                <span class="doc-tag enseignant">{{s.type.nom}}</span>
+            }
+            <span class="doc-level">{{s.niveau.intitule}}: {{s.filiere.intitule}}</span>
+        </div>
+        </div>
+
+         <div class="doc-price-col">
+        <div class="doc-price">{{ s.prix | number }} FCFA</div>
+        <button class="btn btn-primary btn-sm doc-buy-btn"
+                (click)="openPayment(s); $event.stopPropagation()">
+            Acheter →
+            </button>
+        </div>
+
+    </div>
+    }@empty {
+        <div class="empty-state visible " id="emptyState">
+            <div class="empty-icon">🔍</div>
+            <h3>Aucun document trouvé</h3>
+            <p>Essayez de modifier vos filtres ou votre recherche.</p>
+        </div>
+      }
+    </div>
+
+    
+
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="container" style="position:relative;z-index:1;">
+    <span class="tag" style="background:rgba(255,255,255,0.15);color:#fff;">Pour les enseignants</span>
+    <h2>Publiez vos propres supports</h2>
+    <p>Vous êtes enseignant ? Partagez vos épreuves et corrections et gagnez de l'argent sur chaque téléchargement.</p>
+    <div class="btn-group">
+      <a href="enseignants.html" class="btn btn-white btn-lg">Devenir contributeur</a>
+      <a href="contact.html" class="btn btn-accent btn-lg">Nous contacter</a>
+    </div>
+  </div>
+</section>
+
+
+<div class="modal-overlay"
+     [class.open]="isModalOpen()"
+     (click)="closeOnOverlay($event)">
+  <div class="modal">
+
+    <!-- Header -->
+    <div class="modal-doc-header">
+      <button class="modal-close" (click)="closePaymentModal()">✕</button>
+      <span class="tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:11px;">
+        {{ selectedSupport()?.type?.nom }}
+      </span>
+      <div class="modal-doc-title">{{ selectedSupport()?.title }}</div>
+      <div class="modal-doc-meta">
+        {{ selectedSupport()?.niveau?.intitule }} · {{ selectedSupport()?.filiere?.intitule }}
+      </div>
+      <div class="modal-doc-price-row">
+        <span class="modal-doc-price-label">Prix d'achat</span>
+        <span class="modal-doc-price-val">{{ selectedSupport()?.prix | number }} FCFA</span>
+      </div>
+    </div>
+
+    <!-- Flux d'achat -->
+    @if (!showSuccess()) {
+      <div class="modal-body">
+        <div class="modal-section-title">Choisir le moyen de paiement</div>
+
+        <div class="payment-options">
+
+          <!-- Carte bancaire -->
+          <label class="payment-option"
+                 [class.selected]="selectedPayment() === 'card'"
+                 (click)="selectPayment('card')">
+            <div class="payment-logo card">VISA<br>MC</div>
+            <div class="payment-info">
+              <div class="payment-name">Carte Bancaire</div>
+              <div class="payment-desc">Visa, Mastercard – Paiement sécurisé SSL</div>
+            </div>
+            <div class="payment-check">
+              @if (selectedPayment() === 'card') { ✓ }
+            </div>
+          </label>
+
+          <!-- Orange Money -->
+          <label class="payment-option"
+                 [class.selected]="selectedPayment() === 'orange'"
+                 (click)="selectPayment('orange')">
+            <div class="payment-logo orange">🟠</div>
+            <div class="payment-info">
+              <div class="payment-name">Orange Money</div>
+              <div class="payment-desc">Paiement instantané via Orange Cameroun</div>
+            </div>
+            <div class="payment-check">
+              @if (selectedPayment() === 'orange') { ✓ }
+            </div>
+          </label>
+
+          <!-- MTN Money -->
+          <label class="payment-option"
+                 [class.selected]="selectedPayment() === 'mtn'"
+                 (click)="selectPayment('mtn')">
+            <div class="payment-logo mtn">💛</div>
+            <div class="payment-info">
+              <div class="payment-name">MTN Mobile Money</div>
+              <div class="payment-desc">Paiement instantané via MTN Cameroun</div>
+            </div>
+            <div class="payment-check">
+              @if (selectedPayment() === 'mtn') { ✓ }
+            </div>
+          </label>
+
+        </div>
+
+        <!-- Numéro de téléphone (Orange / MTN) -->
+        @if (showPhoneStep()) {
+          <div class="phone-step visible">
+            <div class="modal-section-title">{{ phoneStepLabel() }}</div>
+            <div class="form-group" style="margin-bottom:0">
+              <div class="phone-input-group">
+                <span class="phone-prefix">🇨🇲 +237</span>
+                <input type="tel" class="phone-input"
+                       placeholder="6XX XXX XXX"
+                       maxlength="9"
+                       (input)="onPhoneInput($event)">
+              </div>
+              <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+                💡 Vous recevrez une demande de confirmation sur votre téléphone.
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Champs carte bancaire -->
+        @if (showCardStep()) {
+          <div class="card-step visible">
+            <div class="modal-section-title">Informations de carte</div>
+            <div class="form-group">
+              <label class="form-label">Numéro de carte</label>
+              <input type="text" class="form-input"
+                     placeholder="1234 5678 9012 3456"
+                     maxlength="19"
+                     (input)="onCardNumberInput($event)">
+            </div>
+            <div class="card-row">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Expiration</label>
+                <input type="text" class="form-input"
+                       placeholder="MM/AA"
+                       maxlength="5"
+                       (input)="onCardExpiryInput($event)">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-input"
+                       placeholder="•••"
+                       maxlength="3"
+                       (input)="onCardCvvInput($event)">
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="confirm-btn-wrap">
+          <button class="btn btn-primary btn-lg"
+                  [disabled]="confirmDisabled || isProcessing()"
+                  (click)="confirmPayment()">
+            @if (isProcessing()) {
+              ⏳ Traitement en cours…
+            } @else {
+              🔒 Confirmer le paiement
+            }
+          </button>
+        </div>
+        <div class="security-note">
+          🔐 Paiement 100% sécurisé · Données chiffrées SSL
+        </div>
+      </div>
+    }
+
+    <!-- Écran succès -->
+    @if (showSuccess()) {
+      <div class="success-screen visible">
+        <div class="success-icon">✅</div>
+        <h3>Paiement réussi !</h3>
+        <p>Votre document est prêt. Téléchargez-le maintenant ou retrouvez-le dans votre espace personnel.</p>
+        <button class="btn btn-primary btn-lg download-btn" (click)="closePaymentModal()">
+          ⬇️ Télécharger le document
+        </button>
+        <div style="margin-top:16px;">
+          <a (click)="closePaymentModal()"
+             style="font-size:13px;color:var(--text-light);text-decoration:none;cursor:pointer;">
+            Retour à la liste
+          </a>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

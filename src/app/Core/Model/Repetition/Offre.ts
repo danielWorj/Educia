@@ -1,3 +1,4 @@
+import { Niveau } from "../Academie/Niveau";
 import { Parent } from "../Utilisateur/Parents";
 import { MatiereOffre } from "./MatiereOffre";
 
@@ -8,6 +9,7 @@ export interface Offre {
   frequence: number;
   duree: string;
   parent: Parent; 
+  niveau : Niveau; 
 
 }
 

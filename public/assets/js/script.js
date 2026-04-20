@@ -337,4 +337,210 @@ document.addEventListener('DOMContentLoaded', () => {
 
   } // end if settingsTabBar
 
+  // ===========================
+  // ===== COURS / OFFRES =====
+  // ===========================
+
+  // ===== DONNÉES DES OFFRES =====
+  const offres = {
+    amelie: {
+      initiales: 'AK',
+      gradient: 'linear-gradient(135deg,#0A4FFF,#6B8FFF)',
+      nom: 'Amélie Kamdem',
+      sub: 'Mathématiques · Physique · Douala',
+      rating: '★★★★★ 5.0 · 87 avis',
+      description: 'Docteure en Mathématiques avec 8 ans d\'expérience dans l\'enseignement secondaire et supérieur. Spécialisée dans la préparation au BAC (Terminale C et D), je propose des séances intensives et personnalisées pour combler les lacunes et renforcer la confiance des élèves en mathématiques et en physique.',
+      matieres: ['➕ Mathématiques', '⚗️ Physique', '📐 Géométrie', '📊 Statistiques'],
+      budget: '3 500 FCFA / heure',
+      duree: '1h30 par séance',
+      frequence: '2 séances / semaine',
+      localisation: 'Douala – Akwa & en ligne (Zoom)'
+    },
+    paul: {
+      initiales: 'PN',
+      gradient: 'linear-gradient(135deg,#FF6B35,#FFB347)',
+      nom: 'Paul Nguele',
+      sub: 'Français · Littérature · Yaoundé',
+      rating: '★★★★★ 4.9 · 62 avis',
+      description: 'Professeur certifié de Lettres Modernes avec 12 ans d\'expérience, j\'aide les élèves à maîtriser la dissertation, la rédaction et l\'expression orale pour le BAC. Ma méthode est progressive et bienveillante, adaptée à chaque profil d\'élève.',
+      matieres: ['🇫🇷 Français', '📚 Littérature', '✍️ Dissertation', '🎤 Expression orale'],
+      budget: '2 500 FCFA / heure',
+      duree: '2h par séance',
+      frequence: '3 séances / semaine',
+      localisation: 'Yaoundé – Bastos & présentiel à domicile'
+    },
+    marie: {
+      initiales: 'MB',
+      gradient: 'linear-gradient(135deg,#22C55E,#86EFAC)',
+      nom: 'Marie Bello',
+      sub: 'Anglais · Communication · Bafoussam',
+      rating: '★★★★★ 4.8 · 54 avis',
+      description: 'Traductrice bilingue certifiée Cambridge (C2), je prépare mes élèves aux certifications internationales TOEIC et IELTS ainsi qu\'à l\'anglais professionnel et académique. Cours dynamiques avec supports audio, vidéo et simulations d\'examens.',
+      matieres: ['🇬🇧 Anglais', '💬 Communication', '📝 TOEIC / IELTS', '🌍 Anglais professionnel'],
+      budget: '3 000 FCFA / heure',
+      duree: '1h par séance',
+      frequence: '2 séances / semaine',
+      localisation: 'Bafoussam – En ligne (Google Meet)'
+    },
+    francis: {
+      initiales: 'FT',
+      gradient: 'linear-gradient(135deg,#8B5CF6,#C4B5FD)',
+      nom: 'Francis Talla',
+      sub: 'Informatique · Python · Douala',
+      rating: '★★★★☆ 4.6 · 38 avis',
+      description: 'Ingénieur logiciel avec 5 ans d\'expérience en développement et en enseignement, je donne des cours d\'informatique adaptés du lycée à l\'université. Mon approche est axée sur la pratique : algorithmique, programmation Python, et projets concrets guidés.',
+      matieres: ['💻 Informatique', '🐍 Python', '🔢 Algorithmique', '🛠️ Programmation'],
+      budget: '4 000 FCFA / heure',
+      duree: '2h par séance',
+      frequence: '2 séances / semaine',
+      localisation: 'Douala – Bonanjo & en ligne (Teams)'
+    }
+  };
+
+  // ===== OUVRIR LE MODAL OFFRE =====
+  window.openOfferModal = function(id) {
+    const o = offres[id];
+    if (!o) return;
+
+    document.getElementById('offerModalAvatar').textContent = o.initiales;
+    document.getElementById('offerModalAvatar').style.background = o.gradient;
+    document.getElementById('offerModalHeader').style.background = o.gradient;
+    document.getElementById('offerModalName').textContent = o.nom;
+    document.getElementById('offerModalSub').textContent = o.sub;
+    document.getElementById('offerModalRating').textContent = o.rating;
+
+    document.getElementById('offerModalDesc').textContent = o.description;
+    const subjectsEl = document.getElementById('offerModalSubjects');
+    subjectsEl.innerHTML = o.matieres.map(m =>
+      `<span class="offer-subject-tag">${m}</span>`
+    ).join('');
+
+    document.getElementById('offerModalBudget').textContent = o.budget;
+    document.getElementById('offerModalDuree').textContent = o.duree;
+    document.getElementById('offerModalFreq').textContent = o.frequence;
+    document.getElementById('offerModalLoc').textContent = o.localisation;
+
+    document.getElementById('offerPostulerBtn').onclick = () => {
+      closeModal('offerModal');
+      document.getElementById('postuleModalName').textContent = o.nom;
+      openModal('postuleModal');
+    };
+
+    openModal('offerModal');
+  };
+
+  // ===== PILLS MATIÈRES (filtre visuel) =====
+  document.querySelectorAll('.subject-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.subject-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
 });
+
+
+ /* ===== PAYMENT MODAL ===== */
+  function openPayment(id) {
+    currentDoc = documents.find(d => d.id === id);
+    if (!currentDoc) return;
+
+    // Fill header
+    const typeNames = { epreuve: '📝 Épreuve', correction: '✅ Correction', enseignant: '👨‍🏫 Support enseignant' };
+    document.getElementById('modalDocType').textContent = typeNames[currentDoc.type];
+    document.getElementById('modalDocTitle').textContent = currentDoc.title;
+    document.getElementById('modalDocMeta').textContent = `${currentDoc.level} · ${currentDoc.year} · ${currentDoc.pages} pages`;
+    document.getElementById('modalDocPrice').textContent = currentDoc.price.toLocaleString('fr-FR') + ' FCFA';
+
+    // Reset state
+    selectedPayment = null;
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.payment-check').forEach(c => { c.textContent = ''; });
+    document.getElementById('phoneStep').classList.remove('visible');
+    document.getElementById('cardStep').classList.remove('visible');
+    document.getElementById('confirmBtn').disabled = true;
+    document.getElementById('purchaseFlow').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('visible');
+    document.getElementById('phoneInput').value = '';
+    if (document.getElementById('cardNumber')) document.getElementById('cardNumber').value = '';
+
+    document.getElementById('paymentModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePaymentModal() {
+    document.getElementById('paymentModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on overlay click
+  document.getElementById('paymentModal').addEventListener('click', function(e) {
+    if (e.target === this) closePaymentModal();
+  });
+
+  function selectPayment(type, el) {
+    selectedPayment = type;
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.payment-check').forEach(c => { c.textContent = ''; });
+    el.classList.add('selected');
+    document.getElementById('check-' + type).textContent = '✓';
+
+    // Show appropriate input
+    document.getElementById('phoneStep').classList.remove('visible');
+    document.getElementById('cardStep').classList.remove('visible');
+    document.getElementById('confirmBtn').disabled = false;
+
+    if (type === 'orange') {
+      document.getElementById('phoneStepLabel').textContent = 'Votre numéro Orange Money';
+      document.getElementById('phoneStep').classList.add('visible');
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('phoneInput').oninput = checkPhoneValid;
+    } else if (type === 'mtn') {
+      document.getElementById('phoneStepLabel').textContent = 'Votre numéro MTN Mobile Money';
+      document.getElementById('phoneStep').classList.add('visible');
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('phoneInput').oninput = checkPhoneValid;
+    } else if (type === 'card') {
+      document.getElementById('cardStep').classList.add('visible');
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('cardNumber').oninput = checkCardValid;
+      document.getElementById('cardExpiry').oninput = checkCardValid;
+      document.getElementById('cardCvv').oninput = checkCardValid;
+    }
+  }
+
+  function checkPhoneValid() {
+    const val = document.getElementById('phoneInput').value.replace(/\D/g,'');
+    document.getElementById('confirmBtn').disabled = val.length < 9;
+  }
+
+  function checkCardValid() {
+    const num = document.getElementById('cardNumber').value.replace(/\s/g,'');
+    const exp = document.getElementById('cardExpiry').value;
+    const cvv = document.getElementById('cardCvv').value;
+    document.getElementById('confirmBtn').disabled = !(num.length >= 16 && exp.length === 5 && cvv.length === 3);
+  }
+
+  function formatCard(input) {
+    let v = input.value.replace(/\D/g,'').slice(0,16);
+    input.value = v.match(/.{1,4}/g)?.join(' ') || v;
+    checkCardValid();
+  }
+
+  function formatExpiry(input) {
+    let v = input.value.replace(/\D/g,'');
+    if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+    input.value = v;
+    checkCardValid();
+  }
+
+  function confirmPayment() {
+    const btn = document.getElementById('confirmBtn');
+    btn.textContent = '⏳ Traitement en cours…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('purchaseFlow').style.display = 'none';
+      document.getElementById('successScreen').classList.add('visible');
+    }, 2000);
+  }

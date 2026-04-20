@@ -5,6 +5,8 @@ import { Matiere } from '../../../../../Core/Model/Academie/Matiere';
 import { Genseignant } from '../../../../admin/Super/genseignant/genseignant';
 import { GeneralService } from '../../../../../Core/Service/General/general-service';
 import { ResponseServer } from '../../../../../Core/Model/Server/ResponseServer';
+import { Niveau } from '../../../../../Core/Model/Academie/Niveau';
+import { Section } from '../../../../../Core/Model/Academie/Section';
 
 @Component({
   selector: 'app-trouver-repetiteur',
@@ -24,6 +26,7 @@ export class TrouverRepetiteur {
       email: new FormControl(''),
       localisation: new FormControl(''),
       profession: new FormControl(''),
+      niveau: new FormControl(''),
 
       // Détails de l'offre
       bio: new FormControl(''),
@@ -34,6 +37,7 @@ export class TrouverRepetiteur {
 
 
     this.getAllMatiere(); 
+    this.getAllNiveau()
   }
 
   // ── Fichiers ──────────────────────────────────────────────
@@ -185,5 +189,22 @@ export class TrouverRepetiteur {
         alert('Erreur serveur. Veuillez réessayer.');
       }
     });
+  }
+
+
+  listNiveau = signal<Niveau[]>([]); 
+  getAllNiveau(){
+    this.generalService.findAllNiveau().subscribe({
+      next:(data:Niveau[])=>{
+        this.listNiveau.set(data); 
+      }
+    }); 
+  }
+
+  listSection = signal<Section[]>([]); 
+  getAllSection(){
+    for(const n of this.listNiveau()){
+      this.listSection().push(n.section); 
+    }
   }
 }

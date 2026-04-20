@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ResponseServer } from '../../Model/Server/ResponseServer';
 import { edulearnDashboard } from '../../Constant/EndPoints';
 import { TypeRessource } from '../../Model/MarketPlace/TypeRessource';
+import { Support } from '../../Model/MarketPlace/Support';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,13 @@ export class MarketPlaceService {
   constructor(private http: HttpClient) {}
 
   // Example method to fetch marketplace items
-  findMarketplaceItems():Observable<Ressource[]> {
-    return this.http.get<Ressource[]>(edulearnDashboard.MarketPlace.all);
+  findMarketplaceItems():Observable<Support[]> {
+    return this.http.get<Support[]>(edulearnDashboard.MarketPlace.all);
   }
 
+  findMarketplaceItemById(id:number):Observable<Support> {
+    return this.http.get<Support>(edulearnDashboard.MarketPlace.findbyid+id);
+  }
   createMarketplaceItem(request: any): Observable<ResponseServer> {
     return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.create, request);
   }
@@ -25,6 +29,14 @@ export class MarketPlaceService {
     return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.create, request);
   }
 
+  deleteMarketplaceItem(id:number): Observable<ResponseServer> {
+    return this.http.get<ResponseServer>(edulearnDashboard.MarketPlace.delete+id);
+  }
+
+
+
+
+  //ressource
   findAllTypeRessource():Observable<TypeRessource[]> {
     return this.http.get<TypeRessource[]>(edulearnDashboard.MarketPlace.allType);
   }

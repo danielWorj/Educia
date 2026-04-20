@@ -79,8 +79,11 @@ export const edulearnDashboard = {
     }, 
     
     MarketPlace :{
-        all : `${marketplaceapi}/all`,
-        create : `${marketplaceapi}/create`,
+        all : `${marketplaceapi}/new/all`,
+        findbyid : `${marketplaceapi}/new/findbyid/`,
+        create : `${marketplaceapi}/new/create`,
+        update: `${marketplaceapi}/new/update`,
+        delete: `${marketplaceapi}/new/delete/`,
         allType : `${marketplaceapi}/typeRessource/all`,
     }, 
     

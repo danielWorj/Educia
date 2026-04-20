@@ -9,6 +9,19 @@
         <div class="form-card-subtitle">Matière, fréquence, durée et budget</div>
       </div>
     </div>
+    <!-- Niveau -->
+    <div class="form-group">
+    <label class="form-label">Niveau <span class="req">*</span></label>
+    <div class="matieres-grid">
+      <select name="" id="" formControlName="niveau">
+          <option value="">--Selectionner le niveau--</option>
+          @for (n of listNiveau(); track $index) {
+              <option value="{{n.id}}">{{n.intitule}}</option>
+          }
+      </select>
+      
+    </div>
+    </div>
 
     <!-- Matières (cases à cocher — IDs à adapter selon votre base) -->
     <div class="form-group">
