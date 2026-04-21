@@ -93,7 +93,7 @@
                             <td>{{s.date}}</td>
                             <td>
                                 <div class="action-group">
-                                    <button class="btn btn-ghost btn-sm btn-icon" data-modal-open="editSupportModal"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-ghost btn-sm btn-icon" onclick="openModal('editSupportModal')" (click)="editSupport(s)"><i class="fas fa-edit"></i></button>
                                     <button class="btn btn-danger btn-sm btn-icon" data-confirm-delete><i class="fas fa-trash"></i></button>
                                 </div>
                             </td>
@@ -186,7 +186,7 @@
             <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:var(--text-light);margin-bottom:8px;display:block;"></i>
             <div style="font-weight:600;font-size:14px;">Glissez votre fichier ici</div>
             <div style="font-size:12px;color:var(--text-light);margin-top:4px;">PDF, DOCX, PPT (max 10 MB)</div>
-            <input type="file"  (click)="onSelectSupportFile($event)" />
+            <input type="file"  (change)="onSelectSupportFile($event)" />
           </div>
         </div>
         <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
@@ -200,10 +200,10 @@
 
 <!-- MODAL: Edit Support -->
 <div class="modal-overlay" id="editSupportModal">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal-box" >
     <div class="modal-header">
       <span class="modal-title">Modifier le support</span>
-      <button class="modal-close" data-modal-close="editSupportModal">✕</button>
+      <button class="modal-close" onclick="closeModal('editSupportModal')">✕</button>
     </div>
     <div class="modal-body">
       <form class="admin-form">

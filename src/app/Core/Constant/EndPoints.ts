@@ -45,6 +45,8 @@ export const edulearnDashboard = {
         //Candidature
         Candidature:{
             all : `${repetitionapi}/candidature/all`,
+            allByOffre : `${repetitionapi}/candidature/allbyoffre/`,
+            allByEnseignant : `${repetitionapi}/candidature/allbyenseignant/`,
             create : `${repetitionapi}/candidature/create`,
             update : `${repetitionapi}/candidature/update`,
             delete : `${repetitionapi}/candidature/delete/`,
@@ -210,3 +212,5 @@ export const edulearnDashboard = {
     }
 
 }
+
+export const imageStoreUrl = "http://localhost:4200/assets/file/support/";

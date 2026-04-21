@@ -24,6 +24,7 @@ export class GEsupport {
       id: new FormControl(),
       title: new FormControl(),
       prix: new FormControl(),
+      resume : new FormControl(),
       matiere: new FormControl(),
       niveau: new FormControl(),
       filiere: new FormControl(),
@@ -72,6 +73,13 @@ export class GEsupport {
     }); 
   }
 
+  selectSupport = signal<Support | null>(null);
+  editSupport(support: Support){
+    this.selectSupport.set(support);
+    this.supportFb.patchValue(support);
+  }
+
+
   listNiveau = signal<Filiere[]>([]); 
   listFiliere = signal<Filiere[]>([]); 
   dataToForm(){
@@ -103,14 +111,11 @@ export class GEsupport {
  
 
   fileSupport!:File ; 
-  onSelectSupportFile(photo: any): void { 
-    if (photo.target.files) {
-      let reader = new FileReader();
-      reader.readAsDataURL(photo.target.files[0]);
-      reader.onload=(event :any)=>{
-        this.fileSupport = photo.target.files[0];
-        console.log('Nom du ducoment :'+this.fileSupport.name); 
-      }
+  onSelectSupportFile(event: any): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.fileSupport = file;
+      console.log('Nom du document : ' + this.fileSupport.name);
     }
   }
 
@@ -135,6 +140,6 @@ export class GEsupport {
         error:()=>{
           console.log('Erreur ed creation du support');
         }
-      })
+      }); 
   }
 }

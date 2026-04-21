@@ -14,6 +14,7 @@ export interface Support{
     matiere : Matiere ; 
     niveau : Niveau ; 
     filiere : Filiere ; 
+    file : string; 
     type:TypeRessource; 
     enseignant : Enseignant; 
 }

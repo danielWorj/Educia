@@ -140,6 +140,7 @@
     .doc-type-badge.correction { background: var(--green-light); }
     .doc-type-badge.enseignant { background: var(--accent-light); }
 
+  
     .doc-info { flex: 1; min-width: 0; }
     .doc-title {
       font-family: var(--font-display);
@@ -462,6 +463,223 @@
       .strip-stat { border-right: none; }
       .doc-title { font-size: 13px; }
     }
+
+      .doc-resum {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 600px;
+    }
+
+    /* ============================================================ */
+/* AJOUTER À LA FIN DE site-makertplace.css                     */
+/* ============================================================ */
+
+/* --- Bouton Aperçu dans la liste --- */
+.doc-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.doc-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.doc-view-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* --- Modal overlay Visualiser --- */
+.visualiser-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.visualiser-overlay.open {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --- Modal box --- */
+.visualiser-modal-box {
+  width: 100%;
+  max-width: 780px;
+  max-height: 92vh;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08);
+  animation: slideUp 0.25s cubic-bezier(0.34,1.2,0.64,1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- Header du modal --- */
+.visualiser-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.visualiser-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.visualiser-header-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.visualiser-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.visualiser-resume {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.visualiser-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.visualiser-prix {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.visualiser-prix span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.visualiser-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-soft);
+  color: var(--text-mid);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+
+.visualiser-close-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* --- Zone aperçu --- */
+.visualiser-preview-area {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.visualiser-preview-area app-visualiser-pdf,
+.visualiser-preview-area app-visualiser-docx,
+.visualiser-preview-area app-visualiser-img {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* --- Fallback type inconnu --- */
+.visualiser-unknown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.visualiser-unknown-icon { font-size: 3rem; }
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .visualiser-modal-box { border-radius: 14px; max-height: 96vh; }
+  .visualiser-header { padding: 14px 16px 12px; }
+  .visualiser-title { font-size: 0.95rem; }
+  .visualiser-header-right { gap: 6px; }
+  .visualiser-prix { font-size: 1.1rem; }
+  .doc-actions-group { flex-direction: row; align-items: center; }
+}
 
 
     

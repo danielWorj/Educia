@@ -98,48 +98,47 @@
 
     <div class="doc-list" >
    @for (s of listSupport(); track $index) {
-    <div class="doc-item reveal visible" (click)="openPayment(s)">
-        <div class="doc-type-badge "> <i class="fas fa-book text-primary"></i> </div>
-        
-        <div class="doc-info">
+    <div class="doc-item reveal visible" >
+      <div class="doc-type-badge">
+        <i class="fas fa-book text-primary"></i>
+      </div>
+    
+      <div class="doc-info">
         <div class="doc-title">{{s.title}}</div>
         <div class="doc-resum">{{s.resume}}</div>
         <div class="doc-meta">
-            @if (s.type.id==1) {
-                <!-- Epreuve -->
-                <span class="doc-tag epreuve">{{s.type.nom}}</span>
-            }
-            @if (s.type.id==2) {
-                <!-- Corrections -->
-                <span class="doc-tag corrections">{{s.type.nom}}</span>
-            }
-             @if (s.type.id==3) {
-                <!-- Epreuve -->
-                <span class="doc-tag enseignant">{{s.type.nom}}</span>
-            }
-            <span class="doc-level">{{s.niveau.intitule}}: {{s.filiere.intitule}}</span>
+          @if (s.type.id==1) {
+            <span class="doc-tag epreuve">{{s.type.nom}}</span>
+          }
+          @if (s.type.id==2) {
+            <span class="doc-tag corrections">{{s.type.nom}}</span>
+          }
+          @if (s.type.id==3) {
+            <span class="doc-tag enseignant">{{s.type.nom}}</span>
+          }
+          <span class="doc-level">{{s.niveau.intitule}}: {{s.filiere.intitule}}</span>
         </div>
-        </div>
-
-        <!-- <div class="doc-price-col">
-        <div class="doc-price text-info">Voir</div>
-        <button class="btn btn-info text-white btn-sm doc-buy-btn"
-                 onclick="openModal('acheter')">
-            <i class="fas fa-eye"></i> 
-            </button>
-        </div> -->
-
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error commodi molestiae quibusdam quod corrupti blanditiis quam? Quo ratione debitis praesentium.
-        <div class="doc-price-col">
+      </div>
+    
+      <div class="doc-price-col">
         <div class="doc-price">{{ s.prix | number }} FCFA</div>
-        <button class="btn btn-primary btn-sm doc-buy-btn"
-                 onclick="openModal('acheter')">
+        <div class="doc-actions-group">
+          <!-- Bouton Visualiser -->
+          <button class="btn btn-ghost btn-sm doc-view-btn" (click)="openVisualiser(s)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Aperçu
+          </button>
+          <!-- Bouton Acheter -->
+          <button class="btn btn-primary btn-sm doc-buy-btn" (click)="openPayment(s)">
             Acheter →
-            </button>
-            
+          </button>
         </div>
-
+      </div>
     </div>
+ 
     }@empty {
         <div class="empty-state visible " id="emptyState">
             <div class="empty-icon">🔍</div>
@@ -325,3 +324,64 @@
     </div>
 </div>
 
+
+<div class="modal-overlay visualiser-overlay"
+     id="visualiserModal"
+     [class.open]="isVisualiserOpen()"
+     (click)="closeVisualiserOnOverlay($event)">
+ 
+  <div class="visualiser-modal-box">
+ 
+    <!-- Header avec infos du support -->
+    @if (supportToVisualise(); as s) {
+      <div class="visualiser-header">
+ 
+        <div class="visualiser-header-info">
+          <div class="visualiser-header-top">
+            <!-- Badge type -->
+            @if (s.type.id==1) { <span class="doc-tag epreuve">{{s.type.nom}}</span> }
+            @if (s.type.id==2) { <span class="doc-tag corrections">{{s.type.nom}}</span> }
+            @if (s.type.id==3) { <span class="doc-tag enseignant">{{s.type.nom}}</span> }
+            <span class="doc-level">{{s.niveau.intitule}} · {{s.filiere.intitule}}</span>
+          </div>
+          <h3 class="visualiser-title">{{s.title}}</h3>
+          <p class="visualiser-resume">{{s.resume}}</p>
+        </div>
+ 
+        <div class="visualiser-header-right">
+          <div class="visualiser-prix">{{ s.prix | number }} <span>FCFA</span></div>
+          <button class="btn btn-primary btn-sm" (click)="openPayment(s); closeVisualiser()">
+        <span>{{ s.file }}</span>
+            Acheter → 
+          </button>
+          <button class="visualiser-close-btn" (click)="closeVisualiser()">✕</button>
+        </div>
+ 
+      </div>
+ 
+      <!-- Zone d'aperçu : switch selon l'extension -->
+      <div class="visualiser-preview-area">
+        @switch (getFileType(s.file)) {
+          @case ('pdf') {
+            <app-visualiser-pdf [fileUrl]="imageUrl+s.file"></app-visualiser-pdf>
+          }
+          @case ('docx') {
+            <app-visualiser-docx [fileUrl]="imageUrl+s.file"></app-visualiser-docx>
+          }
+          @case ('img') {
+            <app-visualiser-img [fileUrl]="imageUrl+s.file"></app-visualiser-img>
+          }
+          @default {
+            <div class="visualiser-unknown">
+              <div class="visualiser-unknown-icon">📁</div>
+              <p>Type de fichier non pris en charge pour la prévisualisation.</p>
+              <a [href]="imageUrl+s.file" target="_blank" class="btn btn-ghost btn-sm" rel="noopener">Ouvrir le fichier</a>
+            </div>
+          }
+        }
+      </div>
+    }
+ 
+  </div>
+</div>
+ 

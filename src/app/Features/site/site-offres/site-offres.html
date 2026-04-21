@@ -1,0 +1,441 @@
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <span class="badge-pill">30+ matières</span>
+    <h1>Cours particuliers au Cameroun</h1>
+    <p>Trouvez le répétiteur idéal selon votre matière, niveau et localisation.</p>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Rechercher une matière ou un répétiteur..."
+        [value]="filtreSearch()"
+        (input)="filterBySearch($any($event.target).value)"
+        (keydown.enter)="filterBySearch($any($event.target).value)">
+      <button class="btn btn-primary">Rechercher</button>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- PILLS MATIÈRES -->
+    <div class="pills-row">
+      <div class="pills-label">Choisir une matière</div>
+      <span
+        class="subject-pill"
+        [class.active]="filtreMatiere() === null"
+        (click)="filterByMatiere(null)">🎯 Toutes</span>
+      @for (m of listMatiere(); track m.id) {
+        <span
+          class="subject-pill"
+          [class.active]="filtreMatiere() === m.id"
+          (click)="filterByMatiere(m.id)">
+          {{ m.intitule }}
+        </span>
+      }
+    </div>
+
+    <div class="cours-layout">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <!-- Section -->
+        <div class="sidebar-block">
+          <div class="sidebar-title">Section</div>
+          <ul class="radio-list">
+            <li>
+              <label>
+                <input type="radio" name="section" [checked]="filtreSection() === null"
+                  (change)="filterBySection(null)">
+                Toutes les sections
+              </label>
+            </li>
+            @for (s of listSection(); track s.id) {
+              <li>
+                <label>
+                  <input type="radio" name="section"
+                    [checked]="filtreSection() === s.id"
+                    (change)="filterBySection(s.id)">
+                  {{ s.intitule }}
+                </label>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <hr class="sidebar-sep">
+
+        <!-- Niveau -->
+        <div class="sidebar-block">
+          <div class="sidebar-title">Niveau scolaire</div>
+          <ul class="radio-list">
+            <li>
+              <label>
+                <input type="radio" name="niveau" [checked]="filtreNiveau() === null"
+                  (change)="filterByNiveau(null)">
+                Tous les niveaux
+              </label>
+            </li>
+            @for (n of niveauxFiltres(); track n.id) {
+              <li>
+                <label>
+                  <input type="radio" name="niveau"
+                    [checked]="filtreNiveau() === n.id"
+                    (change)="filterByNiveau(n.id)">
+                  {{ n.intitule }}
+                </label>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <hr class="sidebar-sep">
+
+        <!-- Localisation -->
+        <div class="sidebar-block">
+          <div class="sidebar-title">Ville</div>
+          <ul class="radio-list">
+            <li>
+              <label>
+                <input type="radio" name="localisation" [checked]="filtreLocalisation() === null"
+                  (change)="filterByLocalisation(null)">
+                Toutes les villes
+              </label>
+            </li>
+            @for (loc of listLocalisation(); track loc) {
+              <li>
+                <label>
+                  <input type="radio" name="localisation"
+                    [checked]="filtreLocalisation() === loc"
+                    (change)="filterByLocalisation(loc)">
+                  {{ loc }}
+                </label>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <hr class="sidebar-sep">
+
+        <!-- Budget -->
+        <div class="sidebar-block">
+          <div class="sidebar-title">Budget max (FCFA/h)</div>
+          <div class="range-labels">
+            <span>0</span>
+            <span class="range-val">{{ filtreBudgetMax().toLocaleString('fr-FR') }}</span>
+          </div>
+          <input
+            type="range"
+            class="range-slider"
+            min="0"
+            max="50000"
+            step="1000"
+            [value]="filtreBudgetMax()"
+            (input)="filterByBudget(+$any($event.target).value)">
+        </div>
+
+        <hr class="sidebar-sep">
+
+        <button class="btn btn-outline btn-full" (click)="resetFiltres()">
+          ↺ Réinitialiser les filtres
+        </button>
+      </aside>
+
+      <!-- RÉSULTATS -->
+      <div class="results-area">
+
+        <!-- Barre résultats -->
+        <div class="results-header">
+          <div class="results-count">
+            <span class="count-num">{{ listOffreConstruct().length }}</span>
+            offre{{ listOffreConstruct().length > 1 ? 's' : '' }} trouvée{{ listOffreConstruct().length > 1 ? 's' : '' }}
+          </div>
+          <select class="sort-select" (change)="trierOffres($any($event.target).value)">
+            <option value="pertinence">Trier : Pertinence</option>
+            <option value="budget_asc">Budget croissant</option>
+            <option value="budget_desc">Budget décroissant</option>
+          </select>
+        </div>
+
+        <!-- LISTE -->
+        <div class="offres-list">
+          @for (od of listOffreConstruct(); track od.offre.id) {
+            <div class="offre-card">
+
+              <!-- Couleur top bar via pseudo-element -->
+              <div class="offre-card-inner">
+
+                <!-- Avatar + infos -->
+                <div class="offre-left">
+                  <div class="offre-avatar">
+                    {{ od.offre.parent.nomComplet | slice:0:2 | uppercase }}
+                  </div>
+                  <div class="offre-meta-secondary">
+                    <span class="badge-duree">⏱ {{ od.offre.duree }}</span>
+                    <span class="badge-freq">📅 {{ od.offre.frequence }}x/sem</span>
+                  </div>
+                </div>
+
+                <!-- Corps -->
+                <div class="offre-body">
+                  <div class="offre-header-row">
+                    <div>
+                      <h3 class="offre-nom">{{ od.offre.parent.nomComplet }}</h3>
+                      <div class="offre-loc">📍 {{ od.offre.parent.localisation }}</div>
+                      @if (od.offre.parent.telephone) {
+                        <div class="offre-tel">📞 {{ od.offre.parent.telephone }}</div>
+                      }
+                    </div>
+
+                    <div class="offre-price-block">
+                      <div class="offre-price">
+                        {{ od.offre.budget | number:'1.0-0' }}
+                        <span class="price-unit">FCFA/h</span>
+                      </div>
+                      <button class="btn-candidater" onclick="openModal('candidaturemodal')" (click)="ouvrirModalCandidature(od)">
+                        Candidater →
+                      </button>
+                    </div>
+                  </div>
+
+                  @if (od.offre.bio) {
+                    <p class="offre-bio">{{ od.offre.bio }}</p>
+                  }
+
+                  <!-- Matières -->
+                  <div class="offre-tags">
+                    @for (m of od.matieres; track m.id) {
+                      <span class="offre-tag">{{ m.matiere?.intitule }}</span>
+                    }
+                    @empty {
+                      <span class="offre-tag-empty">Aucune matière renseignée</span>
+                    }
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          }
+
+          @empty {
+            <div class="empty-state">
+              <div class="empty-icon">🔍</div>
+              <p class="empty-title">Aucune offre disponible pour le moment.</p>
+              <p class="empty-sub">Modifiez vos filtres ou revenez plus tard.</p>
+              <button class="btn btn-outline" (click)="resetFiltres()">Réinitialiser les filtres</button>
+            </div>
+          }
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">→</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="container">
+    <span class="badge-pill badge-white">🎁 Offre découverte</span>
+    <h2>Première séance gratuite !</h2>
+    <p>Testez Educia sans engagement. Trouvez votre répétiteur idéal dès aujourd'hui.</p>
+    <button class="btn btn-white btn-lg">Demander ma séance gratuite</button>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     MODAL CANDIDATURE
+═══════════════════════════════════════════════ -->
+@if (offreSelectionnee) {
+  <div class="modal-overlay open" id="candidaturemodal" (click)="fermerModalCandidature()">
+    <div class="modal-box"  (click)="$event.stopPropagation()">
+
+      <button class="modal-close" onclick="closeModal('candidaturemodal')" (click)="fermerModalCandidature()" aria-label="Fermer">✕</button>
+
+      <!-- ── Récapitulatif toujours visible ── -->
+      <div class="modal-recap">
+        <div class="modal-recap-avatar">
+          {{ offreSelectionnee.offre.parent.nomComplet | slice:0:2 | uppercase }}
+        </div>
+        <div>
+          <div class="modal-recap-name">{{ offreSelectionnee.offre.parent.nomComplet }}</div>
+          <div class="modal-recap-loc">📍 {{ offreSelectionnee.offre.parent.localisation }}</div>
+        </div>
+        <div class="modal-recap-price">
+          {{ offreSelectionnee.offre.budget | number:'1.0-0' }}
+          <span>FCFA/h</span>
+        </div>
+      </div>
+
+      <div class="modal-details-grid">
+        <div class="modal-detail-item">
+          <span class="detail-label">⏱ Durée</span>
+          <span class="detail-val">{{ offreSelectionnee.offre.duree }}</span>
+        </div>
+        <div class="modal-detail-item">
+          <span class="detail-label">📅 Fréquence</span>
+          <span class="detail-val">{{ offreSelectionnee.offre.frequence }}x / semaine</span>
+        </div>
+        @if (offreSelectionnee.matieres.length > 0) {
+          <div class="modal-detail-item modal-matieres">
+            <span class="detail-label">📚 Matières</span>
+            <div class="offre-tags" style="margin-top:6px;">
+              @for (m of offreSelectionnee.matieres; track m.id) {
+                <span class="offre-tag">{{ m.matiere?.intitule }}</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <!-- ════════════════════════════════════
+           ÉTAPE 1 : BOUTON PRINCIPAL
+      ════════════════════════════════════ -->
+      @if (!showUnconnectContent() && !showLoginForm() && !showCreateAccountForm() && !showMessageCandidatureSuccesfully()) {
+        <div class="modal-step">
+          <h3 class="modal-step-title">Postuler à cette offre</h3>
+          <p class="modal-step-sub">Cliquez sur le bouton ci-dessous pour envoyer votre candidature.</p>
+          <button class="btn btn-accent btn-full" (click)="verifierLeStatutdeConnexion()">
+            Envoyer ma candidature 🚀
+          </button>
+        </div>
+      }
+
+      <!-- ════════════════════════════════════
+           ÉTAPE 2 : NON CONNECTÉ
+      ════════════════════════════════════ -->
+      @if (showUnconnectContent()) {
+        <div class="modal-step modal-step-unconnect">
+          <div class="unconnect-icon">🔒</div>
+          <h3 class="modal-step-title">Connexion requise</h3>
+          <p class="modal-step-sub">
+            Vous devez être connecté en tant que répétiteur pour postuler à cette offre.
+          </p>
+          <div class="unconnect-actions">
+            <button class="btn btn-primary btn-full" (click)="goToLogin()">
+              Se connecter
+            </button>
+            <button class="btn btn-outline btn-full" (click)="goToCreateCompte()">
+              Créer un compte
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ════════════════════════════════════
+           ÉTAPE 3a : FORMULAIRE LOGIN
+      ════════════════════════════════════ -->
+      @if (showLoginForm()) {
+        <div class="modal-step">
+          <button class="modal-back" (click)="goBackToUnconnect()">← Retour</button>
+          <h3 class="modal-step-title">Se connecter</h3>
+          <p class="modal-step-sub">Entrez vos identifiants pour accéder à votre compte.</p>
+
+          <form [formGroup]="loginFb" (ngSubmit)="login()" class="modal-form">
+            <div class="form-group">
+              <label class="form-label">Adresse e-mail</label>
+              <input
+                type="email"
+                class="form-input"
+                placeholder="vous@exemple.com"
+                formControlName="email"
+                autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mot de passe</label>
+              <div class="password-wrapper">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-input"
+                  placeholder="••••••••"
+                  formControlName="password"
+                  autocomplete="current-password">
+                <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                  {{ showPassword ? '🙈' : '👁' }}
+                </button>
+              </div>
+            </div>
+
+            @if (loginError()) {
+              <div class="alert alert-error">
+                ⚠️ {{ loginError() }}
+              </div>
+            }
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-full"
+              [disabled]="loginFb.invalid || loginLoading()">
+              @if (loginLoading()) {
+                <span class="spinner"></span> Connexion en cours…
+              } @else {
+                Se connecter
+              }
+            </button>
+          </form>
+
+          <div class="modal-switch-action">
+            Pas encore de compte ?
+            <button class="link-btn" (click)="goToCreateCompte()">Créer un compte</button>
+          </div>
+        </div>
+      }
+
+      <!-- ════════════════════════════════════
+           ÉTAPE 3b : CRÉER UN COMPTE
+      ════════════════════════════════════ -->
+      @if (showCreateAccountForm()) {
+        <div class="modal-step">
+          <button class="modal-back" (click)="goBackToUnconnect()">← Retour</button>
+          <h3 class="modal-step-title">Créer un compte</h3>
+          <p class="modal-step-sub">Le formulaire de création de compte sera disponible prochainement.</p>
+
+          <div class="coming-soon-zone">
+            <div class="coming-soon-icon">🚧</div>
+            <p>Formulaire en cours de construction.</p>
+            <p class="coming-soon-sub">Revenez bientôt ou connectez-vous si vous avez déjà un compte.</p>
+          </div>
+
+          <div class="modal-switch-action">
+            Déjà un compte ?
+            <button class="link-btn" (click)="goToLogin()">Se connecter</button>
+          </div>
+        </div>
+      }
+
+      <!-- ════════════════════════════════════
+           ÉTAPE 4 : SUCCÈS
+      ════════════════════════════════════ -->
+      @if (showMessageCandidatureSuccesfully()) {
+        <div class="modal-step modal-step-success">
+          <div class="success-animation">
+            <div class="success-circle">✓</div>
+          </div>
+          <h3 class="modal-step-title">Candidature envoyée !</h3>
+          <p class="modal-step-sub">
+            Votre candidature a été transmise à
+            <strong>{{ offreSelectionnee.offre.parent.nomComplet }}</strong>.
+            Vous serez contacté prochainement.
+          </p>
+          <button class="btn btn-primary btn-full" (click)="fermerModalCandidature()">
+            Fermer
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

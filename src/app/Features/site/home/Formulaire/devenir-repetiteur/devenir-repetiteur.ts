@@ -1,5 +1,11 @@
-import { Component, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@angular/forms';
+import { Component, signal, computed } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { UtilisateurService } from '../../../../../Core/Service/Utlisateur/utilisateur-service';
 import { GeneralService } from '../../../../../Core/Service/General/general-service';
 import { Diplome } from '../../../../../Core/Model/Utilisateur/Enseignant/Diplome';
@@ -9,266 +15,302 @@ import { StatusEnseignant } from '../../../../../Core/Model/Utilisateur/Enseigna
 
 @Component({
   selector: 'app-devenir-repetiteur',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: './devenir-repetiteur.html',
   styleUrl: './devenir-repetiteur.css',
 })
 export class DevenirRepetiteur {
-  enseignantForm !:FormGroup; 
-  constructor(private fb:FormBuilder, private utilisateurService : UtilisateurService , private generalService:GeneralService){
-        this.enseignantForm = this.fb.group({
-        id: new FormControl(),
-        nomComplet: new FormControl(),
-        telephone: new FormControl(),
-        email: new FormControl(),
-        password: new FormControl(),
-        dateInscription: new FormControl(),
-        status: new FormControl(),
-        localisation: new FormControl(),
-        photo: new FormControl(),
-        anneeexperience: new FormControl(),
-        dateNaissance: new FormControl(),
-        bio: new FormControl(),
-        tarifHoraire: new FormControl(),
-        statusEnseignant: new FormControl(),
-        cv: new FormControl(),
-        diplomeurl: new FormControl(),
-        section: new FormControl(),
-        profilEnseignant: new FormControl(),
-        diplome: new FormControl(),
-        specialite : new FormControl()
-    }); 
+
+  // ── STEPPER ───
+  readonly steps = [
+    { id: 0, label: 'Informations' },
+    { id: 1, label: 'Formation' },
+    { id: 2, label: 'CV & Compte' },
+  ];
+
+  currentStep  = signal<number>(0);
+  furthestStep = signal<number>(0);   // étapes déjà visitées (pour nav en arrière)
+
+  nextStep(): void {
+    if (this.currentStep() < this.steps.length - 1) {
+      const next = this.currentStep() + 1;
+      this.currentStep.set(next);
+      if (next > this.furthestStep()) this.furthestStep.set(next);
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep() > 0) {
+      this.currentStep.set(this.currentStep() - 1);
+    }
+  }
+
+  goToStep(index: number): void {
+    if (index <= this.furthestStep()) {
+      this.currentStep.set(index);
+    }
+  }
+
+  // ── FORMULAIRE 
+  enseignantForm!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private utilisateurService: UtilisateurService,
+    private generalService: GeneralService
+  ) {
+    this.enseignantForm = this.fb.group({
+      id:               new FormControl(),
+      nomComplet:       new FormControl(),
+      telephone:        new FormControl(),
+      email:            new FormControl(),
+      password:         new FormControl(),
+      dateInscription:  new FormControl(),
+      status:           new FormControl(),
+      localisation:     new FormControl(),
+      photo:            new FormControl(),
+      anneeexperience:  new FormControl(),
+      dateNaissance:    new FormControl(),
+      bio:              new FormControl(),
+      tarifHoraire:     new FormControl(),
+      statusEnseignant: new FormControl(),
+      cv:               new FormControl(),
+      diplomeurl:       new FormControl(),
+      section:          new FormControl(),
+      profilEnseignant: new FormControl(),
+      diplome:          new FormControl(),
+      specialite:       new FormControl(),
+    });
 
     this.loadPage();
   }
 
-  loadPage(){
+  loadPage(): void {
     this.getAllSections();
     this.getAllStatusEnseignant();
     this.getAllProfilEnseignant();
     this.getAllDiplomes();
   }
 
-  
-  listSections = signal<Section[]>([]);
-  getAllSections(){
+  // ── LISTES ────
+  listSections          = signal<Section[]>([]);
+  listStatusEnseignant  = signal<StatusEnseignant[]>([]);
+  listProfilEnseignant  = signal<ProfilEnseignant[]>([]);
+  listDiplomes          = signal<Diplome[]>([]);
+
+  getAllSections(): void {
     this.generalService.findAllSections().subscribe({
-      next: (response:Section[]) => {
-        this.listSections.set(response);
-      },
-      error: (error) => {
-        console.error('Error fetching sections : failed');
-      }
+      next: (response: Section[]) => this.listSections.set(response),
+      error: () => console.error('Error fetching sections'),
     });
   }
 
-  listStatusEnseignant = signal<StatusEnseignant[]>([]);
-
-  getAllStatusEnseignant(){
+  getAllStatusEnseignant(): void {
     this.generalService.findAllStatusEnseignants().subscribe({
-      next: (response:StatusEnseignant[]) => {
-        this.listStatusEnseignant.set(response);
-      },
-      error: (error) => {
-        console.error('Error fetching status enseignant : failed');
-      } 
+      next: (response: StatusEnseignant[]) => this.listStatusEnseignant.set(response),
+      error: () => console.error('Error fetching status enseignant'),
     });
   }
 
-  listProfilEnseignant = signal<ProfilEnseignant[]>([]); 
-  getAllProfilEnseignant(){
-     this.generalService.findAllProfilEnseignants().subscribe({
-      next: (response:ProfilEnseignant[]) => {
-        this.listProfilEnseignant.set(response);
-      },
-      error: (error) => {
-        console.error('Error fetching status enseignant : failed');
-      } 
+  getAllProfilEnseignant(): void {
+    this.generalService.findAllProfilEnseignants().subscribe({
+      next: (response: ProfilEnseignant[]) => this.listProfilEnseignant.set(response),
+      error: () => console.error('Error fetching profil enseignant'),
     });
   }
 
-  listDiplomes = signal<Diplome[]>([]);
-  getAllDiplomes(){
+  getAllDiplomes(): void {
     this.generalService.findAllDiplomes().subscribe({
-      next: (response:Diplome[]) => {
-        this.listDiplomes.set(response);
-      },
-      error: (error) => {
-        console.error('Error fetching diplomes : failed');
-      } 
+      next: (response: Diplome[]) => this.listDiplomes.set(response),
+      error: () => console.error('Error fetching diplomes'),
     });
   }
 
-  photoFile!:File;
-  showImage = signal<boolean>(false);
+  // ── SÉLECTION PROFIL (type card cliquable) ───────────────────────────────
+  selectedProfilLabel = signal<string>('');
 
-  fichierUrl=signal<string>('');
-  fileName = signal<string>('');
-
-  onSelectImage(e: any) {
-  if (e.target.files && e.target.files[0]) {
-    this.photoFile = e.target.files[0]; // ✅ assignation directe
-  }
-}
-
-
-  cvFile!:File;
-  onSelectCv(e :any){
-    this.showImage.set(true); 
-    if (e.target.files) {
-      let reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-
-      reader.onload=(event :any)=>{
-
-        this.cvFile = e.target.files[0];
-      }
-
-   }
+  selectProfil(profil: ProfilEnseignant): void {
+    this.enseignantForm.controls['profilEnseignant'].setValue(profil);
+    this.selectedProfilLabel.set(profil.intitule);
   }
 
-  diplomeFile!:File;
-  onSelectDiplome(e :any){
-    this.showImage.set(true); 
-    if (e.target.files) {
-      let reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-
-      reader.onload=(event :any)=>{
-
-        this.diplomeFile = e.target.files[0];
-      }
-
-   }
+  /** Fallback quand la liste API est vide */
+  selectProfilLabel(label: string): void {
+    this.selectedProfilLabel.set(label);
+    this.enseignantForm.controls['profilEnseignant'].setValue({ intitule: label });
   }
 
-  cniFile!:File;
-  onSelectCNI(e :any){
-    this.showImage.set(true); 
-    if (e.target.files) {
-      let reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-
-      reader.onload=(event :any)=>{
-
-        this.cniFile = e.target.files[0];
-      }
-
-   }
-  }
-
-    //Upload image profil ; 
-
-  fetchPhotoUrl = signal<string>('')  ;
+  // ── UPLOAD PHOTO PROFIL ──────────────────────────────────────────────────
+  photoProfilFile!: File;
+  fetchPhotoUrl   = signal<string>('');
   fetchPhotoState = signal<boolean>(false);
-  photoFileName = signal<string>('');
-  photoFileSize = signal<string>('');
-  photoProfilFile!:File ; 
+  photoFileName   = signal<string>('');
 
-  selectPhotoUploaded(photo: any): void { 
-      if (photo.target.files) {
+
+  selectPhotoUploaded(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      const file = input.files[0];
+      this.photoProfilFile = file;
+      this.photoFileName.set(file.name);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (ev: ProgressEvent<FileReader>) => {
+        this.fetchPhotoUrl.set(ev.target?.result as string);
         this.fetchPhotoState.set(true);
-        let reader = new FileReader();
-        reader.readAsDataURL(photo.target.files[0]);
-        reader.onload=(event :any)=>{
-
-          this.fetchPhotoUrl.set(event.target.result) ; 
-          this.photoProfilFile = photo.target.files[0];
-
-          this.fileName.set(this.photoProfilFile.name); 
-          this.photoFileName.set(this.photoProfilFile.name);
-
-          console.log('Nom de la photo :'+this.fileName); 
-        }
+      };
     }
   }
-  messageErrorPassword=signal<string>('');
-  showErrormessage=signal<boolean>(false); 
 
-  password=signal<string>(''); 
+  // ── UPLOAD CNI 
+  cniFile!: File;
+  cniUploaded  = signal<boolean>(false);
+  cniFileName  = signal<string>('');
 
-  passwordToStore = signal<string>(''); 
-
-
-  passwordChange(e:any){
-    this.password.set(e.target.value);
-    //console.log('mot de passe : '+this.password()) ;
-  }
-
-  confirmpassword=signal<string>(''); 
-  confirmPasswordChange(e:any){
-    this.confirmpassword.set(e.target.value); 
-    //console.log('confirmer le mot de passe : '+this.confirmpassword()) ;
-
-    this.correspondancePassword(this.password(), this.confirmpassword()); 
-  }
-
-  correspondancePassword(pass:string , cpass : string){
-    if (pass!='' && cpass !='') {
-      console.log('Confirmation de mot de passe'); 
-
-      if (pass!=cpass) {
-          this.showErrormessage.set(true); 
-          this.messageErrorPassword.set("Les mots de passes ne correspondent pas.")
-        
-      }else{
-        this.showErrormessage.set(false);
-        this.passwordToStore.set(pass); 
-      }
-    }else{
-      alert('Remplir la case du mot de passe et celle du confirm mot de passe'); 
+  onSelectCNI(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.cniFile = input.files[0];
+      this.cniFileName.set(this.cniFile.name);
+      this.cniUploaded.set(true);
     }
   }
-  createEnseignantAccount() {
-      sessionStorage.clear();
 
-      this.correspondancePassword(this.password(), this.confirmpassword());
 
-      if (this.password() != this.confirmpassword()) {
-        this.showErrormessage.set(true);
-        this.messageErrorPassword.set("Les mots de passes ne correspondent pas.");
-        return;
-      }
+  // ── UPLOAD CV ─
+  cvFile!: File;
+  cvUploaded  = signal<boolean>(false);
+  cvFileName  = signal<string>('');
 
-      // ✅ Vérifications des fichiers obligatoires
-      if (!this.photoProfilFile) {
-        alert('Veuillez sélectionner une photo de profil.');
-        return;
-      }
-      if (!this.cvFile) {
-        alert('Veuillez sélectionner votre CV.');
-        return;
-      }
-      if (!this.diplomeFile) {
-        alert('Veuillez sélectionner votre diplôme.');
-        return;
-      }
-
-      let formData: FormData = new FormData();
-      this.enseignantForm.controls['password'].setValue(this.passwordToStore());
-
-      formData.append('enseignant', JSON.stringify(this.enseignantForm.value));
-      formData.append('photo', this.photoProfilFile);
-      formData.append('cv', this.cvFile);
-      formData.append('diplome', this.diplomeFile);
-
-      // ✅ CNI optionnel selon votre API (elle ne le demande pas)
-      if (this.cniFile) {
-        formData.append('cni', this.cniFile);
-      }
-
-      this.utilisateurService.createEnseignant(formData).subscribe({
-        next: (response: number) => {
-          if (response > 0) {
-            alert('Enseignant créé avec succès');
-            this.enseignantForm.reset();
-            sessionStorage.setItem('role', '2');
-          }
-        },
-        error: (error: any) => {
-          console.error('Erreur création enseignant', error);
-        }
-      });
+  onSelectCv(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.cvFile = input.files[0];
+      this.cvFileName.set(this.cvFile.name);
+      this.cvUploaded.set(true);
+    }
   }
 
+  // ── UPLOAD DIPLÔME 
+  diplomeFile!: File;
+  diplomeUploaded  = signal<boolean>(false);
+  diplomeFileName  = signal<string>('');
+
+  onSelectDiplome(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.diplomeFile = input.files[0];
+      this.diplomeFileName.set(this.diplomeFile.name);
+      this.diplomeUploaded.set(true);
+    }
+  }
+
+  // ── MOT DE PASSE ──
+  password              = signal<string>('');
+  confirmpassword       = signal<string>('');
+  passwordToStore       = signal<string>('');
+  messageErrorPassword  = signal<string>('');
+  showErrormessage      = signal<boolean>(false);
+
+  passwordChange(e: Event): void {
+    this.password.set((e.target as HTMLInputElement).value);
+  }
+
+  confirmPasswordChange(e: Event): void {
+    this.confirmpassword.set((e.target as HTMLInputElement).value);
+    this.correspondancePassword(this.password(), this.confirmpassword());
+  }
+
+  correspondancePassword(pass: string, cpass: string): void {
+    if (!pass || !cpass) return;
+    if (pass !== cpass) {
+      this.showErrormessage.set(true);
+      this.messageErrorPassword.set('Les mots de passes ne correspondent pas.');
+    } else {
+      this.showErrormessage.set(false);
+      this.passwordToStore.set(pass);
+    }
+  }
+
+  // ── CGU ───────
+  cguAccepted = false;
+
+  // ── SOUMISSION 
+  createEnseignantAccount(): void {
+    sessionStorage.clear();
+
+    this.correspondancePassword(this.password(), this.confirmpassword());
+
+    if (this.password() !== this.confirmpassword()) {
+      this.showErrormessage.set(true);
+      this.messageErrorPassword.set('Les mots de passes ne correspondent pas.');
+      return;
+    }
+
+    if (!this.photoProfilFile) {
+      alert('Veuillez sélectionner une photo de profil.');
+      return;
+    }
+    if (!this.cvFile) {
+      alert('Veuillez sélectionner votre CV.');
+      return;
+    }
+    if (!this.diplomeFile) {
+      alert('Veuillez sélectionner votre diplôme.');
+      return;
+    }
+    if (!this.cguAccepted) {
+      alert('Veuillez accepter les conditions générales d\'utilisation.');
+      return;
+    }
+
+    const formData = new FormData();
+    this.enseignantForm.controls['password'].setValue(this.passwordToStore());
+    formData.append('enseignant', JSON.stringify(this.enseignantForm.value));
+    formData.append('photo',   this.photoProfilFile);
+    formData.append('cv',      this.cvFile);
+    formData.append('diplome', this.diplomeFile);
+
+    if (this.cniFile) {
+      formData.append('cni', this.cniFile);
+    }
+
+    this.utilisateurService.createEnseignant(formData).subscribe({
+      next: (response: number) => {
+        if (response > 0) {
+          alert('Compte répétiteur créé avec succès !');
+          this.enseignantForm.reset();
+          this.resetSignals();
+          sessionStorage.setItem('role', '2');
+        }
+      },
+      error: (error: unknown) => {
+        console.error('Erreur création enseignant', error);
+      },
+    });
+  }
+
+  private resetSignals(): void {
+    this.currentStep.set(0);
+    this.furthestStep.set(0);
+    this.fetchPhotoState.set(false);
+    this.fetchPhotoUrl.set('');
+    this.photoFileName.set('');
+    this.cniUploaded.set(false);
+    this.cniFileName.set('');
+    this.cvUploaded.set(false);
+    this.cvFileName.set('');
+    this.diplomeUploaded.set(false);
+    this.diplomeFileName.set('');
+    this.password.set('');
+    this.confirmpassword.set('');
+    this.passwordToStore.set('');
+    this.showErrormessage.set(false);
+    this.selectedProfilLabel.set('');
+    this.cguAccepted = false;
+  }
+
+  testReactivite(e:Event): void {
+    console.log('le composant reponds', e); 
+  }
 }

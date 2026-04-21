@@ -7,6 +7,7 @@ import { Matiere } from '../../Model/Academie/Matiere';
 import { Enseignant } from '../../Model/Utilisateur/Enseignant/Enseignant';
 import { MatiereOffre } from '../../Model/Repetition/MatiereOffre';
 import { Offre } from '../../Model/Repetition/Offre';
+import { Candidature } from '../../Model/Repetition/Candidature';
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +25,8 @@ export class RepetitionService {
   }
 
   //CANDIDATURE 
-  findAllCandidature():Observable<Offre[]>{
-    return this.http.get<Offre[]>(edulearnDashboard.OffreRepetition.Candidature.all);
+  findAllCandidature():Observable<Candidature[]>{
+    return this.http.get<Candidature[]>(edulearnDashboard.OffreRepetition.Candidature.all);
   }
   createCandidature(request: any): Observable<ResponseServer> {
     return this.http.post<ResponseServer>(edulearnDashboard.OffreRepetition.Candidature.create, request);
@@ -37,9 +38,21 @@ export class RepetitionService {
     return this.http.get<ResponseServer>(edulearnDashboard.OffreRepetition.Candidature.delete+id);
   }
 
+  findAllCandidatureByOffre(id:number):Observable<Candidature[]>{
+    return this.http.get<Candidature[]>(edulearnDashboard.OffreRepetition.Candidature.allByOffre+id);
+  }
+
+  findAllCandidatureByEnseignant(id:number):Observable<Candidature[]>{
+    return this.http.get<Candidature[]>(edulearnDashboard.OffreRepetition.Candidature.allByEnseignant+id);
+  }
+
 
   //MATIERE OFFRE
   findAllMatiereOffre(id:number):Observable<MatiereOffre[]>{
     return this.http.get<MatiereOffre[]>(edulearnDashboard.OffreRepetition.MatiereOffre.allByOffre+id);
   }
+
+
+ 
+
 }

@@ -7,10 +7,14 @@ import { TypeRessource } from '../../../Core/Model/MarketPlace/TypeRessource';
 import { Support } from '../../../Core/Model/MarketPlace/Support';
 import { Matiere } from '../../../Core/Model/Academie/Matiere';
 import { DevenirRepetiteur } from "../home/Formulaire/devenir-repetiteur/devenir-repetiteur";
+import { VisualiserPdf } from '../../../Shared/Composant/visualiser-pdf/visualiser-pdf';
+import { VisualiserImg } from '../../../Shared/Composant/visualiser-img/visualiser-img';
+import { VisualiserDocxs } from '../../../Shared/Composant/visualiser-docxs/visualiser-docxs';
+import { imageStoreUrl } from '../../../Core/Constant/EndPoints';
 
 @Component({
   selector: 'app-site-makertplace',
-  imports: [CommonModule, ReactiveFormsModule, DevenirRepetiteur],
+  imports: [CommonModule, ReactiveFormsModule, VisualiserPdf, VisualiserDocxs, VisualiserImg, DevenirRepetiteur],
   templateUrl: './site-makertplace.html',
   styleUrl: './site-makertplace.css',
 })
@@ -37,6 +41,8 @@ export class SiteMakertplace {
   }
 
   loadPage() {
+    this.imageUrl = imageStoreUrl; 
+    console.log('Image URL set to:', this.imageUrl);
     this.getAllSupport();
     this.getAllDataToFilter();
   }
@@ -46,6 +52,7 @@ export class SiteMakertplace {
   listMatiere = signal<Matiere[]>([]);
   listSupport = signal<Support[]>([]);
   listSupportSaved = signal<Support[]>([]);
+  imageUrl = ''; 
 
   getAllDataToFilter() {
     this.marketPlaceService.findAllTypeRessource().subscribe({
@@ -204,4 +211,41 @@ openPayment(support: Support) {
       this.showSuccess.set(true);
     }, 2000);
   }
+
+   isVisualiserOpen = signal(false);
+  supportToVisualise = signal<Support | null>(null);
+ 
+  // Retourne l'extension du fichier en minuscules : 'pdf' | 'docx' | 'img' | 'unknown'
+  getFileType(file: string): 'pdf' | 'docx' | 'img' | 'unknown' {
+    //console.log('getFileType appelé avec:', file); // ← ajouter
+    if (!file) return 'unknown';
+    const ext = file.split('.').pop()?.toLowerCase() ?? '';
+    if (ext === 'pdf') return 'pdf';
+    if (['doc', 'docx'].includes(ext)) return 'docx';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return 'img';
+    //console.warn('Type de fichier  reconnu pour visualisation:', ext);
+    return 'unknown';
+
+  }
+ 
+  openVisualiser(support: Support): void {
+    this.supportToVisualise.set(support);
+    this.isVisualiserOpen.set(true);
+
+    console.log('le support à visualiser :', support.file);
+    document.body.style.overflow = 'hidden';
+  }
+ 
+  closeVisualiser(): void {
+    this.isVisualiserOpen.set(false);
+    this.supportToVisualise.set(null);
+    document.body.style.overflow = '';
+  }
+ 
+  closeVisualiserOnOverlay(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeVisualiser();
+    }
+  }
+ 
 }

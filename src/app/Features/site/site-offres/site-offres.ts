@@ -1,6 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, SlicePipe, UpperCasePipe } from '@angular/common';
+import { CommonModule, SlicePipe, UpperCasePipe, DecimalPipe } from '@angular/common';
 import { RepetitionService } from '../../../Core/Service/Repetition/repetition-service';
 import { Offre, OffreDescript } from '../../../Core/Model/Repetition/Offre';
 import { ResponseServer } from '../../../Core/Model/Server/ResponseServer';
@@ -9,20 +9,52 @@ import { GeneralService } from '../../../Core/Service/General/general-service';
 import { Section } from '../../../Core/Model/Academie/Section';
 import { Niveau } from '../../../Core/Model/Academie/Niveau';
 import { MatiereOffre } from '../../../Core/Model/Repetition/MatiereOffre';
+import { UtilisateurService } from '../../../Core/Service/Utlisateur/utilisateur-service';
+import { AuthService } from '../../../Core/Service/Auth/auth-service';
+import { AuthData } from '../../../Core/Model/Auth/AuthData';
 
 @Component({
   selector: 'app-site-offres',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SlicePipe, UpperCasePipe],
+  imports: [ReactiveFormsModule, CommonModule, DecimalPipe, SlicePipe, UpperCasePipe],
   templateUrl: './site-offres.html',
   styleUrl: './site-offres.css',
 })
 export class SiteOffres {
 
+  // ─── Formulaires ──────────────────────────────────────────────────────────
   candidatureFb!: FormGroup;
+  loginFb!: FormGroup;
+
+  // ─── UI ───────────────────────────────────────────────────────────────────
+  showPassword = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private repetitionService: RepetitionService,
+    private authService: AuthService,
+    private utilisateurService: UtilisateurService,
+    private generalService: GeneralService,
+  ) {
+    this.candidatureFb = this.fb.group({
+      id:         new FormControl(null),
+      offre:      new FormControl(null),
+      enseignant: new FormControl(null),
+    });
+
+    this.loginFb = this.fb.group({
+      email:    new FormControl(''),
+      password: new FormControl(''),
+    });
+
+    this.chargerReferentiels();
+    this.constructOffre();
+  }
+
+  // ─── Offre sélectionnée ───────────────────────────────────────────────────
   offreSelectionnee: OffreDescript | null = null;
 
-  // ─── États des filtres actifs (tous en signal pour la réactivité) ─────────
+  // ─── États des filtres actifs ─────────────────────────────────────────────
   filtreSection      = signal<number | null>(null);
   filtreNiveau       = signal<number | null>(null);
   filtreMatiere      = signal<number | null>(null);
@@ -31,7 +63,7 @@ export class SiteOffres {
   filtreBudgetMax    = signal<number>(50000);
   triActif           = signal<string>('pertinence');
 
-  // ─── Données brutes (source de vérité) ───────────────────────────────────
+  // ─── Données brutes ───────────────────────────────────────────────────────
   private readonly toutesLesOffres = signal<OffreDescript[]>([]);
 
   // Référentiels
@@ -40,30 +72,27 @@ export class SiteOffres {
   listSection      = signal<Section[]>([]);
   listLocalisation = signal<string[]>([]);
 
-  // ─── Niveaux filtrés par section (computed réactif) ──────────────────────
+  // ─── Niveaux filtrés par section ──────────────────────────────────────────
   niveauxFiltres = computed(() => {
     const section = this.filtreSection();
     if (section === null) return this.listNiveau();
     return this.listNiveau().filter(n => n.section?.id === section);
   });
 
-  // ─── Liste des offres filtrées ET triées (computed réactif) ──────────────
+  // ─── Liste filtrée + triée ────────────────────────────────────────────────
   listOffreConstruct = computed(() => {
     let resultat = this.toutesLesOffres();
 
-    // Filtre section
     const section = this.filtreSection();
     if (section !== null) {
       resultat = resultat.filter(od => od.offre.niveau?.section?.id === section);
     }
 
-    // Filtre niveau
     const niveau = this.filtreNiveau();
     if (niveau !== null) {
       resultat = resultat.filter(od => od.offre.niveau?.id === niveau);
     }
 
-    // Filtre matière — compare bien l'id de la Matiere imbriquée
     const matiere = this.filtreMatiere();
     if (matiere !== null) {
       resultat = resultat.filter(od =>
@@ -71,20 +100,17 @@ export class SiteOffres {
       );
     }
 
-    // Filtre localisation
     const loc = this.filtreLocalisation();
     if (loc !== null) {
       resultat = resultat.filter(od => od.offre.parent.localisation === loc);
     }
 
-    // Filtre budget
     const budgetMax = this.filtreBudgetMax();
     resultat = resultat.filter(od => {
       const b = parseFloat(String(od.offre.budget).replace(/\s/g, ''));
       return isNaN(b) || b <= budgetMax;
     });
 
-    // Filtre recherche texte libre
     const q = this.filtreSearch().trim().toLowerCase();
     if (q) {
       resultat = resultat.filter(od =>
@@ -94,7 +120,6 @@ export class SiteOffres {
       );
     }
 
-    // Tri
     const tri = this.triActif();
     const copy = [...resultat];
     if (tri === 'budget_asc') {
@@ -106,37 +131,17 @@ export class SiteOffres {
     return copy;
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private repetitionService: RepetitionService,
-    private generalService: GeneralService,
-  ) {
-    this.candidatureFb = this.fb.group({
-      id:         new FormControl(null),
-      offre:      new FormControl(null),
-      enseignant: new FormControl(null),
-    });
-
-    this.chargerReferentiels();
-    this.constructOffre();
-  }
-
-  // ─── Chargement ──────────────────────────────────────────────────────────
+  // ─── Chargement ───────────────────────────────────────────────────────────
 
   private chargerReferentiels(): void {
-    //La liste des matieres et des niveaux est nécessaire pour les filtres et l'affichage, on les charge dès le départ
     this.generalService.findAllMatiere().subscribe({
       next: (data: Matiere[]) => this.listMatiere.set(data),
       error: () => console.error('Erreur chargement matières'),
     });
 
-    // La liste des niveaux contient aussi les sections imbriquées, on peut en déduire la liste des sections à partir de là
-
     this.generalService.findAllNiveau().subscribe({
       next: (data: Niveau[]) => {
         this.listNiveau.set(data);
-
-        // Dédupliquer les sections à partir des niveaux
         const sectionsMap = new Map<number, Section>();
         data.forEach(n => { if (n.section) sectionsMap.set(n.section.id, n.section); });
         this.listSection.set([...sectionsMap.values()]);
@@ -151,32 +156,26 @@ export class SiteOffres {
       if (!listOffre) return;
 
       const resultats: OffreDescript[] = [];
-
       for (const o of listOffre) {
-        // findAllMatiereOffre retourne MatiereOffre[] (avec .matiere imbriquée)
         const matieresO = await this.repetitionService.findAllMatiereOffre(o.id).toPromise();
         resultats.push({ offre: o, matieres: (matieresO ?? []) as MatiereOffre[] });
       }
 
       this.toutesLesOffres.set(resultats);
 
-      // Construire la liste unique des localisations
       const locs = [...new Set(
         resultats.map(r => r.offre.parent.localisation).filter((l): l is string => !!l)
       )];
       this.listLocalisation.set(locs);
-
-      console.log('Offres chargées :', this.toutesLesOffres());
     } catch (err) {
       console.error('Erreur chargement offres :', err);
     }
   }
 
-  // ─── Filtres (mettent à jour les signaux → computed se recalcule) ─────────
+  // ─── Filtres ──────────────────────────────────────────────────────────────
 
   filterBySection(id: number | null): void {
     this.filtreSection.set(id);
-    // Réinitialiser le niveau si la section change
     this.filtreNiveau.set(null);
   }
 
@@ -184,7 +183,6 @@ export class SiteOffres {
     this.filtreNiveau.set(id);
   }
 
-  // CORRECTION : on passe bien l'id de la Matiere (depuis listMatiere)
   filterByMatiere(id: number | null): void {
     this.filtreMatiere.set(id);
   }
@@ -219,16 +217,104 @@ export class SiteOffres {
 
   ouvrirModalCandidature(od: OffreDescript): void {
     this.offreSelectionnee = od;
+    this._resetModalState();
     this.candidatureFb.patchValue({
       id:         null,
       offre:      od.offre.id,
       enseignant: null,
     });
+    document.body.style.overflow = 'hidden';
   }
 
   fermerModalCandidature(): void {
     this.offreSelectionnee = null;
+    this._resetModalState();
     this.candidatureFb.reset();
+    this.loginFb.reset();
+    document.body.style.overflow = '';
+  }
+
+  private _resetModalState(): void {
+    this.showUnconnectContent.set(false);
+    this.showLoginForm.set(false);
+    this.showCreateAccountForm.set(false);
+    this.showMessageCandidatureSuccesfully.set(false);
+    this.loginError.set('');
+    this.loginLoading.set(false);
+  }
+
+  // ─── Logique connexion / candidature ──────────────────────────────────────
+
+  idEnseignant               = signal<number>(0);
+  showUnconnectContent       = signal<boolean>(false);
+  showMessageCandidatureSuccesfully = signal<boolean>(false);
+  showCreateAccountForm      = signal<boolean>(false);
+  showLoginForm              = signal<boolean>(false);
+  loginError                 = signal<string>('');
+  loginLoading               = signal<boolean>(false);
+
+  verifierLeStatutdeConnexion(): void {
+    const id = parseInt(sessionStorage.getItem('id') ?? '0');
+    this.idEnseignant.set(id);
+
+    if (!id || id === 0) {
+      // Non connecté → afficher les options
+      this.showUnconnectContent.set(true);
+    } else {
+      // Connecté → candidater directement
+      this.candidatureFb.patchValue({ enseignant: id });
+      this.showUnconnectContent.set(false);
+      this.candidater();
+    }
+  }
+
+  goToCreateCompte(): void {
+    this.showUnconnectContent.set(false);
+    this.showLoginForm.set(false);
+    this.showCreateAccountForm.set(true);
+  }
+
+  goToLogin(): void {
+    this.showUnconnectContent.set(false);
+    this.showCreateAccountForm.set(false);
+    this.showLoginForm.set(true);
+    this.loginError.set('');
+    this.loginFb.reset();
+  }
+
+  /** Retour à l'écran de choix connexion / inscription */
+  goBackToUnconnect(): void {
+    this.showLoginForm.set(false);
+    this.showCreateAccountForm.set(false);
+    this.loginError.set('');
+    this.showUnconnectContent.set(true);
+  }
+
+  login(): void {
+    if (this.loginFb.invalid) return;
+    this.loginLoading.set(true);
+    this.loginError.set('');
+
+    const formData = new FormData();
+    formData.append('auth', JSON.stringify(this.loginFb.value));
+
+    this.authService.login(formData).subscribe({
+      next: (data: AuthData) => {
+        this.loginLoading.set(false);
+        if (data && data.id) {
+          sessionStorage.setItem('id', data.id.toString());
+          sessionStorage.setItem('role', data.role.toString());
+          this.showLoginForm.set(false);
+          this.verifierLeStatutdeConnexion();
+        } else {
+          this.loginError.set('Identifiants incorrects. Veuillez réessayer.');
+        }
+      },
+      error: () => {
+        this.loginLoading.set(false);
+        this.loginError.set('Connexion échouée. Vérifiez vos identifiants.');
+      },
+    });
   }
 
   candidater(): void {
@@ -237,19 +323,21 @@ export class SiteOffres {
     const formData = new FormData();
     formData.append('candidature', JSON.stringify(this.candidatureFb.value));
 
-    this.repetitionService.createOffre(formData).subscribe({
+    this.repetitionService.createCandidature(formData).subscribe({
       next: (data: ResponseServer) => {
         if (data.status) {
-          alert(data.message);
-          this.fermerModalCandidature();
+          this.showMessageCandidatureSuccesfully.set(true);
+        } else {
+          console.error('Erreur serveur :', data.message);
         }
       },
       error: () => console.error('La candidature a échoué'),
     });
   }
 
-  
-
-
-  
+  createCompte(): void {
+    // À implémenter — formulaire à construire plus tard
+    const formData = new FormData();
+    // TODO
+  }
 }
