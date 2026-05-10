@@ -50,8 +50,8 @@ export class UtilisateurService {
     return this.http.get<Enseignant>(`${edulearnDashboard.Enseignant.findById}${id}`);
   }
 
-  changeStatusEnseignant(id: number, status: string): Observable<ResponseServer> {
-    return this.http.put<ResponseServer>(`${edulearnDashboard.Enseignant.changestatus}${id}`, { status });
+  changeStatusEnseignant(id: number, ids: number): Observable<ResponseServer> {
+    return this.http.get<ResponseServer>(edulearnDashboard.Enseignant.changestatus+id+'/'+ids);
   }
 
 

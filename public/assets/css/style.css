@@ -90,7 +90,7 @@ body {
 .tag-green { background: var(--green-light); color: #15803D; }
 
 h1,h2,h3,h4,h5 { font-family: var(--font-display); line-height: 1.2; }
-h1 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; }
+h1 { font-size: clamp(1.3rem, 5vw, 2.4rem); font-weight: 800; }
 h2 { font-size: clamp(1.25rem, 2.2vw, 1.8rem); font-weight: 700; }
 h3 { font-size: clamp(1rem, 1.4vw, 1.2rem); font-weight: 700; }
 p { color: var(--text-mid); line-height: 1.75; }
@@ -383,11 +383,11 @@ p { color: var(--text-mid); line-height: 1.75; }
 .hero-shape-1 { width: 600px; height: 600px; background: var(--primary); top: -200px; right: -100px; }
 .hero-shape-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -100px; }
 .hero-shape-3 { width: 300px; height: 300px; background: var(--green); top: 50%; right: 30%; }
-.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-.hero-content { animation: fadeUp 0.8s ease forwards; }
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%; }
+.hero-content { animation: fadeUp 0.8s ease forwards; min-width: 0; }
 .hero-badge { margin-bottom: 24px; }
 .hero h1 { margin: 16px 0 24px; }
-.hero p { font-size: 1.125rem; margin-bottom: 40px; max-width: 480px; }
+.hero p { font-size: 1.125rem; margin-bottom: 40px; max-width: 480px; width: 100%; }
 .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
 .hero-stats {
   display: flex; gap: 24px; margin-top: 32px; padding-top: 24px;
@@ -395,7 +395,7 @@ p { color: var(--text-mid); line-height: 1.75; }
 }
 .hero-stat-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--primary); }
 .hero-stat-label { font-size: 13px; color: var(--text-light); margin-top: 2px; }
-.hero-visual { animation: fadeIn 1s ease 0.3s both; position: relative; }
+.hero-visual { animation: fadeIn 1s ease 0.3s both; position: relative; padding: 24px; }
 .hero-card {
   background: #fff; border-radius: var(--radius-xl); padding: 32px;
   box-shadow: var(--shadow-lg); position: relative;
@@ -415,8 +415,8 @@ p { color: var(--text-mid); line-height: 1.75; }
   padding: 12px 16px; box-shadow: var(--shadow-md);
   display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600;
 }
-.floating-badge-1 { top: -20px; right: -20px; }
-.floating-badge-2 { bottom: -20px; left: -20px; }
+.floating-badge-1 { top: 0; right: 0; }
+.floating-badge-2 { bottom: 0; left: 0; }
 .fb-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
 
 /* ===== SUBJECTS GRID ===== */
@@ -640,6 +640,17 @@ p { color: var(--text-mid); line-height: 1.75; }
   .form-row { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
   .hero-stats { flex-wrap: wrap; gap: 24px; }
+  /* Fix hero content overflow on mobile */
+  .hero-content { width: 100%; min-width: 0; }
+  .hero h1 { font-size: clamp(1.3rem, 7vw, 2rem); word-break: break-word; }
+  .hero p { font-size: 1rem; max-width: 100%; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  /* Fix contact and other 2-col grids */
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .become-tutor-benefits { grid-template-columns: 1fr; }
+  /* Fix steps grid on tablet */
+  .steps-grid { grid-template-columns: 1fr; }
 }
 
 

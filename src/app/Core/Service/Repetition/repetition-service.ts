@@ -20,8 +20,15 @@ export class RepetitionService {
   findAllOffre():Observable<Offre[]>{
     return this.http.get<Offre[]>(edulearnDashboard.OffreRepetition.all);
   }
+  findAllOffreByParent(id:number):Observable<Offre[]>{
+    return this.http.get<Offre[]>(edulearnDashboard.OffreRepetition.allbyparent+id);
+  }
   createOffre(request: any): Observable<ResponseServer> {
     return this.http.post<ResponseServer>(edulearnDashboard.OffreRepetition.createnew, request);
+  }
+
+  deleteOffre(id:number):Observable<ResponseServer>{
+    return this.http.get<ResponseServer>(edulearnDashboard.OffreRepetition.delete+id);
   }
 
   //CANDIDATURE 

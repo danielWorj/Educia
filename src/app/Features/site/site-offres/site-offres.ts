@@ -158,7 +158,7 @@ export class SiteOffres {
       const resultats: OffreDescript[] = [];
       for (const o of listOffre) {
         const matieresO = await this.repetitionService.findAllMatiereOffre(o.id).toPromise();
-        resultats.push({ offre: o, matieres: (matieresO ?? []) as MatiereOffre[] });
+        resultats.push({ offre: o, matieres: (matieresO ?? []) as MatiereOffre[] , candidature: 0 });
       }
 
       this.toutesLesOffres.set(resultats);

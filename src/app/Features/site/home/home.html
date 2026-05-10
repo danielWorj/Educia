@@ -5,7 +5,8 @@
     <div class="hero-shape hero-shape-2"></div>
     <div class="hero-shape hero-shape-3"></div>
   </div>
-  <div class="container hero-inner">
+  <div class="container">
+  <div class="hero-inner">
     <div class="hero-content">
       <div class="hero-badge">
         <span class="tag">🇨🇲 Plateforme éducative camerounaise</span>
@@ -13,8 +14,8 @@
       <h1>Des cours particuliers <span class="highlight">de qualité</span> au Cameroun</h1>
       <p>Connectez-vous avec les meilleurs répétiteurs vérifiés du Cameroun. En ligne ou en présentiel, pour toutes les matières et tous les niveaux scolaires.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Trouver un répétiteur</button>
-        <a href="enseignants.html" class="btn btn-outline btn-lg">Devenir répétiteur</a>
+        <button class="btn btn-primary btn-lg" onclick="openModal('findrepetiteur')" >Trouver un répétiteur</button>
+        <button class="btn btn-outline btn-lg" onclick="openModal('devenirrepetiteur')">Devenir répétiteur</button>
       </div>
       <div class="hero-stats">
         <div>
@@ -64,9 +65,7 @@
       </div>
     </div>
   </div>
-</section>
 
-<!-- NIVEAUX -->
 <section class="section-sm" style="background:var(--bg-soft);">
   <div class="container">
     <div class="section-header ">

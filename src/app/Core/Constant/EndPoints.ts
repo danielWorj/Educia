@@ -31,7 +31,7 @@ export const edulearnDashboard = {
         count : `${userapi}/enseignant/count/`, 
         create : `${userapi}/enseignant/create`,
         findById : `${userapi}/enseignant/findById/`,
-        changestatus : `${userapi}/enseignant/status/change/`,
+        changestatus : `${userapi}/enseignant/status/`,
     }, 
 
     Eleve :{
@@ -41,7 +41,9 @@ export const edulearnDashboard = {
     }, 
     OffreRepetition :{
         all : `${repetitionapi}/new/offre/all`,
+        allbyparent : `${repetitionapi}/new/offre/all/byparent/`,
         createnew : `${repetitionapi}/new/offre/create`,
+        delete : `${repetitionapi}/new/offre/delete/`,
         //Candidature
         Candidature:{
             all : `${repetitionapi}/candidature/all`,
@@ -200,7 +202,10 @@ export const edulearnDashboard = {
 
     IA :{
         assistant : `${aiapi}/assistant`, 
-        matchingForOffre : `${aiapi}/matching/offre-multienseignant/`
+        matchingForOffre : `${aiapi}/matching/offre-multienseignant/`,
+        create : `${aiapi}/matching/db/create`, 
+        allbyoffre : `${aiapi}/matching/db/findbyoffre/`, 
+        allByEnseignant : `${aiapi}/matching/db/findbyenseignant/`
 
     }, 
     Commentaire:{

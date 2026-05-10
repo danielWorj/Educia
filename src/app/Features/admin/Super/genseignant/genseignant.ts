@@ -1,106 +1,219 @@
-import { Component, signal } from '@angular/core';
-import { Section } from '../../../../Core/Model/Academie/Section';
+import { Component, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { Section } from '../../../../Core/Model/Academie/Section';
 import { ResponseServer } from '../../../../Core/Model/Server/ResponseServer';
 import { Enseignant } from '../../../../Core/Model/Utilisateur/Enseignant/Enseignant';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { GeneralService } from '../../../../Core/Service/General/general-service';
 import { UtilisateurService } from '../../../../Core/Service/Utlisateur/utilisateur-service';
+import { DevenirRepetiteur } from "../../../site/home/Formulaire/devenir-repetiteur/devenir-repetiteur";
 
 @Component({
   selector: 'app-genseignant',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, DevenirRepetiteur],
   templateUrl: './genseignant.html',
   styleUrl: './genseignant.css',
 })
 export class Genseignant {
-  enseignantForm! : FormGroup; 
-  constructor(private fb: FormBuilder, private sanitizer: DomSanitizer, private generalService: GeneralService, private utilisateurService: UtilisateurService) {
-    this.loadPage(); 
 
+  // ──────────────────────────────────────────────
+  // Formulaire
+  // ──────────────────────────────────────────────
+  enseignantForm!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private sanitizer: DomSanitizer,
+    private generalService: GeneralService,
+    private utilisateurService: UtilisateurService
+  ) {
     this.enseignantForm = this.fb.group({
-      id: new FormControl(),
-      nomComplet: new FormControl(),
-      telephone: new FormControl(),
-      email: new FormControl(),
-      password: new FormControl(),
-      dateInscription: new FormControl(),
-      status: new FormControl(),
-      localisation: new FormControl(),
-      photo: new FormControl(),
-      anneeexperience: new FormControl(),
-      dateNaissance: new FormControl(),
-      bio: new FormControl(),
-      tarifHoraire: new FormControl(),
+      id:               new FormControl(),
+      nomComplet:       new FormControl(),
+      telephone:        new FormControl(),
+      email:            new FormControl(),
+      password:         new FormControl(),
+      dateInscription:  new FormControl(),
+      status:           new FormControl(),
+      localisation:     new FormControl(),
+      photo:            new FormControl(),
+      anneeexperience:  new FormControl(),
+      dateNaissance:    new FormControl(),
+      bio:              new FormControl(),
+      tarifHoraire:     new FormControl(),
       statusEnseignant: new FormControl(),
-      cv: new FormControl(),
-      diplomeurl: new FormControl(),
-      section: new FormControl(),
+      cv:               new FormControl(),
+      diplomeurl:       new FormControl(),
+      section:          new FormControl(),
       profilEnseignant: new FormControl(),
-      diplome: new FormControl(),
-      specialite: new FormControl()
-    }); 
+      diplome:          new FormControl(),
+      specialite:       new FormControl(),
+    });
+
+    this.loadPage();
   }
 
-  loadPage() {
+  loadPage(): void {
     this.getAllEnseignants();
+    this.getListSection();
   }
 
-  listEnseignants = signal<Enseignant[]>([]); 
+  // ──────────────────────────────────────────────
+  // Données
+  // ──────────────────────────────────────────────
+  listEnseignants = signal<Enseignant[]>([]);
+  listSection     = signal<Section[]>([]);
 
-  getAllEnseignants() {
-    this.utilisateurService.findAllEnseignants().subscribe(
-      (response: Enseignant[]) => {
-        this.listEnseignants.set(response);
-      },
-      (error) => {
-        console.error('Error fetching enseignants:', error);
-      }
-    );
+  getAllEnseignants(): void {
+    this.utilisateurService.findAllEnseignants().subscribe({
+      next:  (response: Enseignant[]) => this.listEnseignants.set(response),
+      error: (err: any) => console.error('Erreur chargement enseignants:', err),
+    });
   }
 
-  lienPhoto = 'assets/images/apply-bg.jpg';
-  cheminFile = 'assets/file/';
+  getListSection(): void {
+    this.generalService.findAllSections().subscribe({
+      next:  (response: Section[]) => this.listSection.set(response),
+      error: (err: any) => console.error('Erreur chargement sections:', err),
+    });
+  }
 
+  // ──────────────────────────────────────────────
+  // Filtres
+  // ──────────────────────────────────────────────
+  activeFilter = signal<string>('all');
+
+  filterChips = [
+    { value: 'all',      label: 'Tous'        },
+    { value: 'approuve', label: 'Approuvés'   },
+    { value: 'attente',  label: 'En attente'  },
+    { value: 'suspendu', label: 'Suspendus'   },
+  ];
+
+  filteredEnseignants = computed(() => {
+    const filter = this.activeFilter();
+    const list   = this.listEnseignants();
+    if (filter === 'all') return list;
+    return list.filter(e => e.statusEnseignant.intitule === filter);
+  });
+
+  countByStatus(status: string): number {
+    return this.listEnseignants().filter(e => e.statusEnseignant.intitule === status).length;
+  }
+
+  // ──────────────────────────────────────────────
+  // Enseignant sélectionné
+  // ──────────────────────────────────────────────
+  cheminFile        = 'assets/file/';
   enseignantSelected = signal<Enseignant | null>(null);
-  nomDiplome = signal('');
-  nomCNI = signal(''); 
-  nomCV = signal('');
-  lienFichier = signal('');
-  photoProfil = signal(''); 
 
-  selectEnseignant(enseignant: Enseignant) {
+  nomDiplome  = signal('');
+  nomCNI      = signal('');
+  nomCV       = signal('');
+  photoProfil = signal('');
+
+  selectEnseignant(enseignant: Enseignant): void {
     this.enseignantSelected.set(enseignant);
     this.enseignantForm.patchValue(enseignant);
 
     this.nomDiplome.set(enseignant.diplomeurl ?? '');
     this.nomCV.set(enseignant.cv ?? '');
-    this.nomCNI.set(enseignant.cni ?? ''); 
+    this.nomCNI.set(enseignant.cni ?? '');
+    this.photoProfil.set(this.cheminFile + enseignant.photo);
 
-    //Photo de profil 
-    this.photoProfil.set(this.cheminFile+ enseignant.photo); 
-    // Diplôme
-    this.loadDiplomeFile(this.cheminFile + enseignant.diplomeurl, enseignant.diplomeurl);
-    // CV  
-    this.loadCvFile(this.cheminFile + enseignant.cv, enseignant.cv);
-    // CNI  
-    this.loadCniFile(this.cheminFile + enseignant.cni, enseignant.cni);
-  }
-
-  changeStatus(id: number) {
-    this.utilisateurService.changeStatus(id).subscribe(
-      (response: ResponseServer) => {
-        console.log(response);
-        this.getAllEnseignants(); 
-      },
-      (error:any) => {
-        console.error('Error change status enseignants:', error);
-      }
-    );
+    this.loadDiplomeFile(this.cheminFile + enseignant.diplomeurl, enseignant.diplomeurl ?? '');
+    this.loadCvFile(this.cheminFile + enseignant.cv, enseignant.cv ?? '');
+    this.loadCniFile(this.cheminFile + enseignant.cni, enseignant.cni ?? '');
   }
 
   // ──────────────────────────────────────────────
-  // Utilitaire : détecter le type d'un fichier
+  // Gestion du statut
+  // ──────────────────────────────────────────────
+  changeStatus(id: number, idS:number): void {
+    //alert('Changement de statut'); 
+    this.utilisateurService.changeStatusEnseignant(id, idS).subscribe({
+      next: (response: ResponseServer) => {
+        console.log(response.message);
+        this.getAllEnseignants();
+      },
+      error: (err: any) => console.error('Erreur changement statut:', err),
+    });
+  }
+
+  // ──────────────────────────────────────────────
+  // Suppression
+  // ──────────────────────────────────────────────
+  showDeleteModal   = signal(false);
+  idToDelete        = signal<number | null>(null);
+
+  confirmDelete(id: number): void {
+    this.idToDelete.set(id);
+    this.showDeleteModal.set(true);
+  }
+
+  executeDelete(): void {
+    const id = this.idToDelete();
+    if (id !== null) {
+      this.deleteEnseignant(id);
+    }
+    this.showDeleteModal.set(false);
+    this.idToDelete.set(null);
+  }
+
+  deleteEnseignant(id: number): void {
+    // TODO: implémenter la suppression via service
+    console.log('Suppression de l\'enseignant id:', id);
+  }
+
+  // ──────────────────────────────────────────────
+  // Modals
+  // ──────────────────────────────────────────────
+  showProfilModal = signal<boolean>(false);
+  showDocsModal   = signal(false);
+  showAddModal    = signal(false);
+
+  openProfilModal(enseignant: Enseignant): void {
+    this.showProfilModal.set(true);
+
+    console.log('Ouverture modal profil pour enseignant:', this.showProfilModal());
+    this.selectEnseignant(enseignant);
+  }
+
+  closeProfilModal(): void {
+    this.showProfilModal.set(false);
+  }
+
+  openDocsModal(enseignant: Enseignant): void {
+    this.selectEnseignant(enseignant);
+    this.showDocsModal.set(true);
+  }
+
+  saveEnseignant(): void {
+    if (this.enseignantForm.valid) {
+      // TODO: appel service de création
+      console.log('Données enseignant:', this.enseignantForm.value);
+      this.showAddModal.set(false);
+      this.enseignantForm.reset();
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  // Utilitaire : initiales
+  // ──────────────────────────────────────────────
+  getInitiales(nomComplet: string = ''): string {
+    return nomComplet
+      .split(' ')
+      .map(n => n[0] ?? '')
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
+
+  // ──────────────────────────────────────────────
+  // Utilitaire : type de fichier
   // ──────────────────────────────────────────────
   getFileType(filename: string): 'image' | 'pdf' | 'docx' | 'other' {
     if (!filename) return 'other';
@@ -114,65 +227,48 @@ export class Genseignant {
   // ──────────────────────────────────────────────
   // DIPLÔME
   // ──────────────────────────────────────────────
-  diplomeUrl: string = '';
-  diplomeFileName: string = '';
+  diplomeUrl      = '';
+  diplomeFileName = '';
   safeDiplomeUrl?: SafeResourceUrl;
   diplomeFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
 
   loadDiplomeFile(url: string, name: string): void {
-    this.diplomeUrl = url;
+    this.diplomeUrl      = url;
     this.diplomeFileName = name;
     this.diplomeFileType = this.getFileType(name);
-    this.safeDiplomeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.safeDiplomeUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   // ──────────────────────────────────────────────
   // CV
   // ──────────────────────────────────────────────
-  cvUrl: string = '';
-  cvFileName: string = '';
+  cvUrl      = '';
+  cvFileName = '';
   safeCvUrl?: SafeResourceUrl;
   cvFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
 
   loadCvFile(url: string, name: string): void {
-    this.cvUrl = url;
+    this.cvUrl      = url;
     this.cvFileName = name;
     this.cvFileType = this.getFileType(name);
-    this.safeCvUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.safeCvUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   // ──────────────────────────────────────────────
-  // CNI (Carte Nationale d'Identité)
+  // CNI
   // ──────────────────────────────────────────────
-  cniUrl: string = '';
-  cniFileName: string = '';
+  cniUrl      = '';
+  cniFileName = '';
   safeCniUrl?: SafeResourceUrl;
   cniFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
 
   loadCniFile(url: string, name: string): void {
-    this.cniUrl = url;
+    this.cniUrl      = url;
     this.cniFileName = name;
     this.cniFileType = this.getFileType(name);
-    this.safeCniUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.safeCniUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  // ──────────────────────────────────────────────
-  // Sections
-  // ──────────────────────────────────────────────
-  listSection = signal<Section[]>([]);
 
-  getListSection() {
-    this.generalService.findAllSections().subscribe(
-      (response: Section[]) => {
-        this.listSection.set(response);
-      },
-      (error:any) => {
-        console.error('Error find all sections', error);
-      }
-    );
-  }
-
-  deleteEnseignant(id: number) {
-    // TODO: implémenter la suppression
-  }
+  
 }

@@ -1,0 +1,417 @@
+<div class="lp-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="lp-sidebar" [class.open]="sidebarOpen()">
+    <div class="lp-sidebar-inner">
+
+      <!-- Logo -->
+      <div class="lp-logo">
+        <div class="lp-logo-mark">E</div>
+        <span class="lp-logo-text">EDUCIA</span>
+      </div>
+
+      <!-- Nav links -->
+      <nav class="lp-nav" role="navigation">
+        <button
+          class="lp-nav-item"
+          [class.active]="activeSection() === 'dashboard'"
+          (click)="setSection('dashboard')"
+          type="button"
+        >
+          <span class="lp-nav-icon">⊞</span>
+          <span class="lp-nav-label">Dashboard</span>
+        </button>
+
+        <button
+          class="lp-nav-item"
+          [class.active]="activeSection() === 'offres'"
+          (click)="setSection('offres')"
+          type="button"
+        >
+          <span class="lp-nav-icon">📋</span>
+          <span class="lp-nav-label">Mes offres</span>
+          @if (offreBadge() > 0) {
+            <span class="lp-nav-badge">{{ offreBadge() }}</span>
+          }
+        </button>
+
+        <button
+          class="lp-nav-item"
+          [class.active]="activeSection() === 'candidatures'"
+          (click)="setSection('candidatures')"
+          type="button"
+        >
+          <span class="lp-nav-icon">🎯</span>
+          <span class="lp-nav-label">Candidatures</span>
+          @if (candidatureBadge() > 0) {
+            <span class="lp-nav-badge accent">{{ candidatureBadge() }}</span>
+          }
+        </button>
+      </nav>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Footer sidebar -->
+      <div class="lp-sidebar-foot">
+        <div class="lp-user-chip">
+          <div class="lp-user-avatar">P</div>
+          <div class="lp-user-info">
+            <div class="lp-user-name">Parent</div>
+            <div class="lp-user-role">Mon espace</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay mobile -->
+  <div
+    class="lp-overlay"
+    [class.show]="sidebarOpen()"
+    (click)="closeSidebar()"
+  ></div>
+
+  <!-- ══ MAIN AREA ══ -->
+  <div class="lp-main">
+
+    <!-- ── Navbar ── -->
+    <header class="lp-navbar">
+      <button class="lp-hamburger" type="button" (click)="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="lp-navbar-title">
+        @switch (activeSection()) {
+          @case ('dashboard') { <span>Vue d'ensemble</span> }
+          @case ('offres') { <span>Mes offres</span> }
+          @case ('candidatures') { <span>Candidatures</span> }
+        }
+      </div>
+
+      <div class="lp-navbar-actions">
+        <button class="btn btn-sm btn-primary" type="button" (click)="nouvelleOffre()">
+          ＋ Nouvelle offre
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Contenu ── -->
+    <main class="lp-content">
+
+      <!-- ====== DASHBOARD ====== -->
+      @if (activeSection() === 'dashboard') {
+        <div class="lp-section-enter">
+
+          <div class="lp-greeting">
+            <h1>Bonjour 👋</h1>
+            <p>Voici un résumé de votre activité.</p>
+          </div>
+
+          <!-- Stats pills -->
+          <div class="lp-stats-row">
+            <div class="stat-pill">
+              <div class="stat-pill-icon blue">📋</div>
+              <div>
+                <div class="stat-pill-val">{{ listOffres().length }}</div>
+                <div class="stat-pill-label">Offres publiées</div>
+              </div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-icon orange">🎯</div>
+              <div>
+                <div class="stat-pill-val">{{ totalCandidatures() }}</div>
+                <div class="stat-pill-label">Candidatures reçues</div>
+              </div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-icon green">✅</div>
+              <div>
+                <div class="stat-pill-val">{{ listMatching().length }}</div>
+                <div class="stat-pill-label">Matchings actifs</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aperçu rapide des offres -->
+          <div class="lp-section-title">
+            <h2>Dernières offres</h2>
+            <button class="btn btn-sm btn-ghost" type="button" (click)="setSection('offres')">Voir tout →</button>
+          </div>
+
+          <div class="offres-list">
+            @for (offre of listOffres().slice(0,3); track offre.id; let idx = $index) {
+              <div class="offre-card reveal visible" (click)="goToOffre(offre)" role="button" tabindex="0">
+                <div class="offre-matiere-icon" [style.background]="iconBgFor(idx)">📚</div>
+                <div class="offre-body">
+                  <div class="offre-titre">{{ offre.bio }}</div>
+                  <div class="offre-meta">
+                    @if (offre.filiere?.intitule) {
+                      <span class="tag" style="font-size:11px;padding:4px 10px;">{{ offre.filiere.intitule }}</span>
+                    }
+                    @if (offre.niveau?.intitule) {
+                      <span class="tag tag-accent" style="font-size:11px;padding:4px 10px;">{{ offre.niveau.intitule }}</span>
+                    }
+                    @if (offre.budget) {
+                      <span style="font-size:12px;color:var(--text-light);">{{ offre.budget }} FCFA</span>
+                    }
+                  </div>
+                </div>
+                <div class="offre-arrow">›</div>
+              </div>
+            }
+            @if (listOffres().length === 0) {
+              <div class="lp-empty">
+                <span>📭</span>
+                <p>Aucune offre publiée pour l'instant.</p>
+                <button class="btn btn-sm btn-primary" type="button" (click)="nouvelleOffre()">Publier une offre</button>
+              </div>
+            }
+          </div>
+
+        </div>
+      }
+
+      <!-- ====== OFFRES + MATCHING ====== -->
+      @if (activeSection() === 'offres') {
+        <div class="lp-section-enter lp-split-layout">
+
+          <!-- Colonne gauche : liste des offres -->
+          <div class="lp-col-offres">
+            <div class="lp-section-title">
+              <h2>Mes offres</h2>
+              @if (listOffres().length > 0) {
+                <span class="tag">{{ listOffres().length }}</span>
+              }
+            </div>
+
+            @if (erreurOffres()) {
+              <div class="lp-alert lp-alert-error">⚠️ {{ erreurOffres() }}</div>
+            }
+            @if (chargementOffres()) {
+              <div class="lp-skeleton-list">
+                <div class="lp-skeleton"></div>
+                <div class="lp-skeleton"></div>
+                <div class="lp-skeleton"></div>
+              </div>
+            }
+
+            <div class="offres-list">
+              @for (offre of listOffres(); track offre.id; let idx = $index) {
+                <div
+                  class="offre-card reveal visible"
+                  [class.selected]="offreActive()?.id === offre.id"
+                  (click)="selectOffre(offre)"
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="selectOffre(offre)"
+                >
+                  <div class="offre-matiere-icon" [style.background]="iconBgFor(idx)">📚</div>
+                  <div class="offre-body">
+                    <div class="offre-titre">{{ offre.bio }}</div>
+                    <div class="offre-meta">
+                      @if (offre.filiere?.intitule) {
+                        <span class="tag" style="font-size:11px;padding:4px 10px;">{{ offre.filiere.intitule }}</span>
+                      }
+                      @if (offre.niveau?.intitule) {
+                        <span class="tag tag-accent" style="font-size:11px;padding:4px 10px;">{{ offre.niveau.intitule }}</span>
+                      }
+                      @if (offre.budget) {
+                        <span style="font-size:12px;color:var(--text-light);">{{ offre.budget }} FCFA</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="offre-arrow">›</div>
+                </div>
+              }
+              @if (!chargementOffres() && listOffres().length === 0 && !erreurOffres()) {
+                <div class="lp-empty">
+                  <span>📭</span>
+                  <p>Aucune offre publiée.</p>
+                </div>
+              }
+              <button class="btn-new-offre reveal" type="button" (click)="nouvelleOffre()">
+                <span style="font-size:1.4rem;">＋</span> Publier une nouvelle offre
+              </button>
+            </div>
+          </div>
+
+          <!-- Colonne droite : panel matching -->
+          <div class="lp-col-detail" [class.open]="offreActive() !== null">
+
+            <!-- Bouton fermer (mobile) -->
+            <button class="lp-panel-close" type="button" (click)="fermerPanel()" aria-label="Fermer">✕</button>
+
+            @if (offreActive() === null) {
+              <div class="lp-empty lp-empty-detail">
+                <span>👈</span>
+                <p>Sélectionnez une offre pour voir les enseignants matchés.</p>
+              </div>
+            } @else {
+              <div class="match-panel-header">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                  @if (offreActive()?.filiere?.intitule) {
+                    <span class="tag">{{ offreActive()?.filiere?.intitule }}</span>
+                  }
+                  @if (offreActive()?.niveau?.intitule) {
+                    <span class="tag tag-accent">{{ offreActive()?.niveau?.intitule }}</span>
+                  }
+                </div>
+                <h3>{{ offreActive()?.bio }}</h3>
+                <p style="font-size:13px;margin-top:4px;">Enseignants matchés triés par score</p>
+              </div>
+
+              <div class="match-modal-toolbar">
+                @if (chargementMatching()) {
+                  <span class="match-count">Chargement…</span>
+                } @else {
+                  <span class="match-count">{{ listMatching().length }} enseignant(s)</span>
+                }
+                <span class="match-sort">Triés par score mF ↓</span>
+              </div>
+
+              @if (erreurMatching()) {
+                <div class="lp-alert lp-alert-error">⚠️ {{ erreurMatching() }}</div>
+              }
+
+              <div class="match-modal-body">
+                @if (!chargementMatching() && listMatching().length === 0 && !erreurMatching()) {
+                  <div class="lp-empty"><span>🔍</span><p>Aucun enseignant matché.</p></div>
+                }
+                @for (match of listMatching(); track match.enseignant; let i = $index) {
+                  <div class="ens-card">
+                    <div class="ens-rank" [class.top]="i < 3">#{{ i + 1 }}</div>
+                    <div class="ens-photo" [class]="photoClassFor(i)">
+                      {{ initialesDe(match.enseignant.nomComplet) }}
+                    </div>
+                    <div class="ens-info">
+                      <div class="ens-name">{{ match.enseignant.nomComplet }}</div>
+                      @if (match.enseignant.specialite) {
+                        <div class="ens-sub">{{ match.enseignant.specialite }}</div>
+                      }
+                    </div>
+                    <div class="ens-score-block">
+                      <div class="ens-score-val">{{ match.score }}</div>
+                      <div class="ens-score-label">score mF</div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+        </div>
+      }
+
+      <!-- ====== CANDIDATURES ====== -->
+      @if (activeSection() === 'candidatures') {
+        <div class="lp-section-enter lp-split-layout">
+
+          <!-- Colonne gauche : liste offres -->
+          <div class="lp-col-offres">
+            <div class="lp-section-title">
+              <h2>Offres</h2>
+            </div>
+
+            @if (chargementOffres()) {
+              <div class="lp-skeleton-list">
+                <div class="lp-skeleton"></div><div class="lp-skeleton"></div>
+              </div>
+            }
+            <div class="offres-list">
+              @for (offre of listOffres(); track offre.id; let idx = $index) {
+                <div
+                  class="offre-card reveal visible"
+                  [class.selected]="offreActiveCand()?.id === offre.id"
+                  (click)="selectOffreCandidature(offre)"
+                  role="button"
+                  tabindex="0"
+                >
+                  <div class="offre-matiere-icon" [style.background]="iconBgFor(idx)">📚</div>
+                  <div class="offre-body">
+                    <div class="offre-titre">{{ offre.bio }}</div>
+                    <div class="offre-meta">
+                      @if (offre.niveau?.intitule) {
+                        <span class="tag tag-accent" style="font-size:11px;padding:4px 10px;">{{ offre.niveau.intitule }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="offre-arrow">›</div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Colonne droite : candidatures de l'offre -->
+          <div class="lp-col-detail" [class.open]="offreActiveCand() !== null">
+            <button class="lp-panel-close" type="button" (click)="fermerPanelCand()" aria-label="Fermer">✕</button>
+
+            @if (offreActiveCand() === null) {
+              <div class="lp-empty lp-empty-detail">
+                <span>👈</span>
+                <p>Sélectionnez une offre pour voir les candidatures.</p>
+              </div>
+            } @else {
+              <div class="match-panel-header">
+                <h3>Candidatures — {{ offreActiveCand()?.bio }}</h3>
+                <p style="font-size:13px;margin-top:4px;">{{ listCandidatures().length }} candidature(s)</p>
+              </div>
+
+              @if (chargementCandidatures()) {
+                <div class="lp-skeleton-list" style="padding:16px 28px;">
+                  <div class="lp-skeleton"></div><div class="lp-skeleton"></div>
+                </div>
+              }
+              @if (erreurCandidatures()) {
+                <div class="lp-alert lp-alert-error" style="margin:16px 28px;">⚠️ {{ erreurCandidatures() }}</div>
+              }
+
+              <div class="match-modal-body">
+                @if (!chargementCandidatures() && listCandidatures().length === 0 && !erreurCandidatures()) {
+                  <div class="lp-empty"><span>📭</span><p>Aucune candidature pour cette offre.</p></div>
+                }
+                @for (cand of listCandidatures(); track cand.id; let i = $index) {
+                  <div
+                    class="ens-card"
+                    [class.selected-card]="candidatureSelected()?.id === cand.id"
+                    (click)="selectCandidature(cand)"
+                    role="button"
+                    tabindex="0"
+                    style="cursor:pointer;"
+                  >
+                    <div class="ens-rank">#{{ i + 1 }}</div>
+                    <div class="ens-photo" [class]="photoClassFor(i)">
+                      {{ initialesDe(cand.enseignant.nomComplet) }}
+                    </div>
+                    <div class="ens-info">
+                      <div class="ens-name">{{ cand.enseignant.nomComplet }}</div>
+                      <div class="ens-sub">{{ cand.date | date:'dd MMM yyyy' }}</div>
+                    </div>
+                    <a
+                      [href]="'https://wa.me/' + formatPhone(cand.enseignant.telephone)"
+                      target="_blank"
+                      rel="noopener"
+                      class="btn btn-sm btn-success"
+                      (click)="$event.stopPropagation()"
+                      title="Contacter sur WhatsApp"
+                    >
+                      💬
+                    </a>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+        </div>
+      }
+
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="lp-footer">
+      <span>© 2025 EDUCIA — Plateforme éducative</span>
+    </footer>
+
+  </div><!-- /lp-main -->
+</div><!-- /lp-shell -->

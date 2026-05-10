@@ -1,0 +1,792 @@
+/* ============================================================
+   LAYOUT PORTAIL — LayoutPortail Component
+   À ajouter au style.css général (après les sections existantes)
+   ============================================================ */
+
+/* ── Shell principal ── */
+.lp-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-soft);
+  position: relative;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.lp-sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.lp-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 0 24px;
+}
+
+/* Logo */
+.lp-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 12px;
+}
+
+.lp-logo-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.lp-logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+/* Nav */
+.lp-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+}
+
+.lp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+  position: relative;
+}
+
+.lp-nav-item:hover {
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+}
+
+.lp-nav-item.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(10,79,255,0.4);
+}
+
+.lp-nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.lp-nav-label {
+  flex: 1;
+}
+
+.lp-nav-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+  min-width: 22px;
+  text-align: center;
+}
+
+.lp-nav-badge.accent {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+/* Sidebar foot */
+.lp-sidebar-foot {
+  padding: 16px 16px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 8px;
+}
+
+.lp-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.06);
+}
+
+.lp-user-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.lp-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.lp-user-role {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 1px;
+}
+
+/* ── Overlay mobile ── */
+.lp-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,42,0.55);
+  z-index: 199;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.lp-overlay.show { opacity: 1; }
+
+/* ============================================================
+   MAIN AREA
+   ============================================================ */
+.lp-main {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Navbar ── */
+.lp-navbar {
+  height: var(--header-h);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.lp-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.lp-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-dark);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.lp-navbar-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-dark);
+  flex: 1;
+}
+
+.lp-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Contenu ── */
+.lp-content {
+  flex: 1;
+  padding: 28px 28px 0;
+  overflow-x: hidden;
+}
+
+/* ── Footer ── */
+.lp-footer {
+  padding: 20px 28px;
+  font-size: 12px;
+  color: var(--text-light);
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+  margin-top: 32px;
+}
+
+/* ============================================================
+   SECTION ANIMATIONS
+   ============================================================ */
+.lp-section-enter {
+  animation: lpFadeUp 0.35s ease both;
+}
+
+@keyframes lpFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   LAYOUT SPLIT (offres + detail)
+   ============================================================ */
+.lp-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.lp-col-offres {
+  min-width: 0;
+}
+
+.lp-col-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  min-height: 480px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Bouton fermer panneau (caché desktop, visible mobile) */
+.lp-panel-close {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  font-size: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: var(--text-mid);
+  transition: all 0.2s;
+}
+.lp-panel-close:hover { background: var(--red-light); color: var(--red); }
+
+/* ============================================================
+   STATS
+   ============================================================ */
+.lp-stats-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  flex: 1;
+  min-width: 160px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.stat-pill:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-pill-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.stat-pill-icon.blue   { background: var(--primary-light); }
+.stat-pill-icon.orange { background: var(--accent-light); }
+.stat-pill-icon.green  { background: var(--green-light); }
+
+.stat-pill-val {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.stat-pill-label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 3px;
+}
+
+/* ============================================================
+   SECTION TITLE
+   ============================================================ */
+.lp-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.lp-section-title h2 {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+}
+
+/* ============================================================
+   OFFRE CARDS (héritées, enrichies)
+   ============================================================ */
+.offres-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offre-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-decoration: none;
+  outline: none;
+}
+
+.offre-card:hover,
+.offre-card:focus-visible {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.offre-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.offre-matiere-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.offre-body { flex: 1; min-width: 0; }
+.offre-titre {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
+}
+
+.offre-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.offre-arrow {
+  color: var(--text-light);
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.btn-new-offre {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+.btn-new-offre:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* ============================================================
+   PANEL MATCHING / CANDIDATURES (col droite)
+   ============================================================ */
+.match-panel-header {
+  padding: 24px 28px 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 18px;
+}
+
+.match-modal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+
+.match-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.match-sort {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.match-modal-body {
+  padding: 12px 0;
+  overflow-y: auto;
+  max-height: 520px;
+}
+
+/* ============================================================
+   ENS CARDS
+   ============================================================ */
+.ens-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.ens-card:last-child { border-bottom: none; }
+.ens-card:hover { background: var(--bg-soft); }
+.ens-card.selected-card { background: var(--primary-light); }
+
+.ens-rank {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-light);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ens-rank.top { color: var(--accent); }
+
+.ens-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Gradients photos */
+.ens-photo.c1 { background: linear-gradient(135deg, #0A4FFF, #4B8BFF); }
+.ens-photo.c2 { background: linear-gradient(135deg, #FF6B35, #FFB347); }
+.ens-photo.c3 { background: linear-gradient(135deg, #22C55E, #4ADE80); }
+.ens-photo.c4 { background: linear-gradient(135deg, #A855F7, #D8B4FE); }
+.ens-photo.c5 { background: linear-gradient(135deg, #F59E0B, #FCD34D); }
+
+.ens-info { flex: 1; min-width: 0; }
+.ens-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ens-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.ens-score-block {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ens-score-val {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.ens-score-label {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   GREETINGS & EMPTY STATES
+   ============================================================ */
+.lp-greeting {
+  margin-bottom: 24px;
+}
+
+.lp-greeting h1 {
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  margin-bottom: 4px;
+}
+
+.lp-greeting p { font-size: 14px; }
+
+.lp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.lp-empty span { font-size: 2.2rem; }
+.lp-empty p { font-size: 14px; color: var(--text-mid); }
+
+.lp-empty-detail {
+  min-height: 300px;
+}
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+.lp-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.lp-alert-error {
+  background: var(--red-light);
+  color: #B91C1C;
+  border-left: 4px solid var(--red);
+}
+
+/* ============================================================
+   SKELETONS
+   ============================================================ */
+.lp-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.lp-skeleton {
+  height: 72px;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--border) 25%, #f0f4ff 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet
+   ============================================================ */
+@media (max-width: 1024px) {
+  .lp-split-layout {
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile (≤ 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* Sidebar cachée par défaut, glisse depuis la gauche */
+  .lp-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .lp-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .lp-overlay {
+    display: block;
+  }
+
+  /* Main occupe tout l'écran */
+  .lp-main {
+    margin-left: 0;
+  }
+
+  .lp-hamburger {
+    display: flex;
+  }
+
+  .lp-navbar {
+    padding: 0 16px;
+  }
+
+  .lp-content {
+    padding: 20px 16px 0;
+  }
+
+  /* Split layout : une seule colonne, le panel glisse par-dessus */
+  .lp-split-layout {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+
+  /* La colonne offres prend toute la largeur */
+  .lp-col-offres {
+    width: 100%;
+  }
+
+  /* Le panneau détail est un drawer qui glisse depuis la droite */
+  .lp-col-detail {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(420px, 92vw);
+    z-index: 300;
+    border-radius: var(--radius) 0 0 var(--radius);
+    box-shadow: -8px 0 40px rgba(13,27,42,0.18);
+    transform: translateX(110%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lp-col-detail.open {
+    transform: translateX(0);
+  }
+
+  /* Afficher le bouton fermer sur mobile */
+  .lp-panel-close {
+    display: flex;
+  }
+
+  /* Stats en colonne */
+  .lp-stats-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat-pill {
+    flex: none;
+    min-width: unset;
+  }
+
+  /* Match body scrollable mobile */
+  .match-modal-body {
+    max-height: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .lp-navbar-actions .btn { display: none; }
+  .lp-footer { padding: 16px; }
+}
