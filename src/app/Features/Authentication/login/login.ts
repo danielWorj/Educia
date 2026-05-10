@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@angular/forms';
 import { AuthService } from '../../../Core/Service/Auth/auth-service';
 import { AuthData } from '../../../Core/Model/Auth/AuthData';
-import { Router } from 'express';
+import { ActivatedRoute , Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
    loginForm !:FormGroup; 
-  constructor(private fb : FormBuilder , private authService : AuthService , private router: Router){
+  constructor(private fb : FormBuilder ,
+     private authService : AuthService , 
+     private router: Router, 
+     private route:ActivatedRoute){
 
     this.loginForm = this.fb.group({
       email : new FormControl(), 
@@ -20,9 +23,22 @@ export class Login {
     }); 
   }
 
+  
+  roleRoutes: Record<number, string> = {
+    1: '/admin/admin-dashboard',
+    2: '/admin/admin-enseignants', 
+    3: '/portail/dasboard',
+    4: 'admin/admin-parents'
+  };
+
+
+  //1- ADMIN
+  //2-ENSEIGNANT
+  //3-PARENT
+  //4-ELEVE
+
   loginD(){
   //  this.statutConnection.emit(true);
- 
 
     const formData: FormData = new FormData(); 
 
@@ -37,29 +53,17 @@ export class Login {
           // Stocker l'id et le role
           localStorage.setItem('id', `${data.id}`); 
           localStorage.setItem('role', `${data.role}`); 
-          
-          // Mapping rôle -> route
-          // let dashboardRoute: string;
-          
-          // switch(data.role) {
-          //   case 1:
-          //     dashboardRoute = '/dashboard-admin';
-          //     break;
-          //   case 2:
-          //     dashboardRoute = '/dashboard-enseignant';
-          //     break;
-          //   case 3:
-          //     dashboardRoute = '/dashboard-parent';
-          //     break;
-          //   case 4:
-          //     dashboardRoute = '/dashboard-eleve';
-          //     break;
-          //   default:
-          //     dashboardRoute = '/login';
-          // }
-          
-          // // Redirection
-          // this.router.navigate([dashboardRoute]);
+
+           console.log(data);
+
+
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          console.log('Return URL:', returnUrl);
+          const defaultRoute = this.roleRoutes[data.role] ?? '/landing-page';
+          const safeUrl = returnUrl?.startsWith('/') ? returnUrl : defaultRoute;
+          this.router.navigateByUrl(safeUrl);
+        
+
         } else {
           alert('identifiant incorrect'); 
         }

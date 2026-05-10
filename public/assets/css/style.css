@@ -75,7 +75,7 @@ body {
 /* ============================================================
    UTILITAIRES
    ============================================================ */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 24px; }
 .section    { padding: 48px 0; }
 .section-sm { padding: 28px 0; }
 .text-center { text-align: center; }
@@ -277,6 +277,25 @@ p { color: var(--text-mid); line-height: 1.75; }
   display: flex; justify-content: flex-end; gap: 12px;
 }
 
+/* Modal-box : variante pour formulaires longs (scrollable) */
+.modal-box {
+  background: #fff; border-radius: var(--radius-xl);
+  padding: 2rem 2.5rem; width: 100%; max-width: 600px;
+  max-height: 85vh; overflow-y: auto; position: relative;
+  animation: modalIn 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  scrollbar-width: thin; scrollbar-color: #e5e7eb transparent;
+}
+.modal-box::-webkit-scrollbar { width: 5px; }
+.modal-box::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+.modal-box h3 { font-family: var(--font-display); font-size: 1.4rem; margin: 12px 0; }
+
+@media (max-width: 640px) {
+  .modal-overlay { padding: 1rem; align-items: flex-end; }
+  .modal-box { max-width: 100%; max-height: 92vh; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem; }
+  .modal { max-width: 100%; border-radius: var(--radius) var(--radius) 0 0; }
+}
+
 /* ============================================================
    TOAST
    ============================================================ */
@@ -338,11 +357,12 @@ p { color: var(--text-mid); line-height: 1.75; }
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
   height: var(--nav-h); background: rgba(255,255,255,0.95);
   backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s; width: 100%;
 }
 .navbar.scrolled { box-shadow: var(--shadow-md); }
 .navbar-inner {
   display: flex; align-items: center; justify-content: space-between; height: 100%;
+  width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px;
 }
 .logo {
   display: flex; align-items: center; gap: 10px;
@@ -377,13 +397,14 @@ p { color: var(--text-mid); line-height: 1.75; }
   min-height: auto; display: flex; align-items: center;
   padding-top: var(--nav-h); padding-bottom: 60px; position: relative; overflow: hidden;
   background: linear-gradient(135deg, #F0F5FF 0%, #FFF8F5 50%, #F0FFF4 100%);
+  width: 100%;
 }
 .hero-bg-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .hero-shape { position: absolute; border-radius: 50%; opacity: 0.15; filter: blur(80px); }
 .hero-shape-1 { width: 600px; height: 600px; background: var(--primary); top: -200px; right: -100px; }
 .hero-shape-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -100px; }
 .hero-shape-3 { width: 300px; height: 300px; background: var(--green); top: 50%; right: 30%; }
-.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%; }
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%; min-width: 0; }
 .hero-content { animation: fadeUp 0.8s ease forwards; min-width: 0; }
 .hero-badge { margin-bottom: 24px; }
 .hero h1 { margin: 16px 0 24px; }
@@ -629,28 +650,85 @@ p { color: var(--text-mid); line-height: 1.75; }
   .pricing-card.popular { transform: none; }
   .steps-grid { grid-template-columns: 1fr; }
   .stats-band-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-steps { grid-template-columns: repeat(2, 1fr); }
+  .process-steps::before { display: none; }
 }
+
 @media (max-width: 768px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  /* Container */
+  .container { padding: 0 16px; }
+
+  /* Hero */
+  .hero-inner { grid-template-columns: 1fr; gap: 0; }
   .hero-visual { display: none; }
-  .nav-links, .nav-cta { display: none; }
-  .hamburger { display: flex; }
-  .nav-links.open { display: flex; flex-direction: column; position: fixed; top: var(--nav-h); left: 0; right: 0; background: #fff; padding: 24px; box-shadow: var(--shadow-md); gap: 4px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-  .form-row { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-  .hero-stats { flex-wrap: wrap; gap: 24px; }
-  /* Fix hero content overflow on mobile */
-  .hero-content { width: 100%; min-width: 0; }
-  .hero h1 { font-size: clamp(1.3rem, 7vw, 2rem); word-break: break-word; }
+  .hero { padding: 80px 0 40px; }
   .hero p { font-size: 1rem; max-width: 100%; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  /* Fix contact and other 2-col grids */
-  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-stats { flex-wrap: wrap; gap: 20px; }
+  .hero-stat-num { font-size: 1.2rem; }
+  .hero-content { width: 100%; min-width: 0; }
+  .hero h1 { font-size: clamp(1.4rem, 7vw, 2rem); word-break: break-word; }
+
+  /* Navbar mobile */
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: var(--nav-h); left: 0; right: 0;
+    background: #fff; padding: 20px 16px;
+    box-shadow: var(--shadow-md); gap: 4px; z-index: 999;
+  }
+  .nav-links.open li { width: 100%; }
+  .nav-links.open a { display: block; padding: 12px 16px; width: 100%; border-radius: var(--radius-sm); }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+
+  /* Grilles */
+  .form-row { grid-template-columns: 1fr; }
+  .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .tutors-grid { grid-template-columns: 1fr; }
+  .market-grid { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .stats-band-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+  .process-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .process-steps::before { display: none; }
+  .levels-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 32px; }
   .become-tutor-benefits { grid-template-columns: 1fr; }
-  /* Fix steps grid on tablet */
-  .steps-grid { grid-template-columns: 1fr; }
+
+  /* CTA band */
+  .cta-band .btn-group { flex-direction: column; align-items: center; }
+  .cta-band .btn { width: 100%; max-width: 300px; }
+
+  /* Sections */
+  .section    { padding: 40px 0; }
+  .section-sm { padding: 24px 0; }
+  .section-header { margin-bottom: 24px; }
+
+  /* Hero shapes */
+  .hero-shape-1 { width: 250px; height: 250px; right: -60px; top: -60px; }
+  .hero-shape-2 { width: 180px; height: 180px; }
+  .hero-shape-3 { display: none; }
+
+  /* Tab list */
+  .tab-list { overflow-x: auto; width: 100%; border-radius: var(--radius-sm); }
+  .filter-bar { gap: 8px; }
+  .filter-search { margin-left: 0; width: 100%; }
+  .filter-search input { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 12px; }
+  .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .levels-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stats-band-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .process-steps { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 12px; }
+  h1 { font-size: clamp(1.25rem, 6vw, 1.8rem); }
 }
 
 
@@ -659,7 +737,7 @@ p { color: var(--text-mid); line-height: 1.75; }
    ============================================================ */
 
 /* ===== LAYOUT ===== */
-.admin-layout { display: flex; min-height: 100vh; }
+.admin-layout { display: flex; min-height: 100vh; width: 100%; overflow-x: hidden; }
 
 /* ===== SIDEBAR ===== */
 .sidebar {
@@ -722,7 +800,7 @@ p { color: var(--text-mid); line-height: 1.75; }
 .sidebar-overlay.open { display: block; }
 
 /* ===== MAIN CONTENT ===== */
-.main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; overflow-x: hidden; }
 
 /* ===== TOP HEADER ===== */
 .top-header {
@@ -759,7 +837,7 @@ p { color: var(--text-mid); line-height: 1.75; }
 .hamburger-admin span { display: block; width: 22px; height: 2px; background: var(--text-dark); border-radius: 2px; }
 
 /* ===== PAGE BODY ===== */
-.page-body { padding: 32px; flex: 1; }
+.page-body { padding: 32px; flex: 1; min-width: 0; overflow-x: hidden; }
 
 /* ===== PAGE TITLE BAR ===== */
 .page-title-bar {
@@ -772,7 +850,7 @@ p { color: var(--text-mid); line-height: 1.75; }
 .breadcrumb span { color: var(--text-light); }
 
 /* ===== STAT CARDS ===== */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; width: 100%; min-width: 0; }
 .stat-card {
   background: var(--bg-card); border-radius: var(--radius); padding: 24px;
   border: 1px solid var(--border); box-shadow: var(--shadow-sm);
@@ -919,22 +997,27 @@ tbody tr:hover { background: var(--bg-soft); }
   .dashboard-grid { grid-template-columns: 1fr; }
   .dashboard-grid.three { grid-template-columns: 1fr; }
   .offres-grid { grid-template-columns: 1fr; }
+  .top-header { padding: 0 20px; }
 }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
   .main-content { margin-left: 0; }
   .hamburger-admin { display: flex; }
-  .header-search { width: 200px; }
-  .page-body { padding: 20px 16px; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .header-search { width: 180px; }
+  .page-body { padding: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .support-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .header-date { display: none; }
+  .top-header { padding: 0 16px; gap: 10px; }
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr; }
   .header-search { display: none; }
+  .page-body { padding: 12px; }
+  .card-body { padding: 16px; }
+  .card-header { padding: 16px; }
 }
 .process-steps {
   display: grid;
@@ -1058,7 +1141,7 @@ tbody tr:hover { background: var(--bg-soft); }
 
 
 /* ============================================================
-   RESPONSIVE MOBILE (site public)
+   RESPONSIVE MOBILE (site public) — corrections overflow
    ============================================================ */
 
 /* Empêche le débordement horizontal sur mobile */
@@ -1067,112 +1150,8 @@ html, body {
   overflow-x: hidden;
 }
 
-@media (max-width: 768px) {
 
-  /* Réduire les formes de fond qui débordent */
-  .hero-shape-1 { width: 300px; height: 300px; right: -80px; top: -80px; }
-  .hero-shape-2 { width: 200px; height: 200px; }
-  .hero-shape-3 { display: none; }
-
-  /* Hero */
-  .hero { padding: 60px 0 40px; }
-  .hero p { font-size: 1rem; }
-  .hero-actions { flex-direction: column; align-items: flex-start; }
-  .hero-actions .btn { width: 100%; justify-content: center; }
-  .hero-stats { gap: 20px; }
-  .hero-stat-num { font-size: 1.4rem; }
-
-  /* Sections */
-  .section    { padding: 48px 0; }
-  .section-sm { padding: 32px 0; }
-  .section-header { margin-bottom: 32px; }
-
-  /* Grilles qui passent en 1 colonne */
-  .subjects-grid      { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .tutors-grid        { grid-template-columns: 1fr; }
-  .market-grid        { grid-template-columns: 1fr; }
-  .testimonials-grid  { grid-template-columns: 1fr; }
-  .stats-band-grid    { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-
-  /* Niveaux : 2 par ligne sur mobile */
-  .levels-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-
-  /* CTA band */
-  .cta-band .btn-group { flex-direction: column; align-items: center; }
-  .cta-band .btn { width: 100%; max-width: 300px; }
-}
-
-@media (max-width: 400px) {
-  .subjects-grid { grid-template-columns: 1fr 1fr; }
-  .levels-grid   { grid-template-columns: 1fr 1fr; }
-}
-
-
-/* ===== MODAL OVERLAY ===== */
-.modal-overlay {
-  display: none;               /* caché par défaut */
-  position: fixed;
-  inset: 0;                    /* couvre tout l'écran */
-  background: rgba(0, 0, 0, 0.55);  /* fond sombre semi-transparent */
-  backdrop-filter: blur(4px);  /* flou élégant derrière */
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-/* Quand le modal est ouvert */
-.modal-overlay.open {
-  display: flex;               /* flex pour centrer le contenu */
-}
-
-/* ===== MODAL BOX ===== */
-.modal-box {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  width: 100%;
-  max-width: 520px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
-  position: relative;
-  animation: modalIn 0.3s ease;
-}
-
-/* Animation d'entrée */
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Bouton fermer */
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: #f3f4f6;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-.modal-close:hover {
-  background: #e5e7eb;
-}
-
+/* (modal-overlay, modal-box et modal-close définis ci-dessus dans la section MODAL) */
 
 /* ============================================================
    EDUCIA — forms.css
@@ -1735,22 +1714,12 @@ html, body {
 }
 
 
-/* ── 13. MODAL SUCCÈS ────────────────────────────────────── */
-
-.modal-box {
-  background: #fff;
-  border-radius: var(--radius-xl);
+/* ── 13. MODAL SUCCÈS — variante texte centré (surcharge modal-box) ── */
+.modal-box.modal-success {
   max-width: 460px;
-  width: 100%;
   padding: 48px 36px;
   text-align: center;
 }
-.modal-box h3 {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  margin: 12px 0;
-}
-
 
 /* ── 14. RESPONSIVE ──────────────────────────────────────── */
 
@@ -1762,69 +1731,6 @@ html, body {
   .form-row-3   { grid-template-columns: 1fr; gap: 16px; }
   .type-grid    { grid-template-columns: 1fr; }
   .upload-id-wrapper { flex-direction: column; align-items: flex-start; }
-}
-
-/* ===== MODAL OVERLAY ===== */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;         /* espace autour du modal sur mobile */
-}
-
-.modal-overlay.open {
-  display: flex;
-}
-
-/* ===== MODAL BOX ===== */
-.modal-box {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 2rem 2.5rem;
-  width: 100%;
-  max-width: 600px;        /* ✅ plus large pour les formulaires à 2 colonnes */
-  max-height: 85vh;        /* ✅ ne dépasse jamais l'écran */
-  overflow-y: auto;        /* ✅ scroll interne si contenu long */
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
-  position: relative;
-  animation: modalIn 0.3s ease;
-
-  /* Scrollbar discrète */
-  scrollbar-width: thin;
-  scrollbar-color: #e5e7eb transparent;
-}
-
-.modal-box::-webkit-scrollbar {
-  width: 5px;
-}
-.modal-box::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
-  border-radius: 10px;
-}
-
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ===== RESPONSIVE MOBILE ===== */
-@media (max-width: 640px) {
-  .modal-overlay {
-    padding: 1rem;
-    align-items: flex-end;   /* modal collé en bas sur mobile */
-  }
-
-  .modal-box {
-    max-width: 100%;
-    max-height: 92vh;
-    border-radius: 20px 20px 0 0;  /* style sheet bottom sur mobile */
-    padding: 1.5rem 1.25rem;
-  }
 }
 
 .profile-form-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; align-items:start; }
@@ -2376,38 +2282,17 @@ html, body {
     /* No-scroll body when modal open */
     body.modal-open { overflow: hidden; }
 
-    :root {
-      --primary: #0A4FFF;
-      --primary-dark: #0035CC;
-      --primary-light: #EEF3FF;
-      --accent: #FF6B35;
-      --accent-light: #FFF0EA;
-      --green: #22C55E;
-      --text-dark: #0D1B2A;
-      --text-mid: #4A5568;
-      --text-light: #94A3B8;
-      --bg: #F8FAFF;
-      --bg-card: #FFFFFF;
-      --border: #E2E8F0;
-      --sidebar-bg: #0D1B2A;
-      --shadow-sm: 0 2px 8px rgba(10,79,255,0.07);
-      --shadow-md: 0 8px 32px rgba(10,79,255,0.10);
-      --shadow-lg: 0 24px 64px rgba(10,79,255,0.13);
-      --radius: 14px;
-      --radius-sm: 8px;
-      --radius-xl: 24px;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
+    /* Login page : le body peut rester normal, on utilise un wrapper flex */
+    body.login-page {
+      display: flex;
+      overflow: hidden;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font-body);
-      color: var(--text-dark);
-      background: var(--bg);
-      min-height: 100vh;
+    /* Wrapper alternatif si on ne peut pas modifier le body (Angular routing) */
+    .login-wrapper {
       display: flex;
+      min-height: 100vh;
+      width: 100%;
       overflow: hidden;
     }
 
@@ -2873,3 +2758,110 @@ html, body {
       .login-right { padding: 24px 16px; }
       .login-card { padding: 32px 24px; border-radius: var(--radius); }
     }
+/* ============================================================
+   CORRECTIONS RESPONSIVE GLOBALES
+   ============================================================ */
+
+/* ── Portail parent (lp-shell) ── */
+@media (max-width: 768px) {
+  .lp-shell { flex-direction: column; }
+  .lp-sidebar { width: min(280px, 85vw); }
+  .lp-main { margin-left: 0 !important; }
+  .lp-hamburger { display: flex !important; }
+  .lp-content { padding: 16px 12px 0; }
+  .lp-footer { padding: 14px 16px; }
+  .lp-navbar { padding: 0 12px; }
+  .lp-split-layout { grid-template-columns: 1fr !important; }
+  .lp-stats-row { flex-direction: column; gap: 10px; }
+  .stat-pill { min-width: unset; flex: none; width: 100%; }
+}
+
+/* ── Portail — panel détail (drawer mobile) ── */
+@media (max-width: 768px) {
+  .lp-col-detail {
+    position: fixed !important;
+    top: 0; right: 0; bottom: 0;
+    width: min(400px, 92vw) !important;
+    z-index: 300;
+    border-radius: var(--radius) 0 0 var(--radius) !important;
+    box-shadow: -8px 0 40px rgba(13,27,42,0.18);
+    transform: translateX(110%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    background: var(--bg-card);
+    border: none !important;
+  }
+  .lp-col-detail.open { transform: translateX(0) !important; }
+  .lp-panel-close { display: flex !important; }
+  .match-modal-body { max-height: none !important; }
+}
+
+/* ── Stat pills responsive ── */
+@media (max-width: 480px) {
+  .stat-pill { padding: 14px 16px; }
+  .stat-pill-val { font-size: 1.3rem; }
+}
+
+/* ── Portail-wrapper (ancien hero portail) ── */
+@media (max-width: 768px) {
+  .portail-wrapper { overflow-x: hidden; }
+  .portail-header-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .portail-stats { flex-direction: column; gap: 12px; }
+  .portail-stats .stat-pill { width: 100%; }
+}
+
+/* ── Résultats matching page ── */
+@media (max-width: 768px) {
+  .results-header { padding: 48px 0 80px; }
+  .results-meta { gap: 12px; }
+  .offer-recap { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .results-content { padding: 28px 0 48px; }
+  .results-toolbar { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Boutons ── */
+@media (max-width: 480px) {
+  .btn { font-size: 14px; padding: 12px 20px; }
+  .btn-lg { padding: 14px 24px; font-size: 15px; }
+}
+
+/* ── Tables responsive ── */
+@media (max-width: 768px) {
+  .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 500px; }
+  .page-title-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .page-title-bar h1 { font-size: 1rem; }
+}
+
+/* ── Profile form grid ── */
+@media (max-width: 900px) {
+  .profile-form-grid { grid-template-columns: 1fr !important; }
+  .profile-preview { position: static !important; }
+  .steps-apply { grid-template-columns: 1fr !important; }
+}
+
+/* ── Modale responsive ── */
+@media (max-width: 640px) {
+  .modal { max-width: 100%; border-radius: var(--radius) var(--radius) 0 0; }
+  .match-modal { border-radius: var(--radius) var(--radius) 0 0 !important; }
+  .match-modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .match-modal { width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── Filter bar ── */
+@media (max-width: 640px) {
+  .filter-bar { flex-direction: column; }
+  .filter-search { margin-left: 0; width: 100%; }
+  .filter-search input { width: 100%; }
+  .tab-list { overflow-x: auto; width: 100%; white-space: nowrap; border-radius: var(--radius-sm); scrollbar-width: none; }
+  .tab-list::-webkit-scrollbar { display: none; }
+}
+
+/* ── Sections padding ── */
+@media (max-width: 480px) {
+  .section { padding: 32px 0; }
+  .section-sm { padding: 20px 0; }
+}
+
+/* ── img ── */
+img, svg { max-width: 100%; height: auto; }

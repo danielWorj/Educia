@@ -1,4 +1,7 @@
- <!-- LEFT -->
+<!-- Envelopper dans .login-wrapper pour le layout flex côte à côte -->
+<div class="login-wrapper">
+
+  <!-- LEFT -->
   <div class="login-left">
     <div class="brand">
       <div class="brand-icon">E</div>
@@ -55,57 +58,61 @@
         <p class="card-subtitle">Accédez à votre espace Educia</p>
       </div>
 
-      <div id="loginForm">
-        <!-- Email -->
-        <div class="form-group">
-          <label class="form-label" for="email">Adresse e-mail</label>
-          <div class="input-wrap">
-            <input class="form-input" type="email" id="email" placeholder="votre@email.com" autocomplete="email"/>
-            <i class="input-icon fa-regular fa-envelope"></i>
+      <form action="" [formGroup]="loginForm" (ngSubmit)="loginD()">
+        <div id="loginForm">
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label" for="email">Adresse e-mail</label>
+            <div class="input-wrap">
+              <input class="form-input" formControlName="email" type="email" id="email" placeholder="votre@email.com" autocomplete="email"/>
+              <i class="input-icon fa-regular fa-envelope"></i>
+            </div>
+            <div class="form-error" id="emailError"><i class="fa-solid fa-circle-exclamation"></i> Email invalide</div>
           </div>
-          <div class="form-error" id="emailError"><i class="fa-solid fa-circle-exclamation"></i> Email invalide</div>
-        </div>
 
-        <!-- Password -->
-        <div class="form-group">
-          <label class="form-label" for="password">Mot de passe</label>
-          <div class="input-wrap pw-wrap">
-            <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
-            <i class="input-icon fa-solid fa-lock"></i>
-            <button class="pw-toggle" type="button" id="pwToggle" aria-label="Afficher le mot de passe">
-              <i class="fa-regular fa-eye" id="pwIcon"></i>
-            </button>
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="password">Mot de passe</label>
+            <div class="input-wrap pw-wrap">
+              <input class="form-input" formControlName="password" type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+              <i class="input-icon fa-solid fa-lock"></i>
+              <button class="pw-toggle" type="button" id="pwToggle" aria-label="Afficher le mot de passe">
+                <i class="fa-regular fa-eye" id="pwIcon"></i>
+              </button>
+            </div>
+            <div class="form-error" id="passwordError"><i class="fa-solid fa-circle-exclamation"></i> Mot de passe requis</div>
           </div>
-          <div class="form-error" id="passwordError"><i class="fa-solid fa-circle-exclamation"></i> Mot de passe requis</div>
+
+          <!-- Options -->
+          <div class="form-options">
+            <label class="checkbox-wrap">
+              <input type="checkbox" id="remember"/>
+              <span>Se souvenir de moi</span>
+            </label>
+            <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-login" id="loginBtn" type="submit">
+            <span id="btnText">Se connecter</span>
+            <i class="fa-solid fa-arrow-right" id="btnArrow"></i>
+            <div class="spinner" id="btnSpinner"></div>
+          </button>
+
+          <div class="login-divider"><span>ou</span></div>
+
+          <!-- SSO -->
+          <button class="btn-sso" type="button">
+            <div class="sso-icon">E</div>
+            Connexion avec SSO d'entreprise
+          </button>
         </div>
-
-        <!-- Options -->
-        <div class="form-options">
-          <label class="checkbox-wrap">
-            <input type="checkbox" id="remember"/>
-            <span>Se souvenir de moi</span>
-          </label>
-          <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-        </div>
-
-        <!-- Submit -->
-        <button class="btn-login" id="loginBtn" type="button">
-          <span id="btnText">Se connecter</span>
-          <i class="fa-solid fa-arrow-right" id="btnArrow"></i>
-          <div class="spinner" id="btnSpinner"></div>
-        </button>
-
-        <div class="login-divider"><span>ou</span></div>
-
-        <!-- SSO -->
-        <button class="btn-sso" type="button">
-          <div class="sso-icon">E</div>
-          Connexion avec SSO d'entreprise
-        </button>
-      </div>
+      </form>
 
       <div class="card-footer">
         <p>Pas encore de compte ? <a href="#">Contacter l'administration</a></p>
       </div>
     </div>
   </div>
+
+</div><!-- /.login-wrapper -->

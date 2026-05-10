@@ -12,10 +12,7 @@ export const routes: Routes = [
           path: '', 
           loadComponent: () => import('./Features/site/home/home').then(m => m.Home) 
           },
-           {
-            path: 'portail',
-            loadComponent: () => import('./Features/site/Portail/layout-portail/layout-portail').then(m => m.LayoutPortail) 
-          },
+           
           { 
           path: 'home', 
           loadComponent: () => import('./Features/site/home/home').then(m => m.Home) 
@@ -47,7 +44,16 @@ export const routes: Routes = [
      path: 'login', 
      loadComponent: () => import('./Features/Authentication/login/login').then(m => m.Login) 
    }, 
-  
+   {
+    path : 'portail', 
+    canActivate: [authGuard],
+    children:[
+      {
+          path: 'dasboard',
+          loadComponent: () => import('./Features/site/Portail/layout-portail/layout-portail').then(m => m.LayoutPortail) 
+      },
+    ]
+   }, 
  
  // Dashboard  routes 
    {
