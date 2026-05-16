@@ -1,0 +1,17 @@
+/* Bouton Se connecter — visible uniquement en mobile dans le menu */
+.nav-cta-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-cta-mobile {
+    display: block;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .nav-cta-mobile .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
