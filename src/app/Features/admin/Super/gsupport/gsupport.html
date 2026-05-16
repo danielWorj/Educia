@@ -1,113 +1,476 @@
-<!-- PAGE HEADER -->
-<div class="page-header">
-  <div class="container">
-    <span class="tag" style="background:rgba(255,255,255,0.15);color:#fff;margin-bottom:16px;">📚 Ressources pédagogiques</span>
-    <h1>Banque des Sujets</h1>
-    <p>Épreuves officielles, corrections détaillées et supports enseignants pour tous les niveaux du programme camerounais.</p>
-    <div class="search-bar">
-      <span>🔍</span>
-      <input type="text" placeholder="Rechercher un sujet, une matière, un niveau…" id="searchInput">
-      <button class="btn btn-primary btn-sm" onclick="performSearch()">Rechercher</button>
+<div class="page-body">
+
+  <!-- ─── TITRE ─── -->
+  <div class="page-title-bar fade-up">
+    <div>
+      <h1>Gestion des Supports</h1>
+      <div class="breadcrumb">
+        <a href="#">Accueil</a><span>›</span><span>Marketplace</span><span>›</span><span>Supports</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" (click)="showCreateModal.set(true)">
+      <i class="fas fa-plus"></i> Ajouter un support
+    </button>
+  </div>
+
+  <!-- ─── MÉTRIQUES ─── -->
+  <div class="stats-grid fade-up">
+
+    <div class="stat-card" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+      <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ listSupport().length }}</div>
+        <div class="stat-label">Total supports</div>
+        <div class="stat-sub"><i class="fas fa-layer-group"></i> Tous types confondus</div>
+      </div>
+    </div>
+
+    <div class="stat-card fade-up-1" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+      <div class="stat-icon"><i class="fas fa-toggle-on"></i></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ countActifs() }}</div>
+        <div class="stat-label">Actifs</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-green">{{ percentActifs() }}</span> du total
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card fade-up-2" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+      <div class="stat-icon"><i class="fas fa-gift"></i></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ countGratuits() }}</div>
+        <div class="stat-label">Gratuits</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-yellow">{{ percentGratuits() }}</span> du total
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card fade-up-3" style="--stat-color:#EF4444;--stat-bg:#FEE2E2;">
+      <div class="stat-icon"><i class="fas fa-tag"></i></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ countPayants() }}</div>
+        <div class="stat-label">Payants</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-red">{{ percentPayants() }}</span> du total
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── FILTRES ─── -->
+  <div class="filter-bar fade-up">
+    <span class="filter-label">Filtrer :</span>
+    <button class="filter-chip" [class.active]="activeFilter() === 'all'"    (click)="activeFilter.set('all')">Tous</button>
+    <button class="filter-chip" [class.active]="activeFilter() === 'actif'"  (click)="activeFilter.set('actif')">Actifs</button>
+    <button class="filter-chip" [class.active]="activeFilter() === 'gratuit'"(click)="activeFilter.set('gratuit')">Gratuits</button>
+    <button class="filter-chip" [class.active]="activeFilter() === 'payant'" (click)="activeFilter.set('payant')">Payants</button>
+
+    <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
+      <!-- Recherche -->
+      <div class="table-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Titre, matière, enseignant…" (input)="onSearch($event)" />
+      </div>
+      <button class="btn btn-ghost btn-sm btn-icon" (click)="getAllSupport()" title="Rafraîchir">
+        <i class="fas fa-sync-alt"></i>
+      </button>
     </div>
   </div>
+
+  <!-- ─── TABLEAU ─── -->
+  <div class="card fade-up">
+    <div class="card-header">
+      <div class="card-title">
+        Liste des supports
+        <span class="badge badge-blue" style="margin-left:8px;">{{ filteredSupports().length }}</span>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    @if (isLoading()) {
+      <div class="table-loading">
+        <div class="spinner"></div>
+        <span>Chargement…</span>
+      </div>
+    }
+
+    <!-- Table -->
+    @if (!isLoading()) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Support</th>
+              <th>Matière</th>
+              <th>Niveau</th>
+              <th>Prix</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of filteredSupports(); track s.id) {
+              <tr>
+                <td>
+                  <div class="user-cell">
+                    <div class="support-avatar">
+                      <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                      <div class="user-name support-title" (click)="openDetailModal(s)">{{ s.title }}</div>
+                      <div class="user-email">{{ s.enseignant?.nomComplet ?? '—' }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ s.matiere?.intitule ?? '—' }}</td>
+                <td>{{ s.niveau?.intitule ?? '—' }} {{ s.filiere?.intitule ?? '—' }}</td>
+                <td>
+                  @if (s.prix === 0) {
+                    <span class="badge badge-green">Gratuit</span>
+                  } @else {
+                    <span style="font-weight:700; font-size:13px;">{{ s.prix | number }} XAF</span>
+                  }
+                </td>
+                <td>
+                  @if (s.statut) {
+                    <span class="badge badge-green">Actif</span>
+                  } @else {
+                    <span class="badge badge-red">Inactif</span>
+                  }
+                </td>
+                <td>
+                  <div class="action-group">
+                    <button class="btn btn-info btn-sm btn-icon" title="Voir le détail" (click)="openDetailModal(s)">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm btn-icon" title="Modifier" (click)="openEditModal(s)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" (click)="confirmDelete(s.id!)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+
+            @empty {
+              <tr>
+                <td colspan="10" style="text-align:center; padding:40px; color:var(--text-light);">
+                  <i class="fas fa-book-open" style="font-size:2.5rem; margin-bottom:12px; opacity:.25; display:block;"></i>
+                  Aucun support trouvé
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-footer" style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:13px; color:var(--text-light);">
+          Affichage de {{ filteredSupports().length }} résultat(s)
+        </span>
+        <div class="pagination">
+          <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    }
+  </div>
+
 </div>
 
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="container">
-    <div class="stats-strip-inner">
-      <div class="strip-stat">
-        <div class="strip-num">1 240+</div>
-        <div class="strip-label">Documents disponibles</div>
+
+<!-- ============================================================ -->
+<!--  MODAL : Détail support                                      -->
+<!-- ============================================================ -->
+@if (showDetailModal()) {
+  <div class="modal-overlay open" (click)="showDetailModal.set(false)">
+    <div class="modal-box" style="max-width:620px;" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <span class="modal-title">Détail du support</span>
+        <button class="modal-close" (click)="showDetailModal.set(false)">✕</button>
       </div>
-      <div class="strip-stat">
-        <div class="strip-num">34</div>
-        <div class="strip-label">Matières couvertes</div>
+
+      <div class="modal-body">
+        @if (selectedSupport(); as s) {
+
+          <!-- En-tête fiche -->
+          <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+            <div class="support-avatar support-avatar--lg">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div>
+              <div style="font-weight:800; font-size:1.1rem; font-family:var(--font-display);">{{ s.title }}</div>
+              <div style="color:var(--text-light); font-size:13px; margin-top:2px;">
+                {{ s.type?.nom ?? '—' }} · {{ s.matiere?.intitule ?? '—' }}
+              </div>
+              <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                @if (s.statut) {
+                  <span class="badge badge-green">Actif</span>
+                } @else {
+                  <span class="badge badge-red">Inactif</span>
+                }
+                @if (s.prix === 0) {
+                  <span class="badge badge-green">Gratuit</span>
+                } @else {
+                  <span class="badge badge-yellow">{{ s.prix | number }} XAF</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Infos grille -->
+          <div class="detail-grid" style="margin-bottom:20px;">
+            <div class="detail-item">
+              <div class="detail-item__label">Enseignant</div>
+              <div class="detail-item__value">{{ s.enseignant?.nomComplet ?? '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-item__label">Niveau</div>
+              <div class="detail-item__value">{{ s.niveau?.intitule ?? '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-item__label">Filière</div>
+              <div class="detail-item__value">{{ s.filiere?.intitule ?? '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-item__label">Date de publication</div>
+              <div class="detail-item__value">{{ s.date | date:'dd MMMM yyyy' }}</div>
+            </div>
+          </div>
+
+          <!-- Résumé -->
+          @if (s.resume) {
+            <div style="margin-bottom:20px;">
+              <div style="font-weight:700; font-size:13px; margin-bottom:8px; font-family:var(--font-display);">Résumé</div>
+              <p style="font-size:14px; color:var(--text-mid); line-height:1.65;">{{ s.resume }}</p>
+            </div>
+          }
+
+          <!-- Fichier -->
+          @if (s.file) {
+            <div>
+              <div style="font-weight:700; font-size:13px; margin-bottom:10px; font-family:var(--font-display);">Fichier joint</div>
+              <div class="doc-item">
+                <div class="doc-icon" style="background:#EEF3FF; color:#0A4FFF;"><i class="fas fa-file-pdf"></i></div>
+                <div>
+                  <div class="doc-name">{{ s.file }}</div>
+                  <div class="doc-size">Document pédagogique</div>
+                </div>
+                <div class="doc-actions">
+                  <a class="btn btn-ghost btn-sm btn-icon" title="Télécharger"><i class="fas fa-download"></i></a>
+                </div>
+              </div>
+            </div>
+          }
+
+        }
       </div>
-      <div class="strip-stat">
-        <div class="strip-num">15 ans</div>
-        <div class="strip-label">D'archives (2009–2024)</div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="showDetailModal.set(false)">Fermer</button>
+        <button class="btn btn-primary" (click)="openEditModal(selectedSupport()!); showDetailModal.set(false)">
+          <i class="fas fa-edit"></i> Modifier
+        </button>
       </div>
-      <div class="strip-stat">
-        <div class="strip-num">98%</div>
-        <div class="strip-label">Avis satisfaits</div>
-      </div>
+
     </div>
   </div>
-</div>
+}
 
-<!-- FILTER SECTION -->
-<div class="filter-section">
-  <div class="container">
-    <div class="filter-section-inner">
-      <span class="filter-label">Type :</span>
-      <div class="type-filters">
-        <button class="type-chip active" data-type="all" onclick="filterByType('all', this)">
-          <span class="chip-icon">📋</span> Tous
+
+<!-- ============================================================ -->
+<!--  MODAL : Créer / Modifier un support                         -->
+<!-- ============================================================ -->
+@if (showCreateModal() || showEditModal()) {
+  <div class="modal-overlay open" (click)="showCreateModal.set(false); showEditModal.set(false)">
+    <div class="modal-box" style="max-width:760px;" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <span class="modal-title">{{ showCreateModal() ? 'Ajouter un support' : 'Modifier le support' }}</span>
+        <button class="modal-close" (click)="showCreateModal.set(false); showEditModal.set(false)">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="admin-form" [formGroup]="supportFb">
+
+          <!-- Titre -->
+          <div class="form-group">
+            <label class="form-label">Titre <span class="req">*</span></label>
+            <input class="form-input" type="text" formControlName="title"
+              placeholder="Ex : Épreuve de Mathématiques BAC 2023"
+              [class.input-error]="isFieldInvalid('title')" />
+            @if (isFieldInvalid('title')) {
+              <span class="field-error">Le titre est requis (min. 3 caractères).</span>
+            }
+          </div>
+
+          <!-- Résumé -->
+          <div class="form-group">
+            <label class="form-label">Résumé <span class="req">*</span></label>
+            <textarea class="form-textarea" formControlName="resume" rows="3"
+              placeholder="Description courte du contenu de ce support…"
+              [class.input-error]="isFieldInvalid('resume')"></textarea>
+            @if (isFieldInvalid('resume')) {
+              <span class="field-error">Le résumé est requis.</span>
+            }
+          </div>
+
+          <!-- Prix + Type -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Prix (XAF) <span class="req">*</span></label>
+              <input class="form-input" type="number" formControlName="prix"
+                placeholder="0 = Gratuit" min="0"
+                [class.input-error]="isFieldInvalid('prix')" />
+              @if (isFieldInvalid('prix')) {
+                <span class="field-error">Le prix est requis (≥ 0).</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Type de ressource <span class="req">*</span></label>
+              <select class="form-select" formControlName="type" [class.input-error]="isFieldInvalid('type')">
+                <option [ngValue]="null" disabled>-- Sélectionner --</option>
+                @for (t of listTypeRessource(); track t.id) {
+                  <option [value]="t.id">{{ t.nom }}</option>
+                }
+              </select>
+              @if (isFieldInvalid('type')) {
+                <span class="field-error">Le type est requis.</span>
+              }
+            </div>
+          </div>
+
+          <!-- Matière + Niveau -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Matière <span class="req">*</span></label>
+              <select class="form-select" formControlName="matiere" [class.input-error]="isFieldInvalid('matiere')">
+                <option [ngValue]="null" disabled>-- Sélectionner --</option>
+                @for (m of listMatiere(); track m.id) {
+                  <option [value]="m.id">{{ m.intitule }}</option>
+                }
+              </select>
+              @if (isFieldInvalid('matiere')) {
+                <span class="field-error">La matière est requise.</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Niveau <span class="req">*</span></label>
+              <select class="form-select" formControlName="niveau" [class.input-error]="isFieldInvalid('niveau')">
+                <option [ngValue]="null" disabled>-- Sélectionner --</option>
+                @for (n of listNiveau(); track n.id) {
+                  <option [value]="n.id">{{ n.intitule }}</option>
+                }
+              </select>
+              @if (isFieldInvalid('niveau')) {
+                <span class="field-error">Le niveau est requis.</span>
+              }
+            </div>
+          </div>
+
+          <!-- Filière + Enseignant -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Filière <span class="req">*</span></label>
+              <select class="form-select" formControlName="filiere" [class.input-error]="isFieldInvalid('filiere')">
+                <option [ngValue]="null" disabled>-- Sélectionner --</option>
+                @for (f of listFiliere(); track f.id) {
+                  <option [value]="f.id">{{ f.intitule }}</option>
+                }
+              </select>
+              @if (isFieldInvalid('filiere')) {
+                <span class="field-error">La filière est requise.</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">ID Enseignant <span class="req">*</span></label>
+              <input class="form-input" type="number" formControlName="enseignant"
+                placeholder="Ex : 12" [class.input-error]="isFieldInvalid('enseignant')" />
+              @if (isFieldInvalid('enseignant')) {
+                <span class="field-error">L'enseignant est requis.</span>
+              }
+            </div>
+          </div>
+
+          <!-- Fichier (création uniquement) -->
+          @if (showCreateModal()) {
+            <div class="form-group">
+              <label class="form-label">Fichier <span class="req">*</span></label>
+              <div class="upload-id-wrapper" (click)="fileInput.click()">
+                <div class="upload-id-left">
+                  <div class="upload-id-icon">📄</div>
+                  <div>
+                    <div class="upload-id-title">
+                      {{ filePreviewName() ?? 'Choisir un fichier' }}
+                    </div>
+                    <div class="upload-id-sub">PDF, DOC, DOCX, PPT · Max 20 Mo</div>
+                  </div>
+                </div>
+                <span class="upload-id-btn">📎 Parcourir</span>
+                <input #fileInput type="file" hidden
+                  (change)="onSelectSupportFile($event)"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx" />
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost"
+          (click)="showCreateModal.set(false); showEditModal.set(false)">
+          Annuler
         </button>
-        <button class="type-chip epreuve" data-type="epreuve" onclick="filterByType('epreuve', this)">
-          <span class="chip-icon">📝</span> Épreuves
-        </button>
-        <button class="type-chip correction" data-type="correction" onclick="filterByType('correction', this)">
-          <span class="chip-icon">✅</span> Corrections
-        </button>
-        <button class="type-chip enseignant" data-type="enseignant" onclick="filterByType('enseignant', this)">
-          <span class="chip-icon">👨‍🏫</span> Enseignants
+        <button type="button" class="btn btn-primary" [disabled]="isSaving()"
+          (click)="showCreateModal() ? createSupport() : updateSupport()">
+          @if (isSaving()) {
+            <span class="spinner spinner-sm"></span> Enregistrement…
+          } @else {
+            <i class="fas fa-check"></i>
+            {{ showCreateModal() ? 'Ajouter' : 'Enregistrer' }}
+          }
         </button>
       </div>
-      <div class="filter-right">
-        <span class="results-count"><strong id="countDisplay">28</strong> documents</span>
+
+    </div>
+  </div>
+}
+
+
+<!-- ============================================================ -->
+<!--  MODAL : Confirmation suppression                            -->
+<!-- ============================================================ -->
+@if (showDeleteModal()) {
+  <div class="modal-overlay open" (click)="showDeleteModal.set(false)">
+    <div class="modal-box" style="max-width:420px;" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <span class="modal-title">Confirmer la suppression</span>
+        <button class="modal-close" (click)="showDeleteModal.set(false)">✕</button>
       </div>
-    </div>
-    <div class="subject-filter-row" id="subjectFilters">
-      <button class="subj-chip active" data-subject="all" onclick="filterBySubject('all', this)">Toutes les matières</button>
-      <button class="subj-chip" data-subject="maths" onclick="filterBySubject('maths', this)">Mathématiques</button>
-      <button class="subj-chip" data-subject="physique" onclick="filterBySubject('physique', this)">Physique-Chimie</button>
-      <button class="subj-chip" data-subject="francais" onclick="filterBySubject('francais', this)">Français</button>
-      <button class="subj-chip" data-subject="anglais" onclick="filterBySubject('anglais', this)">Anglais</button>
-      <button class="subj-chip" data-subject="svt" onclick="filterBySubject('svt', this)">SVT</button>
-      <button class="subj-chip" data-subject="histoire" onclick="filterBySubject('histoire', this)">Histoire-Géo</button>
-      <button class="subj-chip" data-subject="informatique" onclick="filterBySubject('informatique', this)">Informatique</button>
-      <button class="subj-chip" data-subject="economie" onclick="filterBySubject('economie', this)">Économie</button>
+
+      <div class="modal-body" style="text-align:center; padding:32px 24px;">
+        <div style="font-size:3rem; margin-bottom:16px;">⚠️</div>
+        <p style="font-size:15px; color:var(--text-mid);">
+          Voulez-vous vraiment supprimer ce support ? Cette action est irréversible.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="showDeleteModal.set(false)">Annuler</button>
+        <button class="btn btn-danger" (click)="executeDelete()">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+      </div>
+
     </div>
   </div>
-</div>
-
-<!-- DOCUMENT LIST -->
-<section class="doc-list-section">
-  <div class="container">
-    <div class="list-header">
-      <h3 id="listTitle">Tous les documents</h3>
-      <select class="sort-select" onchange="sortDocuments(this.value)">
-        <option value="recent">Plus récents</option>
-        <option value="price-asc">Prix croissant</option>
-        <option value="price-desc">Prix décroissant</option>
-        <option value="popular">Plus populaires</option>
-      </select>
-    </div>
-
-    <div class="doc-list" id="docList">
-      <!-- Items populated by JS -->
-    </div>
-
-    <div class="empty-state" id="emptyState">
-      <div class="empty-icon">🔍</div>
-      <h3>Aucun document trouvé</h3>
-      <p>Essayez de modifier vos filtres ou votre recherche.</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- CTA BAND -->
-<section class="cta-band">
-  <div class="container" style="position:relative;z-index:1;">
-    <span class="tag" style="background:rgba(255,255,255,0.15);color:#fff;">Pour les enseignants</span>
-    <h2>Publiez vos propres supports</h2>
-    <p>Vous êtes enseignant ? Partagez vos épreuves et corrections et gagnez de l'argent sur chaque téléchargement.</p>
-    <div class="btn-group">
-      <a href="enseignants.html" class="btn btn-white btn-lg">Devenir contributeur</a>
-      <a href="contact.html" class="btn btn-accent btn-lg">Nous contacter</a>
-    </div>
-  </div>
-</section>
+}

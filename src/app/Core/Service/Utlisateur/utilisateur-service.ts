@@ -55,6 +55,11 @@ export class UtilisateurService {
   }
 
 
+   deleteEnseignant(id:number):Observable<ResponseServer> {
+    return this.http.get<ResponseServer>(edulearnDashboard.Enseignant.delete+id);
+  }
+
+
   //Parent related methods
   createParent(request:any): Observable<number> {
     return this.http.post<number>(`${edulearnDashboard.Parent.create}`, request);

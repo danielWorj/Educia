@@ -8,46 +8,138 @@
         <a href="#">Accueil</a><span>›</span><span>Enseignants</span>
       </div>
     </div>
-    <button class="btn btn-primary" (click)="showAddModal.set(true)">
+    <button class="btn btn-primary" (click)="openAddModal()">
       <i class="fas fa-plus"></i> Ajouter un enseignant
     </button>
   </div>
 
-  <!-- ─── STATS ─── -->
-  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="stat-card fade-up" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
+  <!-- ─── MÉTRIQUES ─── -->
+  <div class="stats-grid fade-up">
+
+    <!-- Total -->
+    <div class="stat-card" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
       <div class="stat-icon"><i class="fas fa-users"></i></div>
-      <div>
+      <div class="stat-content">
         <div class="stat-value">{{ listEnseignants().length }}</div>
         <div class="stat-label">Total enseignants</div>
+        <div class="stat-sub">
+          <i class="fas fa-chalkboard-teacher"></i> Corps enseignant complet
+        </div>
       </div>
     </div>
-    <div class="stat-card fade-up fade-up-1" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
+
+    <!-- Approuvés -->
+    <div class="stat-card fade-up-1" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
       <div class="stat-icon"><i class="fas fa-user-check"></i></div>
-      <div>
+      <div class="stat-content">
         <div class="stat-value">{{ countByStatus('approuve') }}</div>
         <div class="stat-label">Approuvés</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-green">{{ percentByStatus('approuve') }}</span>
+          du total
+        </div>
       </div>
     </div>
-    <div class="stat-card fade-up fade-up-2" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
+
+    <!-- En attente -->
+    <div class="stat-card fade-up-2" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
       <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
-      <div>
+      <div class="stat-content">
         <div class="stat-value">{{ countByStatus('attente') }}</div>
         <div class="stat-label">En attente</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-yellow">{{ percentByStatus('attente') }}</span>
+          à valider
+        </div>
       </div>
     </div>
-    <div class="stat-card fade-up fade-up-3" style="--stat-color:#EF4444;--stat-bg:#FEE2E2;">
+
+    <!-- Suspendus -->
+    <div class="stat-card fade-up-3" style="--stat-color:#EF4444;--stat-bg:#FEE2E2;">
       <div class="stat-icon"><i class="fas fa-user-times"></i></div>
-      <div>
+      <div class="stat-content">
         <div class="stat-value">{{ countByStatus('suspendu') }}</div>
         <div class="stat-label">Suspendus</div>
+        <div class="stat-sub">
+          <span class="stat-pill stat-pill-red">{{ percentByStatus('suspendu') }}</span>
+          du total
+        </div>
       </div>
     </div>
+
+  </div>
+
+  <!-- ─── GRAPHIQUES Chart.js  (col-md-4 → 3 colonnes compactes) ─── -->
+  <div class="charts-grid fade-up">
+
+    <!-- Camembert diplôme -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <div class="chart-card-title">
+          <span class="chart-card-icon" style="background:#EEF3FF;color:#0A4FFF;">
+            <i class="fas fa-graduation-cap"></i>
+          </span>
+          Répartition par diplôme
+        </div>
+      </div>
+      <div class="chart-card-body">
+        <canvas #chartDiplome></canvas>
+        @if (listEnseignants().length === 0) {
+          <div class="chart-empty-overlay">
+            <i class="fas fa-chart-pie"></i>
+            <span>Aucune donnée</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Camembert profil -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <div class="chart-card-title">
+          <span class="chart-card-icon" style="background:#DCFCE7;color:#15803D;">
+            <i class="fas fa-id-badge"></i>
+          </span>
+          Répartition par profil
+        </div>
+      </div>
+      <div class="chart-card-body">
+        <canvas #chartProfil></canvas>
+        @if (listEnseignants().length === 0) {
+          <div class="chart-empty-overlay">
+            <i class="fas fa-chart-pie"></i>
+            <span>Aucune donnée</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Camembert section -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <div class="chart-card-title">
+          <span class="chart-card-icon" style="background:#FEF3C7;color:#92400E;">
+            <i class="fas fa-layer-group"></i>
+          </span>
+          Répartition par section
+        </div>
+      </div>
+      <div class="chart-card-body">
+        <canvas #chartSection></canvas>
+        @if (listEnseignants().length === 0) {
+          <div class="chart-empty-overlay">
+            <i class="fas fa-chart-pie"></i>
+            <span>Aucune donnée</span>
+          </div>
+        }
+      </div>
+    </div>
+
   </div>
 
   <!-- ─── FILTRES ─── -->
   <div class="filter-bar fade-up">
-    <span style="font-size:13px;font-weight:600;color:var(--text-mid);">Filtrer :</span>
+    <span class="filter-label">Filtrer :</span>
 
     @for (chip of filterChips; track chip.value) {
       <button
@@ -80,21 +172,14 @@
       </div>
     </div>
 
-
-    
-
-
     <div class="table-wrapper">
       <table id="teachersTable">
         <thead>
           <tr>
-            <th><input type="checkbox" /></th>
             <th>Enseignant</th>
             <th>Spécialité</th>
             <th>Tarif/h</th>
-            <th>Documents</th>
             <th>Statut</th>
-            <th>Inscription</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -102,104 +187,47 @@
 
           @for (enseignant of filteredEnseignants(); track enseignant.id) {
             <tr>
-              <td><input type="checkbox" /></td>
-
-              <!-- Identité -->
               <td>
                 <div class="user-cell">
-                  <div class="user-avatar-sm">
-                    {{ getInitiales(enseignant.nomComplet) }}
-                  </div>
+                  <div class="user-avatar-sm">{{ getInitiales(enseignant.nomComplet) }}</div>
                   <div>
                     <div class="user-name">{{ enseignant.nomComplet }}</div>
                     <div class="user-email">{{ enseignant.email }}</div>
                   </div>
                 </div>
               </td>
-
               <td>{{ enseignant.specialite }}</td>
-
-              <!-- Tarif horaire -->
               <td>{{ enseignant.tarifHoraire ? (enseignant.tarifHoraire + ' XAF') : '—' }}</td>
-
-              <!-- Documents -->
-              <td>
-                <button class="btn btn-ghost btn-sm" onclick="openModal('documentsEnseignant')" (click)="openDocsModal(enseignant)">
-                  <i class="fas fa-folder-open"></i> Docs
-                </button>
-              </td>
-
-              <!-- Statut -->
               <td>
                 @switch (enseignant.statusEnseignant.id) {
-                  @case (2) {
-                    <span class="badge badge-green">Approuvé</span>
-                  }
-                  @case (1) {
-                    <span class="badge badge-yellow">En attente</span>
-                  }
-                  @case (3) {
-                    <span class="badge badge-red">Suspendu</span>
-                  }
-                  @default {
-                    <span class="badge">{{ enseignant.statusEnseignant }}</span>
-                  }
+                  @case (2) { <span class="badge badge-green">Approuvé</span> }
+                  @case (1) { <span class="badge badge-yellow">En attente</span> }
+                  @case (3) { <span class="badge badge-red">Suspendu</span> }
+                  @default  { <span class="badge">{{ enseignant.statusEnseignant }}</span> }
                 }
               </td>
-
-              <!-- Date inscription -->
-              <td>{{ enseignant.dateInscription | date:'dd/MM/yyyy' }}</td>
-
-              <!-- Actions -->
               <td>
                 <div class="action-group">
-
-                  <!-- Voir profil -->
-                  <button
-                    class="btn btn-ghost btn-sm btn-icon"
-                    title="Voir le profil"
-                    onclick="openModal('profilEnseignant')"
-                    (click)="openProfilModal(enseignant)">
+                  <button class="btn btn-info text-white btn-sm btn-icon" title="Voir le profil" (click)="openProfilModal(enseignant)">
                     <i class="fas fa-eye"></i>
                   </button>
-
-                  <!-- Approuver / Rejeter si en attente -->
-                  @if (enseignant.statusEnseignant.id==1) {
-                    <button
-                      class="btn btn-success btn-sm"
-                      title="Approuver"
-                      (click)="changeStatus(enseignant.id, 2)">✓</button>
-                    <button
-                      class="btn btn-danger btn-sm"
-                      title="Rejeter"
-                      (click)="changeStatus(enseignant.id, 3)">✗</button>
+                  @if (enseignant.statusEnseignant.id == 1) {
+                    <button class="btn btn-success btn-sm" title="Approuver" (click)="changeStatus(enseignant.id, 2)">✓</button>
+                    <button class="btn btn-danger btn-sm"  title="Rejeter"   (click)="changeStatus(enseignant.id, 3)">✗</button>
                   }
-
-                  <!-- Réactiver si suspendu -->
-                  @if (enseignant.statusEnseignant.id==3) {
-                    <button
-                      class="btn btn-success btn-sm btn-icon"
-                      title="Réactiver"
-                      (click)="changeStatus(enseignant.id,2)">
+                  @if (enseignant.statusEnseignant.id == 3) {
+                    <button class="btn btn-success btn-sm btn-icon" title="Réactiver" (click)="changeStatus(enseignant.id, 2)">
                       <i class="fas fa-undo"></i>
                     </button>
                   }
-
-                  <!-- Éditer si approuvé -->
-                  @if (enseignant.statusEnseignant.id==2) {
-                    <button class="btn btn-outline btn-sm btn-icon" title="Modifier">
+                  @if (enseignant.statusEnseignant.id == 2) {
+                    <button class="btn btn-primary btn-sm btn-icon" title="Modifier">
                       <i class="fas fa-edit"></i>
                     </button>
                   }
-
-                  <!-- Supprimer -->
-                  <button
-                    class="btn btn-danger btn-sm btn-icon"
-                    title="Supprimer"
-                    (click)="confirmDelete(enseignant.id)">
+                  <button class="btn btn-danger btn-sm btn-icon" title="Supprimer" (click)="confirmDelete(enseignant.id)">
                     <i class="fas fa-trash"></i>
                   </button>
-
                 </div>
               </td>
             </tr>
@@ -207,7 +235,7 @@
 
           @empty {
             <tr>
-              <td colspan="9" style="text-align:center;padding:32px;color:var(--text-light);">
+              <td colspan="5" style="text-align:center;padding:32px;color:var(--text-light);">
                 <i class="fas fa-users" style="font-size:2rem;margin-bottom:8px;opacity:.3;display:block;"></i>
                 Aucun enseignant trouvé
               </td>
@@ -218,7 +246,6 @@
       </table>
     </div>
 
-    <!-- Pagination -->
     <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;">
       <span style="font-size:13px;color:var(--text-light);">
         Affichage de {{ filteredEnseignants().length }} résultat(s)
@@ -230,6 +257,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 
@@ -237,16 +265,15 @@
 <!--  MODAL : Profil enseignant                                   -->
 <!-- ============================================================ -->
 @if (showProfilModal()) {
-  <div class="modal-overlay" id="profilEnseignant" (click)="closeProfilModal()">
-    <div class="modal-box"  (click)="$event.stopPropagation()">
+  <div class="modal-overlay open" id="profilEnseignant" (click)="closeProfilModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
 
       <div class="modal-header">
         <span class="modal-title">Profil de l'enseignant</span>
-        <button class="modal-close" onclick="closeModal('profilEnseignant')" (click)="closeProfilModal()">✕</button>
+        <button class="modal-close" (click)="closeProfilModal()">✕</button>
       </div>
 
       <div class="modal-body">
-
         @if (enseignantSelected(); as ens) {
 
           <!-- En-tête profil -->
@@ -256,18 +283,18 @@
             </div>
             <div>
               <div style="font-weight:800;font-size:1.1rem;font-family:var(--font-display);">{{ ens.nomComplet }}</div>
-              <div style="color:var(--text-light);font-size:13px;">{{ ens.specialite }} · {{ ens.profilEnseignant }}</div>
+              <div style="color:var(--text-light);font-size:13px;">{{ ens.specialite }} · {{ ens.profilEnseignant?.intitule }}</div>
               <div style="margin-top:8px;display:flex;gap:8px;">
                 @switch (ens.statusEnseignant.id) {
                   @case (2) { <span class="badge badge-green">Approuvé</span> }
-                  @case (1)  { <span class="badge badge-yellow">En attente</span> }
+                  @case (1) { <span class="badge badge-yellow">En attente</span> }
                   @case (3) { <span class="badge badge-red">Suspendu</span> }
                 }
               </div>
             </div>
           </div>
 
-          <!-- Infos détaillées -->
+          <!-- Infos -->
           <div class="form-row" style="margin-bottom:20px;">
             <div>
               <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Email</div>
@@ -300,65 +327,44 @@
             <div style="font-weight:700;font-size:13px;margin-bottom:12px;font-family:var(--font-display);">Documents uploadés</div>
             <ul class="doc-list">
 
-              <!-- Diplôme -->
               @if (nomDiplome()) {
                 <li class="doc-item">
-                  <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;">
-                    <i class="fas fa-file-pdf"></i>
-                  </div>
+                  <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
                   <div>
                     <div class="doc-name">{{ nomDiplome() }}</div>
                     <div class="doc-size">Diplôme</div>
                   </div>
                   <div class="doc-actions">
-                    <a [href]="safeDiplomeUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon" title="Aperçu">
-                      <i class="fas fa-eye"></i>
-                    </a>
-                    <a [href]="safeDiplomeUrl" [download]="nomDiplome()" class="btn btn-ghost btn-sm btn-icon" title="Télécharger">
-                      <i class="fas fa-download"></i>
-                    </a>
+                    <a [href]="safeDiplomeUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
+                    <a [href]="safeDiplomeUrl" [download]="nomDiplome()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
                   </div>
                 </li>
               }
 
-              <!-- CV -->
               @if (nomCV()) {
                 <li class="doc-item">
-                  <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;">
-                    <i class="fas fa-file-pdf"></i>
-                  </div>
+                  <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
                   <div>
                     <div class="doc-name">{{ nomCV() }}</div>
                     <div class="doc-size">Curriculum Vitae</div>
                   </div>
                   <div class="doc-actions">
-                    <a [href]="safeCvUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon" title="Aperçu">
-                      <i class="fas fa-eye"></i>
-                    </a>
-                    <a [href]="safeCvUrl" [download]="nomCV()" class="btn btn-ghost btn-sm btn-icon" title="Télécharger">
-                      <i class="fas fa-download"></i>
-                    </a>
+                    <a [href]="safeCvUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
+                    <a [href]="safeCvUrl" [download]="nomCV()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
                   </div>
                 </li>
               }
 
-              <!-- CNI -->
               @if (nomCNI()) {
                 <li class="doc-item">
-                  <div class="doc-icon" style="background:#DCFCE7;color:#15803D;">
-                    <i class="fas fa-image"></i>
-                  </div>
+                  <div class="doc-icon" style="background:#DCFCE7;color:#15803D;"><i class="fas fa-image"></i></div>
                   <div>
                     <div class="doc-name">{{ nomCNI() }}</div>
                     <div class="doc-size">Carte Nationale d'Identité</div>
                   </div>
                   <div class="doc-actions">
-                    <a [href]="safeCniUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon" title="Aperçu">
-                      <i class="fas fa-eye"></i>
-                    </a>
-                    <a [href]="safeCniUrl" [download]="nomCNI()" class="btn btn-ghost btn-sm btn-icon" title="Télécharger">
-                      <i class="fas fa-download"></i>
-                    </a>
+                    <a [href]="safeCniUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
+                    <a [href]="safeCniUrl" [download]="nomCNI()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
                   </div>
                 </li>
               }
@@ -369,92 +375,15 @@
 
             </ul>
           </div>
-
         }
-      </div><!-- /modal-body -->
+      </div>
 
       <div class="modal-footer">
         <button class="btn btn-ghost" (click)="closeProfilModal()">Fermer</button>
-        @if (enseignantSelected()?.statusEnseignant?.id==1) {
-          <button class="btn btn-danger btn-sm" (click)="changeStatus(enseignantSelected()!.id, 3 ); closeProfilModal()">Rejeter</button>
+        @if (enseignantSelected()?.statusEnseignant?.id == 1) {
+          <button class="btn btn-danger btn-sm" (click)="changeStatus(enseignantSelected()!.id, 3); closeProfilModal()">Rejeter</button>
           <button class="btn btn-primary" (click)="changeStatus(enseignantSelected()!.id, 2); closeProfilModal()">✓ Approuver</button>
         }
-      </div>
-
-    </div>
-  </div>
-
-}
-
-
-<!-- ============================================================ -->
-<!--  MODAL : Documents                                           -->
-<!-- ============================================================ -->
-@if (showDocsModal()) {
-  <div class="modal-overlay" id="documentsEnseignant" (click)="showDocsModal.set(false)">
-    <div class="modal-box"  (click)="$event.stopPropagation()">
-
-      <div class="modal-header">
-        <span class="modal-title">
-          Documents — {{ enseignantSelected()?.nomComplet }}
-        </span>
-        <button class="modal-close" onclick="closeModal('documentsEnseignant')" (click)="showDocsModal.set(false)">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <ul class="doc-list">
-
-          @if (nomDiplome()) {
-            <li class="doc-item">
-              <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
-              <div>
-                <div class="doc-name">{{ nomDiplome() }}</div>
-                <div class="doc-size">Diplôme</div>
-              </div>
-              <div class="doc-actions">
-                <a [href]="safeDiplomeUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                <a [href]="safeDiplomeUrl" [download]="nomDiplome()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
-              </div>
-            </li>
-          }
-
-          @if (nomCV()) {
-            <li class="doc-item">
-              <div class="doc-icon" style="background:#FEE2E2;color:#EF4444;"><i class="fas fa-file-pdf"></i></div>
-              <div>
-                <div class="doc-name">{{ nomCV() }}</div>
-                <div class="doc-size">CV</div>
-              </div>
-              <div class="doc-actions">
-                <a [href]="safeCvUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                <a [href]="safeCvUrl" [download]="nomCV()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
-              </div>
-            </li>
-          }
-
-          @if (nomCNI()) {
-            <li class="doc-item">
-              <div class="doc-icon" style="background:#EEF3FF;color:#0A4FFF;"><i class="fas fa-image"></i></div>
-              <div>
-                <div class="doc-name">{{ nomCNI() }}</div>
-                <div class="doc-size">CNI</div>
-              </div>
-              <div class="doc-actions">
-                <a [href]="safeCniUrl" target="_blank" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-eye"></i></a>
-                <a [href]="safeCniUrl" [download]="nomCNI()" class="btn btn-ghost btn-sm btn-icon"><i class="fas fa-download"></i></a>
-              </div>
-            </li>
-          }
-
-          @if (!nomDiplome() && !nomCV() && !nomCNI()) {
-            <li style="color:var(--text-light);font-size:13px;padding:12px 0;">Aucun document disponible.</li>
-          }
-
-        </ul>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-ghost" (click)="showDocsModal.set(false)">Fermer</button>
       </div>
 
     </div>
@@ -466,7 +395,7 @@
 <!--  MODAL : Ajouter un enseignant                               -->
 <!-- ============================================================ -->
 @if (showAddModal()) {
-  <div class="modal-overlay" (click)="showAddModal.set(false)">
+  <div class="modal-overlay open" (click)="showAddModal.set(false)">
     <div class="modal-box" style="max-width:800px;" (click)="$event.stopPropagation()">
 
       <div class="modal-header">
@@ -475,44 +404,49 @@
       </div>
 
       <div class="modal-body">
-        <div class="admin-form" [formGroup]="enseignantForm">
+        <div class="admin-form" [formGroup]="addEnseignantForm">
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Nom complet</label>
+              <label class="form-label">Nom complet <span class="req">*</span></label>
               <input class="form-input" type="text" placeholder="ex: Kengne Nathalie" formControlName="nomComplet" />
             </div>
             <div class="form-group">
-              <label class="form-label">Email</label>
+              <label class="form-label">Email <span class="req">*</span></label>
               <input class="form-input" type="email" placeholder="email@example.cm" formControlName="email" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Téléphone</label>
+              <label class="form-label">Téléphone <span class="req">*</span></label>
               <input class="form-input" type="tel" placeholder="+237 6XX XXX XXX" formControlName="telephone" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ville</label>
-              <input class="form-input" type="text" placeholder="ex: Yaoundé" formControlName="localisation" />
+              <label class="form-label">Ville / Localisation <span class="req">*</span></label>
+              <input class="form-input" type="text" placeholder="ex: Yaoundé, Melen" formControlName="localisation" />
             </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mot de passe <span class="req">*</span></label>
+            <input class="form-input" type="password" placeholder="Minimum 8 caractères" formControlName="password" />
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Spécialité</label>
+              <label class="form-label">Spécialité <span class="req">*</span></label>
               <input class="form-input" type="text" placeholder="ex: Mathématiques" formControlName="specialite" />
             </div>
             <div class="form-group">
-              <label class="form-label">Tarif horaire (XAF)</label>
+              <label class="form-label">Tarif horaire (XAF) <span class="req">*</span></label>
               <input class="form-input" type="number" placeholder="ex: 5000" formControlName="tarifHoraire" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Années d'expérience</label>
+              <label class="form-label">Années d'expérience <span class="req">*</span></label>
               <input class="form-input" type="number" placeholder="ex: 5" formControlName="anneeexperience" />
             </div>
             <div class="form-group">
@@ -522,22 +456,104 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Section</label>
+            <label class="form-label">Section <span class="req">*</span></label>
             <select class="form-select" formControlName="section">
-              <option value="">Sélectionner une section...</option>
-              @for (section of listSection(); track section.id) {
-                <option [value]="section.id">{{ section.intitule }}</option>
+              <option value="">-- Sélectionner une section --</option>
+              @for (s of listSection(); track s.id) {
+                <option [value]="s.id">{{ s.intitule }}</option>
               }
             </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Bio</label>
-            <textarea class="form-textarea" placeholder="Décrivez l'enseignant..." style="min-height:80px;" formControlName="bio"></textarea>
+            <label class="form-label">Profil enseignant <span class="req">*</span></label>
+            <select class="form-select" formControlName="profilEnseignant">
+              <option value="">-- Sélectionner un profil --</option>
+              @for (p of listProfilEnseignant(); track p.id) {
+                <option [value]="p.id">{{ p.intitule }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Niveau de diplôme <span class="req">*</span></label>
+            <select class="form-select" formControlName="diplome">
+              <option value="">-- Sélectionner un diplôme --</option>
+              @for (d of listDiplomes(); track d.id) {
+                <option [value]="d.id">{{ d.intitule }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Statut <span class="req">*</span></label>
+            <select class="form-select" formControlName="statusEnseignant">
+              <option value="">-- Sélectionner un statut --</option>
+              @for (st of listStatusEnseignant(); track st.id) {
+                <option [value]="st.id">{{ st.intitule }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bio / Présentation</label>
+            <textarea class="form-textarea" placeholder="Décrivez brièvement cet enseignant..." formControlName="bio"></textarea>
+          </div>
+
+          <!-- Photo -->
+          <div class="form-group">
+            <label class="form-label">Photo de profil <span class="req">*</span></label>
+            <div class="upload-id-wrapper">
+              <div class="upload-id-left">
+                @if (addPhotoUploaded()) {
+                  <img [src]="addPhotoPreview()" alt="Aperçu" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
+                } @else {
+                  <div class="upload-id-icon">🖼️</div>
+                }
+                <div>
+                  <div class="upload-id-title">{{ addPhotoUploaded() ? addPhotoFileName() : 'Choisir une photo' }}</div>
+                  <div class="upload-id-sub">JPG ou PNG · Max 5 Mo</div>
+                </div>
+              </div>
+              <label for="add-photo-input" class="upload-id-btn">📎 Parcourir</label>
+              <input type="file" id="add-photo-input" accept=".jpg,.jpeg,.png" (change)="onAddSelectPhoto($event)" style="display:none;" />
+            </div>
+          </div>
+
+          <!-- CV -->
+          <div class="form-group">
+            <label class="form-label">CV <span class="req">*</span></label>
+            <div class="upload-id-wrapper">
+              <div class="upload-id-left">
+                <div class="upload-id-icon">📄</div>
+                <div>
+                  <div class="upload-id-title">{{ addCvUploaded() ? addCvFileName() : 'Choisir le CV' }}</div>
+                  <div class="upload-id-sub">PDF, DOC, DOCX · Max 5 Mo</div>
+                </div>
+              </div>
+              <label for="add-cv-input" class="upload-id-btn">📎 Parcourir</label>
+              <input type="file" id="add-cv-input" accept=".pdf,.doc,.docx" (change)="onAddSelectCv($event)" style="display:none;" />
+            </div>
+          </div>
+
+          <!-- Diplôme scan -->
+          <div class="form-group">
+            <label class="form-label">Scan du diplôme <span class="req">*</span></label>
+            <div class="upload-id-wrapper">
+              <div class="upload-id-left">
+                <div class="upload-id-icon">🎓</div>
+                <div>
+                  <div class="upload-id-title">{{ addDiplomeUploaded() ? addDiplomeFileName() : 'Choisir le diplôme' }}</div>
+                  <div class="upload-id-sub">JPG, PNG ou PDF · Max 5 Mo</div>
+                </div>
+              </div>
+              <label for="add-diplome-input" class="upload-id-btn">📎 Parcourir</label>
+              <input type="file" id="add-diplome-input" accept=".jpg,.jpeg,.png,.pdf" (change)="onAddSelectDiplome($event)" style="display:none;" />
+            </div>
           </div>
 
         </div>
-      </div><!-- /modal-body -->
+      </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" (click)="showAddModal.set(false)">Annuler</button>
@@ -555,7 +571,7 @@
 <!--  MODAL : Confirmation suppression                            -->
 <!-- ============================================================ -->
 @if (showDeleteModal()) {
-  <div class="modal-overlay" (click)="showDeleteModal.set(false)">
+  <div class="modal-overlay open" (click)="showDeleteModal.set(false)">
     <div class="modal-box" style="max-width:420px;" (click)="$event.stopPropagation()">
 
       <div class="modal-header">

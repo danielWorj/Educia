@@ -6,7 +6,7 @@ import { ResponseServer } from '../../../../Core/Model/Server/ResponseServer';
 import { DatePipe } from '@angular/common';
 import { AssistantService } from '../../../../Core/Service/IA/Assistant-Service/assistant-service';
 import { MatchingResult } from '../../../../Core/Model/IA/MatchingResult';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import e from 'express';
 
 // Pas de statut dans le modèle Offre — filtres basés sur niveau/filière/texte
@@ -14,7 +14,7 @@ export type FilterType = 'toutes' | 'urgentes';
 
 @Component({
   selector: 'app-goffre',
-  imports: [DatePipe],
+  imports: [DatePipe, ReactiveFormsModule],
   templateUrl: './goffre.html',
   styleUrl: './goffre.css',
 })
@@ -42,6 +42,7 @@ export class GOffre {
   isViewModalOpen    = signal<boolean>(false);
   isDeleteModalOpen  = signal<boolean>(false);
   isBotModalOpen     = signal<boolean>(false);
+  showAddModal       = signal<boolean>(false);
 
   // ─── Matching IA ──
   isMatchingLoading  = signal<boolean>(true);
@@ -58,16 +59,37 @@ export class GOffre {
 
   // ─── Init ─────────
 
-  matchingDBFb !:FormGroup;
-  constructor(private fb:FormBuilder) {
-    this.matchingDBFb = this.fb.group({
-      id:new FormControl(''),
-      offre : new FormControl(''),
-      enseignant : new FormControl(''),
-      score : new FormControl(''),
-    });
-    this.constructOffre();
+  matchingDBFb !: FormGroup;
+  addOffreForm  !: FormGroup;
 
+  constructor(private fb: FormBuilder) {
+    this.matchingDBFb = this.fb.group({
+      id:         new FormControl(''),
+      offre:      new FormControl(''),
+      enseignant: new FormControl(''),
+      score:      new FormControl(''),
+    });
+
+    this.addOffreForm = this.fb.group({
+      niveau:    new FormControl(''),
+      filiere:   new FormControl(''),
+      frequence: new FormControl(''),
+      duree:     new FormControl(''),
+      budget:    new FormControl(''),
+      bio:       new FormControl(''),
+    });
+
+    this.constructOffre();
+  }
+
+  // ─── Ajout offre ──
+  submitAddOffre(): void {
+    if (this.addOffreForm.invalid) return;
+    // TODO: appeler le service de création d'offre
+    console.log('Nouvelle offre :', this.addOffreForm.value);
+    this.showAddModal.set(false);
+    this.addOffreForm.reset();
+    this.constructOffre();
   }
 
   // ─── Chargement ───
@@ -212,9 +234,7 @@ export class GOffre {
 
   // ─── Modals ───────
   openModal(id: 'viewOffer' | 'deleteOffer' | 'botMatching'): void {
-    document.getElementById(id)?.classList.add('open');
     document.body.style.overflow = 'hidden';
-
     switch (id) {
       case 'viewOffer':   this.isViewModalOpen.set(true);   break;
       case 'deleteOffer': this.isDeleteModalOpen.set(true); break;
@@ -223,9 +243,7 @@ export class GOffre {
   }
 
   closeModal(id: 'viewOffer' | 'deleteOffer' | 'botMatching'): void {
-    document.getElementById(id)?.classList.remove('open');
     document.body.style.overflow = '';
-
     switch (id) {
       case 'viewOffer':   this.isViewModalOpen.set(false);   break;
       case 'deleteOffer': this.isDeleteModalOpen.set(false); break;

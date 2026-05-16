@@ -15,22 +15,22 @@ export class MarketPlaceService {
 
   // Example method to fetch marketplace items
   findMarketplaceItems():Observable<Support[]> {
-    return this.http.get<Support[]>(edulearnDashboard.MarketPlace.all);
+    return this.http.get<Support[]>(edulearnDashboard.MarketPlace.Support.all);
   }
 
   findMarketplaceItemById(id:number):Observable<Support> {
-    return this.http.get<Support>(edulearnDashboard.MarketPlace.findbyid+id);
+    return this.http.get<Support>(edulearnDashboard.MarketPlace.Support.findbyid+id);
   }
   createMarketplaceItem(request: any): Observable<ResponseServer> {
-    return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.create, request);
+    return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.Support.create, request);
   }
 
   updateMarketplaceItem(request: any): Observable<ResponseServer> {
-    return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.create, request);
+    return this.http.post<ResponseServer>(edulearnDashboard.MarketPlace.Support.create, request);
   }
 
   deleteMarketplaceItem(id:number): Observable<ResponseServer> {
-    return this.http.get<ResponseServer>(edulearnDashboard.MarketPlace.delete+id);
+    return this.http.get<ResponseServer>(edulearnDashboard.MarketPlace.Support.delete+id);
   }
 
 
@@ -40,4 +40,7 @@ export class MarketPlaceService {
   findAllTypeRessource():Observable<TypeRessource[]> {
     return this.http.get<TypeRessource[]>(edulearnDashboard.MarketPlace.allType);
   }
+
+ 
+  
 }

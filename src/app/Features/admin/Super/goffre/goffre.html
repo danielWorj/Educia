@@ -13,7 +13,7 @@
     </div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter</button>
-      <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nouvelle offre</button>
+      <button class="btn btn-primary btn-sm" (click)="showAddModal.set(true)"><i class="fas fa-plus"></i> Nouvelle offre</button>
     </div>
   </div>
 
@@ -167,263 +167,271 @@
 <!-- ============================================================
      MODAL 1 : VOIR L'OFFRE
      ============================================================ -->
-<div class="modal-overlay" id="viewOffer"
-  (click)="$event.target === $event.currentTarget && closeModal('viewOffer')">
-  <div class="modal modal-xl">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title">Détail de l'offre</div>
-        <div class="modal-subtitle">Informations complètes sur cette demande de répétiteur</div>
+@if (isViewModalOpen()) {
+  <div class="modal-overlay open" (click)="closeModal('viewOffer')">
+    <div class="modal modal-xl" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Détail de l'offre</div>
+          <div class="modal-subtitle">Informations complètes sur cette demande de répétiteur</div>
+        </div>
+        <button class="modal-close" (click)="closeModal('viewOffer')">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <button class="modal-close" (click)="closeModal('viewOffer')">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
 
-    @if (offreSelected(); as offre) {
-      <div class="modal-body">
+      @if (offreSelected(); as offre) {
+        <div class="modal-body">
 
-        <!-- Hero -->
-        <div class="view-hero">
-          <div class="view-hero-title">
-            {{ offre.offre.filiere?.intitule }} — {{ offre.offre.niveau?.intitule }}
-          </div>
-          <div class="view-hero-sub">
-            Publiée le {{ offre.offre.date | date:'dd MMMM yyyy' }}
-            · {{ offre.offre.parent?.localisation }}
-          </div>
-          <div class="view-hero-tags">
-            @for (m of offre.matieres; track m.id) {
-              <span class="view-hero-tag">
-                <i class="fas fa-book" style="margin-right:5px;"></i>
-                {{ m.matiere?.intitule }}
+          <!-- Hero -->
+          <div class="view-hero">
+            <div class="view-hero-title">
+              {{ offre.offre.filiere?.intitule }} — {{ offre.offre.niveau?.intitule }}
+            </div>
+            <div class="view-hero-sub">
+              Publiée le {{ offre.offre.date | date:'dd MMMM yyyy' }}
+              · {{ offre.offre.parent?.localisation }}
+            </div>
+            <div class="view-hero-tags">
+              @for (m of offre.matieres; track m.id) {
+                <span class="view-hero-tag">
+                  <i class="fas fa-book" style="margin-right:5px;"></i>
+                  {{ m.matiere?.intitule }}
+                </span>
+              }
+              <span class="view-hero-tag"
+                style="background:rgba(99,102,241,0.25);color:#fff;">
+                {{ offre.offre.filiere?.intitule }}
               </span>
-            }
-            <span class="view-hero-tag"
-              style="background:rgba(99,102,241,0.25);color:#fff;">
-              {{ offre.offre.filiere?.intitule }}
-            </span>
+            </div>
           </div>
-        </div>
 
-        <!-- Infos générales -->
-        <div class="view-section">
-          <div class="view-section-title">
-            <i class="fas fa-info-circle" style="margin-right:6px;color:var(--primary);"></i>
-            Informations générales
+          <!-- Infos générales -->
+          <div class="view-section">
+            <div class="view-section-title">
+              <i class="fas fa-info-circle" style="margin-right:6px;color:var(--primary);"></i>
+              Informations générales
+            </div>
+            <div class="view-info-grid">
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--primary-light);color:var(--primary);">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Niveau scolaire</div>
+                  <div class="view-info-val">{{ offre.offre.niveau?.intitule }}</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--purple-light);color:var(--purple);">
+                  <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Filière</div>
+                  <div class="view-info-val">{{ offre.offre.filiere?.intitule }}</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--green-light);color:#15803D;">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Localisation</div>
+                  <div class="view-info-val">{{ offre.offre.parent?.localisation }}</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--yellow-light);color:#92400E;">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Fréquence (séances/sem.)</div>
+                  <div class="view-info-val">{{ offre.offre.frequence }} séances</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--yellow-light);color:#92400E;">
+                  <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Durée par séance</div>
+                  <div class="view-info-val">{{ offre.offre.duree }}</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--accent-light);color:var(--accent);">
+                  <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Budget mensuel</div>
+                  <div class="view-info-val">{{ offre.offre.budget }}</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--purple-light);color:var(--purple);">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Candidatures reçues</div>
+                  <div class="view-info-val">{{ offre.candidature }} candidatures</div>
+                </div>
+              </div>
+              <div class="view-info-item">
+                <div class="view-info-icon" style="background:var(--green-light);color:#15803D;">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                  <div class="view-info-label">Date de publication</div>
+                  <div class="view-info-val">{{ offre.offre.date | date:'dd MMMM yyyy' }}</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="view-info-grid">
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--primary-light);color:var(--primary);">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Niveau scolaire</div>
-                <div class="view-info-val">{{ offre.offre.niveau?.intitule }}</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--purple-light);color:var(--purple);">
-                <i class="fas fa-layer-group"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Filière</div>
-                <div class="view-info-val">{{ offre.offre.filiere?.intitule }}</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--green-light);color:#15803D;">
-                <i class="fas fa-map-marker-alt"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Localisation</div>
-                <div class="view-info-val">{{ offre.offre.parent?.localisation }}</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--yellow-light);color:#92400E;">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Fréquence (séances/sem.)</div>
-                <div class="view-info-val">{{ offre.offre.frequence }} séances</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--yellow-light);color:#92400E;">
-                <i class="fas fa-hourglass-half"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Durée par séance</div>
-                <div class="view-info-val">{{ offre.offre.duree }}</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--accent-light);color:var(--accent);">
-                <i class="fas fa-money-bill-wave"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Budget mensuel</div>
-                <div class="view-info-val">{{ offre.offre.budget }}</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--purple-light);color:var(--purple);">
-                <i class="fas fa-users"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Candidatures reçues</div>
-                <div class="view-info-val">{{ offre.candidature }} candidatures</div>
-              </div>
-            </div>
-            <div class="view-info-item">
-              <div class="view-info-icon" style="background:var(--green-light);color:#15803D;">
-                <i class="fas fa-calendar-check"></i>
-              </div>
-              <div>
-                <div class="view-info-label">Date de publication</div>
-                <div class="view-info-val">{{ offre.offre.date | date:'dd MMMM yyyy' }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Bio -->
-        <div class="view-section">
-          <div class="view-section-title">
-            <i class="fas fa-align-left" style="margin-right:6px;color:var(--primary);"></i>
-            Description de la demande
-          </div>
-          <div class="view-desc-box">{{ offre.offre.bio }}</div>
-        </div>
-
-        <!-- Parent -->
-        <div class="view-section">
-          <div class="view-section-title">
-            <i class="fas fa-user" style="margin-right:6px;color:var(--primary);"></i>
-            Publié par
-          </div>
-          <div class="view-parent-box">
-            <div class="view-parent-avatar"
-              style="background:linear-gradient(135deg,#0A4FFF,#6366F1);">
-              {{ getInitiales(offre.offre.parent?.nomComplet ?? '') }}
+          <!-- Bio -->
+          <div class="view-section">
+            <div class="view-section-title">
+              <i class="fas fa-align-left" style="margin-right:6px;color:var(--primary);"></i>
+              Description de la demande
             </div>
-            <div>
-              <div class="view-parent-name">{{ offre.offre.parent?.nomComplet }}</div>
-              <div class="view-parent-meta">
-                <i class="fas fa-envelope" style="margin-right:5px;"></i>
-                {{ offre.offre.parent?.email }}
-                &nbsp;·&nbsp;
-                <i class="fas fa-phone" style="margin-left:4px;margin-right:5px;"></i>
-                {{ offre.offre.parent?.telephone }}
-              </div>
-              <div class="view-parent-meta" style="margin-top:4px;">
-                <i class="fas fa-map-marker-alt" style="margin-right:5px;"></i>
-                {{ offre.offre.parent?.localisation }}
-              </div>
-            </div>
-            <a href="#" class="btn btn-ghost btn-sm" style="margin-left:auto;">
-              <i class="fas fa-external-link-alt"></i> Profil
-            </a>
+            <div class="view-desc-box">{{ offre.offre.bio }}</div>
           </div>
-        </div>
 
+          <!-- Parent -->
+          <div class="view-section">
+            <div class="view-section-title">
+              <i class="fas fa-user" style="margin-right:6px;color:var(--primary);"></i>
+              Publié par
+            </div>
+            <div class="view-parent-box">
+              <div class="view-parent-avatar"
+                style="background:linear-gradient(135deg,#0A4FFF,#6366F1);">
+                {{ getInitiales(offre.offre.parent?.nomComplet ?? '') }}
+              </div>
+              <div>
+                <div class="view-parent-name">{{ offre.offre.parent?.nomComplet }}</div>
+                <div class="view-parent-meta">
+                  <i class="fas fa-envelope" style="margin-right:5px;"></i>
+                  {{ offre.offre.parent?.email }}
+                  &nbsp;·&nbsp;
+                  <i class="fas fa-phone" style="margin-left:4px;margin-right:5px;"></i>
+                  {{ offre.offre.parent?.telephone }}
+                </div>
+                <div class="view-parent-meta" style="margin-top:4px;">
+                  <i class="fas fa-map-marker-alt" style="margin-right:5px;"></i>
+                  {{ offre.offre.parent?.localisation }}
+                </div>
+              </div>
+              <a href="#" class="btn btn-ghost btn-sm" style="margin-left:auto;">
+                <i class="fas fa-external-link-alt"></i> Profil
+              </a>
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="closeModal('viewOffer')">Fermer</button>
+        <button class="btn btn-ai"
+          (click)="closeModal('viewOffer'); offreSelected() && openMatching(offreSelected()!)">
+          <i class="fas fa-robot"></i> Lancer le matching
+        </button>
       </div>
-    }
 
-    <div class="modal-footer">
-      <button class="btn btn-ghost" (click)="closeModal('viewOffer')">Fermer</button>
-      <button class="btn btn-ai"
-        (click)="closeModal('viewOffer'); offreSelected() && openMatching(offreSelected()!)">
-        <i class="fas fa-robot"></i> Lancer le matching
-      </button>
     </div>
   </div>
-</div>
+}
 
 
 <!-- ============================================================
      MODAL 2 : CONFIRMER SUPPRESSION
      ============================================================ -->
-<div class="modal-overlay" id="deleteOffer"
-  (click)="$event.target === $event.currentTarget && closeModal('deleteOffer')">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">Confirmation</div>
-      <button class="modal-close" (click)="closeModal('deleteOffer')">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body" style="text-align:center; padding: 36px 28px;">
-      <div class="delete-icon-box">
-        <i class="fas fa-trash-alt"></i>
-      </div>
-      <div class="delete-modal-title">Supprimer cette offre ?</div>
+@if (isDeleteModalOpen()) {
+  <div class="modal-overlay open" (click)="closeModal('deleteOffer')">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()">
 
-      @if (offreToDelete(); as offre) {
-        <p class="delete-modal-text">
-          Vous êtes sur le point de supprimer l'offre<br>
-          <span class="delete-offer-name">
-            {{ offre.offre.filiere?.intitule }} — {{ offre.offre.niveau?.intitule }}
-          </span><br>
-          de <strong>{{ offre.offre.parent?.nomComplet }}</strong>.<br><br>
-          Cette action est <strong>irréversible</strong>.
-          Toutes les candidatures associées seront également supprimées.
-        </p>
-      }
-    </div>
-    <div class="modal-footer" style="justify-content:center; gap:14px;">
-      <button class="btn btn-ghost" (click)="closeModal('deleteOffer')">
-        <i class="fas fa-times"></i> Annuler
-      </button>
-      <button class="btn btn-danger"
-        style="background:var(--red);color:#fff;"
-        (click)="deleteOffre()">
-        <i class="fas fa-trash"></i> Oui, supprimer
-      </button>
+      <div class="modal-header">
+        <div class="modal-title">Confirmation</div>
+        <button class="modal-close" (click)="closeModal('deleteOffer')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body" style="text-align:center;padding:36px 28px;">
+        <div class="delete-icon-box">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <div class="delete-modal-title">Supprimer cette offre ?</div>
+
+        @if (offreToDelete(); as offre) {
+          <p class="delete-modal-text">
+            Vous êtes sur le point de supprimer l'offre<br>
+            <span class="delete-offer-name">
+              {{ offre.offre.filiere?.intitule }} — {{ offre.offre.niveau?.intitule }}
+            </span><br>
+            de <strong>{{ offre.offre.parent?.nomComplet }}</strong>.<br><br>
+            Cette action est <strong>irréversible</strong>.
+            Toutes les candidatures associées seront également supprimées.
+          </p>
+        }
+      </div>
+
+      <div class="modal-footer" style="justify-content:center;gap:14px;">
+        <button class="btn btn-ghost" (click)="closeModal('deleteOffer')">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+        <button class="btn btn-danger"
+          style="background:var(--red);color:#fff;"
+          (click)="deleteOffre()">
+          <i class="fas fa-trash"></i> Oui, supprimer
+        </button>
+      </div>
+
     </div>
   </div>
-</div>
+}
 
 
 <!-- ============================================================
      MODAL 3 : BOT MATCHING IA
      ============================================================ -->
-<div class="modal-overlay" id="botMatching"
-  (click)="$event.target === $event.currentTarget && closeModal('botMatching')">
-  <div class="modal modal-xl bot-modal">
-    <div class="modal-header"
-      style="background:linear-gradient(135deg, #0D1B2A 0%, #1E1B4B 100%);">
-      <div>
-        <div class="modal-title"
-          style="color:#fff; display:flex; align-items:center; gap:10px;">
-          <span style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6366F1,#A855F7);display:inline-flex;align-items:center;justify-content:center;font-size:14px;">
-            <i class="fas fa-robot"></i>
-          </span>
-          Matching IA — EduBot
-        </div>
-        @if (offreForMatching(); as offre) {
-          <div class="modal-subtitle"
-            style="color:rgba(255,255,255,0.45); font-size:12px; margin-top:3px;">
-            Analyse intelligente des profils pour :
-            <strong style="color:rgba(255,255,255,0.7);">
-              {{ offre.offre.niveau?.intitule }} — {{ offre.offre.filiere?.intitule }}
-            </strong>
+@if (isBotModalOpen()) {
+  <div class="modal-overlay open" (click)="closeModal('botMatching')">
+    <div class="modal modal-xl" (click)="$event.stopPropagation()">
+
+      <div class="modal-header"
+        style="background:linear-gradient(135deg, #0D1B2A 0%, #1E1B4B 100%);">
+        <div>
+          <div class="modal-title"
+            style="color:#fff;display:flex;align-items:center;gap:10px;">
+            <span style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6366F1,#A855F7);display:inline-flex;align-items:center;justify-content:center;font-size:14px;">
+              <i class="fas fa-robot"></i>
+            </span>
+            Matching IA — EduBot
           </div>
-        }
+          @if (offreForMatching(); as offre) {
+            <div class="modal-subtitle"
+              style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:3px;">
+              Analyse intelligente des profils pour :
+              <strong style="color:rgba(255,255,255,0.7);">
+                {{ offre.offre.niveau?.intitule }} — {{ offre.offre.filiere?.intitule }}
+              </strong>
+            </div>
+          }
+        </div>
+        <button class="modal-close"
+          style="background:rgba(255,255,255,0.1);color:#fff;"
+          (click)="closeModal('botMatching')">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <button class="modal-close"
-        style="background:rgba(255,255,255,0.1);color:#fff;"
-        (click)="closeModal('botMatching')">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
 
-    <div class="modal-body">
+      <div class="modal-body">
 
-      <!-- LOADING STATE -->
-      @if (isMatchingLoading()) {
-        <div id="matchingLoading">
+        <!-- LOADING STATE -->
+        @if (isMatchingLoading()) {
           <div class="matching-loader">
             <div class="ai-orbit">
               <div class="orbit-ring-2"><div class="orbit-dot-2"></div></div>
@@ -457,97 +465,96 @@
               </div>
             </div>
           </div>
-        </div>
-      }
+        }
 
-      <!-- RESULTS STATE -->
-      @if (!isMatchingLoading() && matchingSaveState() === 'idle') {
-        <div id="matchingResults">
-          <div class="results mb-3 d-flex align-items-center justify-content-between">
-            <div class="results-icon ml-1"><i class="fas fa-trophy"></i></div>
-            <div>
-              <div class="results-title mr-1 ml-1">Matching terminé avec succès !</div>
-              <div class="results-subtitle mr-1 ml-1">
-                {{ matchingResults().length }} enseignant(s) compatible(s) trouvé(s)
+        <!-- RESULTS STATE -->
+        @if (!isMatchingLoading() && matchingSaveState() === 'idle') {
+          <div>
+            <div class="results mb-3 d-flex align-items-center justify-content-between">
+              <div class="results-icon ml-1"><i class="fas fa-trophy"></i></div>
+              <div>
+                <div class="results-title mr-1 ml-1">Matching terminé avec succès !</div>
+                <div class="results-subtitle mr-1 ml-1">
+                  {{ matchingResults().length }} enseignant(s) compatible(s) trouvé(s)
+                </div>
               </div>
+              <span class="results-count">{{ matchingResults().length }} résultats</span>
             </div>
-            <span class="results-count">{{ matchingResults().length }} résultats</span>
-          </div>
 
-          <div class="teacher-results">
-            @for (result of matchingResults(); track result.enseignant.nomComplet) {
-              <div class="teacher-result-card">
-                <div class="teacher-result-avatar"
-                  style="background:linear-gradient(135deg,#22C55E,#10B981);">
-                  {{ getInitiales(result.enseignant.nomComplet) }}
-                </div>
-                <div class="teacher-result-info">
-                  <div class="teacher-result-name">{{ result.enseignant.nomComplet }}</div>
-                  <div class="teacher-result-meta">
-                    <span class="t-meta-item">
-                      <span class="t-meta-icon t-meta-icon--specialite">
-                        <i class="fas fa-chalkboard-teacher"></i>
+            <div class="teacher-results">
+              @for (result of matchingResults(); track result.enseignant.nomComplet) {
+                <div class="teacher-result-card">
+                  <div class="teacher-result-avatar"
+                    style="background:linear-gradient(135deg,#22C55E,#10B981);">
+                    {{ getInitiales(result.enseignant.nomComplet) }}
+                  </div>
+                  <div class="teacher-result-info">
+                    <div class="teacher-result-name">{{ result.enseignant.nomComplet }}</div>
+                    <div class="teacher-result-meta">
+                      <span class="t-meta-item">
+                        <span class="t-meta-icon t-meta-icon--specialite">
+                          <i class="fas fa-chalkboard-teacher"></i>
+                        </span>
+                        {{ result.enseignant.specialite }}
                       </span>
-                      {{ result.enseignant.specialite }}
-                    </span>
-                    <span class="t-meta-item">
-                      <span class="t-meta-icon t-meta-icon--phone">
-                        <i class="fas fa-mobile-alt"></i>
+                      <span class="t-meta-item">
+                        <span class="t-meta-icon t-meta-icon--phone">
+                          <i class="fas fa-mobile-alt"></i>
+                        </span>
+                        {{ result.enseignant.telephone }}
                       </span>
-                      {{ result.enseignant.telephone }}
-                    </span>
+                    </div>
+                  </div>
+                  <div class="teacher-match-score">
+                    <div class="score-val {{ getScoreClass(result.score) }}">
+                      {{ result.score }}%
+                    </div>
+                    <div class="score-label">Match</div>
+                    <button class="btn btn-primary btn-sm"
+                      style="margin-top:8px;padding:6px 12px;font-size:11px;">
+                      <i class="fas fa-paper-plane"></i> Contacter
+                    </button>
                   </div>
                 </div>
-                <div class="teacher-match-score">
-                  <div class="score-val {{ getScoreClass(result.score) }}">
-                    {{ result.score }}%
-                  </div>
-                  <div class="score-label">Match</div>
-                  <button class="btn btn-primary btn-sm"
-                    style="margin-top:8px;padding:6px 12px;font-size:11px;">
-                    <i class="fas fa-paper-plane"></i> Contacter
-                  </button>
+              }
+
+              @if (matchingResults().length === 0) {
+                <div class="empty-state">
+                  <i class="fas fa-user-slash"></i>
+                  <p>Aucun enseignant compatible trouvé pour cette offre.</p>
                 </div>
-              </div>
-            }
+              }
+            </div>
+          </div>
+        }
 
-            @if (matchingResults().length === 0) {
-              <div class="empty-state">
-                <i class="fas fa-user-slash"></i>
-                <p>Aucun enseignant compatible trouvé pour cette offre.</p>
-              </div>
-            }
+        <!-- FEEDBACK : SUCCÈS SAUVEGARDE -->
+        @if (matchingSaveState() === 'success') {
+          <div class="matching-feedback matching-feedback--success">
+            <div class="feedback-icon-wrap feedback-icon-wrap--success">
+              <div class="feedback-icon-pulse"></div>
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="feedback-title">Matching sauvegardé !</div>
+            <div class="feedback-subtitle">
+              Les résultats du matching ont bien été enregistrés en base de données.<br>
+              Vous pouvez les consulter à tout moment dans le tableau de bord.
+            </div>
+            <div class="feedback-badges">
+              <span class="feedback-badge feedback-badge--green">
+                <i class="fas fa-database"></i> Enregistré
+              </span>
+              <span class="feedback-badge feedback-badge--blue">
+                <i class="fas fa-users"></i> {{ matchingResults().length }} enseignant(s)
+              </span>
+            </div>
           </div>
-        </div>
-      }
+        }
 
-      <!-- FEEDBACK : SUCCÈS SAUVEGARDE -->
-      @if (matchingSaveState() === 'success') {
-        <div class="matching-feedback matching-feedback--success">
-          <div class="feedback-icon-wrap feedback-icon-wrap--success">
-            <div class="feedback-icon-pulse"></div>
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <div class="feedback-title">Matching sauvegardé !</div>
-          <div class="feedback-subtitle">
-            Les résultats du matching ont bien été enregistrés en base de données.<br>
-            Vous pouvez les consulter à tout moment dans le tableau de bord.
-          </div>
-          <div class="feedback-badges">
-            <span class="feedback-badge feedback-badge--green">
-              <i class="fas fa-database"></i> Enregistré
-            </span>
-            <span class="feedback-badge feedback-badge--blue">
-              <i class="fas fa-users"></i> {{ matchingResults().length }} enseignant(s)
-            </span>
-          </div>
-        </div>
-      }
-
-      <!-- FEEDBACK : ÉCHEC SAUVEGARDE -->
-      @if (matchingSaveState() === 'error') {
-        @if (isInternError()) {
-           <div class="matching-feedback matching-feedback--error">
+        <!-- FEEDBACK : ÉCHEC SAUVEGARDE -->
+        @if (matchingSaveState() === 'error') {
+          @if (isInternError()) {
+            <div class="matching-feedback matching-feedback--error">
               <div class="feedback-icon-wrap feedback-icon-wrap--error">
                 <i class="fas fa-times-circle"></i>
               </div>
@@ -562,16 +569,16 @@
                 </span>
               </div>
             </div>
-        }
-        @if (!isInternError()) {
+          }
+          @if (!isInternError()) {
             <div class="matching-feedback matching-feedback--info">
               <div class="feedback-icon-wrap feedback-icon-wrap--info">
                 <i class="fas fa-info-circle"></i>
               </div>
               <div class="feedback-title">Échec de la sauvegarde</div>
               <div class="feedback-subtitle">
-                Ces resultats ont deja ete enregistres.<br>
-                Vous pouvz les consulter a la partie "Matchings".
+                Ces résultats ont déjà été enregistrés.<br>
+                Vous pouvez les consulter à la partie "Matchings".
               </div>
               <div class="feedback-badges">
                 <span class="feedback-badge feedback-badge--red">
@@ -579,37 +586,108 @@
                 </span>
               </div>
             </div>
-        }
-      }
-
-    </div>
-
-    <div class="modal-footer" style="background:var(--bg);">
-      <button class="btn btn-ghost" (click)="closeModal('botMatching')">
-        <i class="fas fa-times"></i> Fermer
-      </button>
-
-      @if (!isMatchingLoading() && matchingSaveState() === 'idle') {
-        <button class="btn btn-save-matching" (click)="sauvegarderMatching()"
-          [disabled]="isSaving()">
-          @if (isSaving()) {
-            <span class="btn-save-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
-            Sauvegarde…
-          } @else {
-            <span class="btn-save-icon"><i class="fas fa-cloud-upload-alt"></i></span>
-            Sauvegarder le matching
           }
-        </button>
-        <button class="btn btn-ai" (click)="relanceMatching()">
-          <i class="fas fa-redo"></i> Relancer
-        </button>
-      }
+        }
 
-      @if (matchingSaveState() === 'success' || matchingSaveState() === 'error') {
-        <button class="btn btn-back-matching" (click)="revenirAuMatching()">
-          <i class="fas fa-arrow-left"></i> Revenir au matching
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer" style="background:var(--bg);">
+        <button class="btn btn-ghost" (click)="closeModal('botMatching')">
+          <i class="fas fa-times"></i> Fermer
         </button>
-      }
+
+        @if (!isMatchingLoading() && matchingSaveState() === 'idle') {
+          <button class="btn btn-save-matching" (click)="sauvegarderMatching()"
+            [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span class="btn-save-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
+              Sauvegarde…
+            } @else {
+              <span class="btn-save-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+              Sauvegarder le matching
+            }
+          </button>
+          <button class="btn btn-ai" (click)="relanceMatching()">
+            <i class="fas fa-redo"></i> Relancer
+          </button>
+        }
+
+        @if (matchingSaveState() === 'success' || matchingSaveState() === 'error') {
+          <button class="btn btn-back-matching" (click)="revenirAuMatching()">
+            <i class="fas fa-arrow-left"></i> Revenir au matching
+          </button>
+        }
+      </div>
+
     </div>
   </div>
-</div>
+}
+
+<!-- ============================================================
+     MODAL 4 : NOUVELLE OFFRE
+     ============================================================ -->
+@if (showAddModal()) {
+  <div class="modal-overlay open" (click)="showAddModal.set(false)">
+    <div class="modal modal-xl" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Nouvelle offre de cours</div>
+          <div class="modal-subtitle">Créer une demande de répétiteur</div>
+        </div>
+        <button class="modal-close" (click)="showAddModal.set(false)">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="admin-form" [formGroup]="addOffreForm">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Niveau scolaire</label>
+              <input class="form-input" type="text" placeholder="ex: Terminale" formControlName="niveau" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Filière</label>
+              <input class="form-input" type="text" placeholder="ex: Scientifique" formControlName="filiere" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fréquence (séances / semaine)</label>
+              <input class="form-input" type="number" placeholder="ex: 3" formControlName="frequence" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Durée par séance</label>
+              <input class="form-input" type="text" placeholder="ex: 2h" formControlName="duree" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Budget mensuel (XAF)</label>
+            <input class="form-input" type="number" placeholder="ex: 30000" formControlName="budget" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description de la demande</label>
+            <textarea class="form-input" rows="4"
+              placeholder="Décrivez vos attentes, le profil souhaité, les matières prioritaires…"
+              formControlName="bio"
+              style="resize:vertical;"></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" (click)="showAddModal.set(false)">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="submitAddOffre()">
+          <i class="fas fa-plus"></i> Publier l'offre
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

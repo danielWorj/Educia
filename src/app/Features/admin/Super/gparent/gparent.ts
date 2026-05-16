@@ -13,149 +13,232 @@ import { ResponseServer } from '../../../../Core/Model/Server/ResponseServer';
   styleUrl: './gparent.css',
 })
 export class GParent {
+
   ParentForm!: FormGroup;
 
-  // --- Signals d'état UI ---
-  activeFilter = signal<'all' | 'parent' | 'etudiant' | 'actif' | 'inactif'>('all');
+  // ── Signals UI ──────────────────────────────────────────────────────────────
+  activeFilter  = signal<'all' | 'parent' | 'etudiant' | 'actif' | 'inactif'>('all');
   showFormModal = signal<boolean>(false);
-  isEditMode = signal<boolean>(false);
+  isEditMode    = signal<boolean>(false);
   parentToDelete = signal<Parent | null>(null);
+  parentSelected = signal<Parent | null>(null);
 
   constructor(
     private fb: FormBuilder,
     private generalService: GeneralService,
     private utilisateurService: UtilisateurService
   ) {
-    this.loadPage();
-
+    /**
+     * Champs alignés sur ParentDTO (extends UtilisateurDTO) :
+     *   UtilisateurDTO : nomComplet, telephone, email, password, localisation
+     *   ParentDTO      : + profession
+     *   Note           : photo & cni sont envoyés en MultipartFile, pas dans le JSON
+     */
     this.ParentForm = this.fb.group({
-      id: new FormControl(),
-      nomComplet: new FormControl(),
-      telephone: new FormControl(),
-      email: new FormControl(),
-      role: new FormControl(),
-      password: new FormControl(),
-      dateInscription: new FormControl(),
-      status: new FormControl(),
-      localisation: new FormControl(),
-      photo: new FormControl(),
-      profession: new FormControl(),
-      cni: new FormControl(),
+      id:           new FormControl(null),
+      nomComplet:   new FormControl(''),
+      telephone:    new FormControl(''),
+      email:        new FormControl(''),
+      password:     new FormControl(''),   // utilisé uniquement en création
+      localisation: new FormControl(''),
+      profession:   new FormControl(''),
+    });
+
+    this.loadPage();
+  }
+
+  loadPage(): void {
+    this.getAllParents();
+  }
+
+  // ── Données ─────────────────────────────────────────────────────────────────
+  listParents = signal<Parent[]>([]);
+
+  getAllParents(): void {
+    this.utilisateurService.findAllParent().subscribe({
+      next:  (response: Parent[]) => this.listParents.set(response),
+      error: (err: any) => console.error('Erreur chargement parents :', err),
     });
   }
 
-  loadPage() {
-    this.getAllParents();
-  }
-
-  // --- Données ---
-  listParents = signal<Parent[]>([]);
-
-  getAllParents() {
-    this.utilisateurService.findAllParent().subscribe(
-      (response: Parent[]) => {
-        this.listParents.set(response);
-      },
-      (error) => {
-        console.error('Error fetching Parents:', error);
-      }
-    );
-  }
-
-  parentSelected = signal<Parent | null>(null);
-
-  selectParent(p: Parent) {
-    this.parentSelected.set(p);
-  }
-
-  // --- Signal computed pour filtrage ---
   filteredParents = computed<Parent[]>(() => {
-    const filter = this.activeFilter();
+    const filter  = this.activeFilter();
     const parents = this.listParents();
     switch (filter) {
-      case 'actif':     return parents.filter(p => p.status === true);
-      case 'inactif':   return parents.filter(p => p.status === false);
-      default:          return parents;
+      case 'actif':   return parents.filter(p => p.status === true);
+      case 'inactif': return parents.filter(p => p.status === false);
+      default:        return parents;
     }
   });
 
-  setFilter(filter: 'all' | 'parent' | 'etudiant' | 'actif' | 'inactif') {
+  setFilter(filter: 'all' | 'parent' | 'etudiant' | 'actif' | 'inactif'): void {
     this.activeFilter.set(filter);
   }
 
-  // getParentsByRole(role: string): Parent[] {
-  //  // return this.listParents().filter(p => p.role?.toUpperCase() === role);
-  // }
+  selectParent(p: Parent): void {
+    this.parentSelected.set(p);
+  }
 
-  // --- Modals ---
-  openAddModal() {
+  // ── Fichiers – Photo ─────────────────────────────────────────────────────────
+  modalPhotoFile!: File;
+  modalPhotoFileName  = signal<string>('');
+  modalPhotoPreview   = signal<string>('');
+  modalPhotoUploaded  = signal<boolean>(false);
+
+  onModalSelectPhoto(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      const file = input.files[0];
+      this.modalPhotoFile = file;
+      this.modalPhotoFileName.set(file.name);
+      this.modalPhotoUploaded.set(true);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (ev: ProgressEvent<FileReader>) => {
+        this.modalPhotoPreview.set(ev.target?.result as string);
+      };
+    }
+  }
+
+  // ── Fichiers – CNI ───────────────────────────────────────────────────────────
+  modalCniFile!: File;
+  modalCniFileName  = signal<string>('');
+  modalCniUploaded  = signal<boolean>(false);
+
+  onModalSelectCNI(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.modalCniFile = input.files[0];
+      this.modalCniFileName.set(this.modalCniFile.name);
+      this.modalCniUploaded.set(true);
+    }
+  }
+
+  // ── Modals ───────────────────────────────────────────────────────────────────
+  openAddModal(): void {
     this.isEditMode.set(false);
     this.ParentForm.reset();
+    // Reset fichiers
+    this.modalPhotoFile   = undefined!;
+    this.modalPhotoFileName.set('');
+    this.modalPhotoPreview.set('');
+    this.modalPhotoUploaded.set(false);
+    this.modalCniFile = undefined!;
+    this.modalCniFileName.set('');
+    this.modalCniUploaded.set(false);
     this.showFormModal.set(true);
   }
 
-  openEditModal(parent: Parent) {
+  openEditModal(parent: Parent): void {
     this.isEditMode.set(true);
-    this.ParentForm.patchValue(parent);
+    // Patch uniquement les champs texte — pas les fichiers
+    this.ParentForm.patchValue({
+      id:           parent.id,
+      nomComplet:   parent.nomComplet,
+      telephone:    parent.telephone,
+      email:        parent.email,
+      localisation: parent.localisation,
+      profession:   parent.profession,
+    });
     this.showFormModal.set(true);
   }
 
-  closeDetailModal(event: MouseEvent) {
-    this.parentSelected.set(null);
-  }
-
-  closeFormModal(event: MouseEvent) {
-    this.showFormModal.set(false);
-  }
-
-  confirmDelete(parent: Parent) {
+  confirmDelete(parent: Parent): void {
     this.parentToDelete.set(parent);
   }
 
-  // --- Actions CRUD ---
-  submitForm() {
+  // ── Soumission ───────────────────────────────────────────────────────────────
+  submitForm(): void {
     if (this.ParentForm.invalid) return;
-    if (this.isEditMode()) {
-      // TODO: appeler le service de mise à jour
-      console.log('Update parent:', this.ParentForm.value);
-    } else {
-      // TODO: appeler le service de création
-      console.log('Create parent:', this.ParentForm.value);
-    }
-    this.showFormModal.set(false);
-    this.getAllParents();
-  }
 
-  changeStatus(id: number) {
-    this.utilisateurService.changeStatus(id).subscribe(
-      (response: ResponseServer) => {
-        if (response.status) {
-          console.log(response.message);
-          this.getAllParents(); // Rafraîchir la liste
+    if (this.isEditMode()) {
+      // ── Mode édition : pas de fichiers requis (API à implémenter côté backend)
+      const parentDTO = {
+        id:           this.ParentForm.value.id,
+        nomComplet:   this.ParentForm.value.nomComplet,
+        telephone:    this.ParentForm.value.telephone,
+        email:        this.ParentForm.value.email,
+        localisation: this.ParentForm.value.localisation,
+        profession:   this.ParentForm.value.profession,
+      };
+      // TODO: appeler le service de mise à jour quand l'endpoint sera disponible
+      console.log('Update parent :', parentDTO);
+      this.showFormModal.set(false);
+      this.getAllParents();
+      return;
+    }
+
+    // ── Mode création : photo + CNI obligatoires (POST /parent/create)
+    if (!this.modalPhotoFile) {
+      alert('Veuillez sélectionner une photo de profil.');
+      return;
+    }
+    if (!this.modalCniFile) {
+      alert('Veuillez téléverser la CNI.');
+      return;
+    }
+
+    /**
+     * Le backend attend :
+     *   @Param("parent")  → JSON du ParentDTO
+     *   @RequestParam("photo") → MultipartFile
+     *   @RequestParam("cni")   → MultipartFile
+     */
+    const parentDTO = {
+      nomComplet:   this.ParentForm.value.nomComplet,
+      telephone:    this.ParentForm.value.telephone,
+      email:        this.ParentForm.value.email,
+      password:     this.ParentForm.value.password,
+      localisation: this.ParentForm.value.localisation,
+      profession:   this.ParentForm.value.profession,
+    };
+
+    const formData = new FormData();
+    formData.append('parent', JSON.stringify(parentDTO));
+    formData.append('photo',  this.modalPhotoFile);
+    formData.append('cni',    this.modalCniFile);
+
+    this.utilisateurService.createParent(formData).subscribe({
+      next: (response: number) => {
+        if (response > 0) {
+          this.showFormModal.set(false);
+          this.ParentForm.reset();
+          this.getAllParents();
+        } else {
+          alert('Erreur lors de la création du compte.');
         }
       },
-      (error) => {
-        console.error('Error change status Parents:', error);
-      }
-    );
+      error: (err: any) => console.error('Erreur création parent :', err),
+    });
   }
 
-  deleteParent(id: number) {
-    this.utilisateurService.deleteParent(id).subscribe(
-      (response: ResponseServer) => {
+  // ── CRUD ─────────────────────────────────────────────────────────────────────
+  changeStatus(id: number): void {
+    this.utilisateurService.changeStatus(id).subscribe({
+      next: (response: ResponseServer) => {
+        if (response.status) {
+          console.log(response.message);
+          this.getAllParents();
+        }
+      },
+      error: (err: any) => console.error('Erreur changement statut :', err),
+    });
+  }
+
+  deleteParent(id: number): void {
+    this.utilisateurService.deleteParent(id).subscribe({
+      next: (response: ResponseServer) => {
         if (response.status) {
           console.log(response.message);
           this.parentToDelete.set(null);
-          this.getAllParents(); // Rafraîchir la liste
+          this.getAllParents();
         }
       },
-      (error) => {
-        console.error('Error delete Parents:', error);
-      }
-    );
+      error: (err: any) => console.error('Erreur suppression parent :', err),
+    });
   }
 
-  // --- Utilitaires UI ---
+  // ── Utilitaires UI ───────────────────────────────────────────────────────────
   getInitials(nomComplet: string | undefined): string {
     if (!nomComplet) return '?';
     return nomComplet

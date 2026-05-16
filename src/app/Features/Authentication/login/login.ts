@@ -25,7 +25,7 @@ export class Login {
 
   
   roleRoutes: Record<number, string> = {
-    1: '/admin/admin-dashboard',
+    1: '/admin/dashboard',
     2: '/admin/admin-enseignants', 
     3: '/portail/dasboard',
     4: 'admin/admin-parents'

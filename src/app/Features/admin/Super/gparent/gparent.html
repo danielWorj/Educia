@@ -30,10 +30,10 @@
 
 <!-- FILTERS -->
 <div class="filter-bar fade-up">
-  <button class="filter-chip" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">Tous</button>
-  <button class="filter-chip" [class.active]="activeFilter() === 'parent'" (click)="setFilter('parent')">Parents</button>
-  <button class="filter-chip" [class.active]="activeFilter() === 'etudiant'" (click)="setFilter('etudiant')">Étudiants</button>
-  <button class="filter-chip" [class.active]="activeFilter() === 'actif'" (click)="setFilter('actif')">Actifs</button>
+  <button class="filter-chip" [class.active]="activeFilter() === 'all'"     (click)="setFilter('all')">Tous</button>
+  <button class="filter-chip" [class.active]="activeFilter() === 'parent'"  (click)="setFilter('parent')">Parents</button>
+  <button class="filter-chip" [class.active]="activeFilter() === 'etudiant'"(click)="setFilter('etudiant')">Étudiants</button>
+  <button class="filter-chip" [class.active]="activeFilter() === 'actif'"   (click)="setFilter('actif')">Actifs</button>
   <button class="filter-chip" [class.active]="activeFilter() === 'inactif'" (click)="setFilter('inactif')">Inactifs</button>
   <div style="margin-left:auto;">
     <button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter CSV</button>
@@ -54,11 +54,9 @@
         <tr>
           <th><input type="checkbox" /></th>
           <th>Utilisateur</th>
-          <th>Type</th>
           <th>Localisation</th>
           <th>Téléphone</th>
           <th>Statut</th>
-          <th>Inscription</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -77,12 +75,6 @@
                 </div>
               </div>
             </td>
-            <td>
-             
-                <span class="badge badge-blue">Parent</span>
-             
-            
-            </td>
             <td>{{ parent.localisation }}</td>
             <td>{{ parent.telephone }}</td>
             <td>
@@ -92,7 +84,6 @@
                 <span class="badge badge-red">Inactif</span>
               }
             </td>
-            <td>{{ parent.dateInscription | date:'dd/MM/yyyy' }}</td>
             <td>
               <div class="action-group">
                 <button class="btn btn-ghost btn-sm btn-icon" (click)="selectParent(parent)" title="Voir détails">
@@ -137,133 +128,202 @@
   </div>
 </div>
 
-<!-- MODAL: Détail Parent -->
+
+<!-- ============================================================ -->
+<!--  MODAL : Détail Parent                                       -->
+<!-- ============================================================ -->
 @if (parentSelected()) {
-  <div class="modal-overlay" [class.active]="parentSelected() !== null" (click)="closeDetailModal($event)">
-    <div class="modal" style="max-width:540px;" (click)="$event.stopPropagation()">
+  <div class="modal-overlay open" (click)="parentSelected.set(null)">
+    <div class="modal-box" style="max-width:540px;" (click)="$event.stopPropagation()">
+
       <div class="modal-header">
         <span class="modal-title">Détail du compte</span>
         <button class="modal-close" (click)="parentSelected.set(null)">✕</button>
       </div>
+
       <div class="modal-body">
-        <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
-          <div class="user-avatar-sm"
-               style="width:56px;height:56px;font-size:1.2rem;border-radius:14px;"
-               [style.background]="getAvatarGradient(parentSelected()!)">
-            {{ getInitials(parentSelected()!.nomComplet) }}
-          </div>
-          <div>
-            <div style="font-weight:800;font-size:1rem;font-family:var(--font-display);">{{ parentSelected()!.nomComplet }}</div>
-            <div style="color:var(--text-light);font-size:12px;">
-               · Inscrit le {{ parentSelected()!.dateInscription | date:'dd/MM/yyyy' }}
+        @if (parentSelected(); as p) {
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+            <div class="user-avatar-sm"
+                 style="width:56px;height:56px;font-size:1.2rem;border-radius:14px;"
+                 [style.background]="getAvatarGradient(p)">
+              {{ getInitials(p.nomComplet) }}
             </div>
-            @if (parentSelected()!.status) {
-              <span class="badge badge-green" style="margin-top:6px;">Actif</span>
-            } @else {
-              <span class="badge badge-red" style="margin-top:6px;">Inactif</span>
-            }
+            <div>
+              <div style="font-weight:800;font-size:1rem;font-family:var(--font-display);">{{ p.nomComplet }}</div>
+              <div style="color:var(--text-light);font-size:12px;">
+                Inscrit le {{ p.dateInscription | date:'dd/MM/yyyy' }}
+              </div>
+              @if (p.status) {
+                <span class="badge badge-green" style="margin-top:6px;">Actif</span>
+              } @else {
+                <span class="badge badge-red" style="margin-top:6px;">Inactif</span>
+              }
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Email</div>
-            <div style="font-weight:600;font-size:13px;">{{ parentSelected()!.email }}</div>
+
+          <div class="form-row" style="margin-bottom:20px;">
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Email</div>
+              <div style="font-weight:600;font-size:13px;">{{ p.email }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Téléphone</div>
+              <div style="font-weight:600;font-size:13px;">{{ p.telephone }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Localisation</div>
+              <div style="font-weight:600;font-size:13px;">{{ p.localisation }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Profession</div>
+              <div style="font-weight:600;font-size:13px;">{{ p.profession }}</div>
+            </div>
           </div>
-          <div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Téléphone</div>
-            <div style="font-weight:600;font-size:13px;">{{ parentSelected()!.telephone }}</div>
-          </div>
-          <div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Localisation</div>
-            <div style="font-weight:600;font-size:13px;">{{ parentSelected()!.localisation }}</div>
-          </div>
-          <div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:4px;">Profession</div>
-            <div style="font-weight:600;font-size:13px;">{{ parentSelected()!.profession }}</div>
-          </div>
-        </div>
+        }
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-ghost" (click)="parentSelected.set(null)">Fermer</button>
         <button class="btn btn-primary"><i class="fas fa-envelope"></i> Envoyer un message</button>
       </div>
+
     </div>
   </div>
 }
 
-<!-- MODAL: Ajouter / Modifier un Parent -->
+
+<!-- ============================================================ -->
+<!--  MODAL : Ajouter / Modifier un Parent                        -->
+<!-- ============================================================ -->
 @if (showFormModal()) {
-  <div class="modal-overlay" [class.active]="showFormModal()" (click)="closeFormModal($event)">
-    <div class="modal" style="max-width:520px;" (click)="$event.stopPropagation()">
+  <div class="modal-overlay open" (click)="showFormModal.set(false)">
+    <div class="modal-box" style="max-width:520px;" (click)="$event.stopPropagation()">
+
       <div class="modal-header">
         <span class="modal-title">{{ isEditMode() ? 'Modifier le compte' : 'Créer un compte' }}</span>
         <button class="modal-close" (click)="showFormModal.set(false)">✕</button>
       </div>
+
       <div class="modal-body">
-        <form [formGroup]="ParentForm" (ngSubmit)="submitForm()">
+        <div class="admin-form" [formGroup]="ParentForm">
+
+          <!-- Nom complet -->
           <div class="form-group">
-            <label class="form-label">Type de compte</label>
-            <select class="form-select" formControlName="role">
-              <option value="">Sélectionner...</option>
-              <option value="PARENT">Parent</option>
-              <option value="ETUDIANT">Étudiant</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nom complet</label>
+            <label class="form-label">Nom complet <span class="req">*</span></label>
             <input class="form-input" type="text" placeholder="Prénom et Nom" formControlName="nomComplet" />
           </div>
+
+          <!-- Email + Téléphone -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Email</label>
+              <label class="form-label">Email <span class="req">*</span></label>
               <input class="form-input" type="email" placeholder="email@example.cm" formControlName="email" />
             </div>
             <div class="form-group">
-              <label class="form-label">Téléphone</label>
+              <label class="form-label">Téléphone <span class="req">*</span></label>
               <input class="form-input" type="tel" placeholder="+237 6XX XXX XXX" formControlName="telephone" />
             </div>
           </div>
+
+          <!-- Localisation + Profession -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Localisation</label>
+              <label class="form-label">Localisation <span class="req">*</span></label>
               <input class="form-input" type="text" placeholder="ex: Douala" formControlName="localisation" />
             </div>
             <div class="form-group">
-              <label class="form-label">Profession</label>
+              <label class="form-label">Profession <span class="req">*</span></label>
               <input class="form-input" type="text" placeholder="ex: Ingénieur" formControlName="profession" />
             </div>
           </div>
+
+          <!-- Mot de passe — uniquement en création -->
           @if (!isEditMode()) {
             <div class="form-group">
-              <label class="form-label">Mot de passe</label>
-              <input class="form-input" type="password" placeholder="••••••••" formControlName="password" />
+              <label class="form-label">Mot de passe <span class="req">*</span></label>
+              <input class="form-input" type="password" placeholder="Minimum 8 caractères" formControlName="password" />
             </div>
           }
-          <div class="form-group">
-            <label class="form-label">CNI</label>
-            <input class="form-input" type="text" placeholder="Numéro CNI" formControlName="cni" />
-          </div>
-          <div class="modal-footer" style="padding:0;border:none;margin-top:4px;">
-            <button type="button" class="btn btn-ghost" (click)="showFormModal.set(false)">Annuler</button>
-            <button type="submit" class="btn btn-primary" [disabled]="ParentForm.invalid">
-              <i class="fas fa-plus"></i> {{ isEditMode() ? 'Enregistrer' : 'Créer le compte' }}
-            </button>
-          </div>
-        </form>
+
+          <!-- ── Fichiers — uniquement en création ─────────────────────── -->
+          @if (!isEditMode()) {
+
+            <!-- Photo de profil -->
+            <div class="form-group">
+              <label class="form-label">Photo de profil <span class="req">*</span></label>
+              <div class="upload-id-wrapper">
+                <div class="upload-id-left">
+                  @if (modalPhotoUploaded()) {
+                    <img [src]="modalPhotoPreview()"
+                         alt="Aperçu"
+                         style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
+                  } @else {
+                    <div class="upload-id-icon">🖼️</div>
+                  }
+                  <div>
+                    <div class="upload-id-title">
+                      {{ modalPhotoUploaded() ? modalPhotoFileName() : 'Choisir une photo' }}
+                    </div>
+                    <div class="upload-id-sub">JPG ou PNG · Max 5 Mo</div>
+                  </div>
+                </div>
+                <label for="modal-photo-input" class="upload-id-btn">📎 Parcourir</label>
+                <input type="file" id="modal-photo-input" accept=".jpg,.jpeg,.png"
+                       (change)="onModalSelectPhoto($event)" style="display:none;" />
+              </div>
+            </div>
+
+            <!-- CNI -->
+            <div class="form-group">
+              <label class="form-label">Carte Nationale d'Identité <span class="req">*</span></label>
+              <div class="upload-id-wrapper">
+                <div class="upload-id-left">
+                  <div class="upload-id-icon">🪪</div>
+                  <div>
+                    <div class="upload-id-title">
+                      {{ modalCniUploaded() ? modalCniFileName() : 'Choisir la CNI' }}
+                    </div>
+                    <div class="upload-id-sub">JPG, PNG ou PDF · Max 5 Mo</div>
+                  </div>
+                </div>
+                <label for="modal-cni-input" class="upload-id-btn">📎 Parcourir</label>
+                <input type="file" id="modal-cni-input" accept=".jpg,.jpeg,.png,.pdf"
+                       (change)="onModalSelectCNI($event)" style="display:none;" />
+              </div>
+            </div>
+
+          }
+          <!-- ── fin fichiers ──────────────────────────────────────────── -->
+
+        </div>
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" (click)="showFormModal.set(false)">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="submitForm()">
+          <i class="fas fa-plus"></i> {{ isEditMode() ? 'Enregistrer' : 'Créer le compte' }}
+        </button>
       </div>
+
     </div>
   </div>
 }
 
-<!-- MODAL: Confirmation Suppression -->
+
+<!-- ============================================================ -->
+<!--  MODAL : Confirmation Suppression                            -->
+<!-- ============================================================ -->
 @if (parentToDelete()) {
-  <div class="modal-overlay active" (click)="parentToDelete.set(null)">
-    <div class="modal" style="max-width:400px;" (click)="$event.stopPropagation()">
+  <div class="modal-overlay open" (click)="parentToDelete.set(null)">
+    <div class="modal-box" style="max-width:420px;" (click)="$event.stopPropagation()">
+
       <div class="modal-header">
         <span class="modal-title">Confirmer la suppression</span>
         <button class="modal-close" (click)="parentToDelete.set(null)">✕</button>
       </div>
-      <div class="modal-body" style="text-align:center;padding:24px;">
+
+      <div class="modal-body" style="text-align:center;padding:32px 24px;">
         <i class="fas fa-exclamation-triangle" style="font-size:2.5rem;color:#EF4444;margin-bottom:16px;display:block;"></i>
         <p style="font-size:14px;color:var(--text-mid);">
           Êtes-vous sûr de vouloir supprimer le compte de
@@ -271,12 +331,14 @@
           Cette action est irréversible.
         </p>
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-ghost" (click)="parentToDelete.set(null)">Annuler</button>
         <button class="btn btn-danger" (click)="deleteParent(parentToDelete()!.id)">
           <i class="fas fa-trash"></i> Supprimer
         </button>
       </div>
+
     </div>
   </div>
 }

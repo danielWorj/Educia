@@ -30,8 +30,9 @@ export const edulearnDashboard = {
         allByProfil : `${userapi}/enseignant/all/byProfil/`,
         count : `${userapi}/enseignant/count/`, 
         create : `${userapi}/enseignant/create`,
+        delete : `${userapi}/enseignant/delete/`,
         findById : `${userapi}/enseignant/findById/`,
-        changestatus : `${userapi}/enseignant/status/`,
+        changestatus : `${userapi}/change/status/`,
     }, 
 
     Eleve :{
@@ -89,6 +90,13 @@ export const edulearnDashboard = {
         update: `${marketplaceapi}/new/update`,
         delete: `${marketplaceapi}/new/delete/`,
         allType : `${marketplaceapi}/typeRessource/all`,
+          Support: {
+            all:       `${marketplaceapi}/new/all`,
+            findbyid:  `${marketplaceapi}/new/findbyid/`,   // + id
+            create:    `${marketplaceapi}/new/create`,
+            update:    `${marketplaceapi}/new/update`,
+            delete:    `${marketplaceapi}/new/delete/`,     // + id
+        }
     }, 
     
     General :{
