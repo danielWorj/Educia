@@ -1,8 +1,8 @@
-<div class="admin-layout">
+<div class="admin-layout" [class.sidebar-open]="sidebarOpen">
 
   <!-- SIDEBAR -->
-  <app-admin-sidebar></app-admin-sidebar>
-  <div class="sidebar-overlay"></div>
+  <app-admin-sidebar [isOpen]="sidebarOpen"></app-admin-sidebar>
+  <div class="sidebar-overlay" [class.visible]="sidebarOpen" (click)="closeSidebar()"></div>
 
   <!-- MAIN -->
   <div class="main-content">
@@ -10,7 +10,7 @@
     <!-- HEADER -->
     <header class="top-header">
       <div style="display:flex;align-items:center;gap:16px;">
-        <button class="hamburger-admin" aria-label="Menu">
+        <button class="hamburger-admin" aria-label="Menu" (click)="toggleSidebar()">
           <span></span><span></span><span></span>
         </button>
         <div class="header-search">

@@ -1,0 +1,16 @@
+/* Overlay */
+.sidebar-overlay {
+  display: block;           /* ← ne pas utiliser display:none */
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;     /* ← désactivé par défaut : laisse passer les clics */
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;     /* ← activé seulement quand le sidebar est ouvert */
+}

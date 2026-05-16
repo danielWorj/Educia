@@ -9,5 +9,13 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './admin-layout.css',
 })
 export class AdminLayout {
+  sidebarOpen = false;
 
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
+  }
 }
