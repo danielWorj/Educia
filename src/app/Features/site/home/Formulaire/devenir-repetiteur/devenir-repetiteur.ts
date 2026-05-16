@@ -29,7 +29,7 @@ export class DevenirRepetiteur {
   ];
 
   currentStep  = signal<number>(0);
-  furthestStep = signal<number>(0);   // étapes déjà visitées (pour nav en arrière)
+  furthestStep = signal<number>(0);
 
   nextStep(): void {
     if (this.currentStep() < this.steps.length - 1) {
@@ -51,7 +51,7 @@ export class DevenirRepetiteur {
     }
   }
 
-  // ── FORMULAIRE 
+  // ── FORMULAIRE ────────────────────────────────────────────────────────────
   enseignantForm!: FormGroup;
 
   constructor(
@@ -68,7 +68,6 @@ export class DevenirRepetiteur {
       dateInscription:  new FormControl(),
       status:           new FormControl(),
       localisation:     new FormControl(),
-      photo:            new FormControl(),
       anneeexperience:  new FormControl(),
       dateNaissance:    new FormControl(),
       bio:              new FormControl(),
@@ -92,7 +91,7 @@ export class DevenirRepetiteur {
     this.getAllDiplomes();
   }
 
-  // ── LISTES ────
+  // ── LISTES ────────────────────────────────────────────────────────────────
   listSections          = signal<Section[]>([]);
   listStatusEnseignant  = signal<StatusEnseignant[]>([]);
   listProfilEnseignant  = signal<ProfilEnseignant[]>([]);
@@ -126,46 +125,39 @@ export class DevenirRepetiteur {
     });
   }
 
-  // ── SÉLECTION PROFIL (type card cliquable) ───────────────────────────────
+  // ── SÉLECTION PROFIL ──────────────────────────────────────────────────────
   selectedProfilLabel = signal<string>('');
 
   selectProfil(profil: ProfilEnseignant): void {
-    this.enseignantForm.controls['profilEnseignant'].setValue(profil);
+    this.enseignantForm.controls['profilEnseignant'].setValue(profil.id);
     this.selectedProfilLabel.set(profil.intitule);
   }
 
-  /** Fallback quand la liste API est vide */
   selectProfilLabel(label: string): void {
     this.selectedProfilLabel.set(label);
     this.enseignantForm.controls['profilEnseignant'].setValue({ intitule: label });
   }
 
-  // ── UPLOAD PHOTO PROFIL ──────────────────────────────────────────────────
+  // ── UPLOAD PHOTO PROFIL ───────────────────────────────────────────────────
   photoProfilFile!: File;
-  fetchPhotoUrl   = signal<string>('');
-  fetchPhotoState = signal<boolean>(false);
-  photoFileName   = signal<string>('');
-
+  photoUploaded = signal<boolean>(false);
+  photoFileName = signal<string>('');
 
   selectPhotoUploaded(e: Event): void {
     const input = e.target as HTMLInputElement;
     if (input.files?.length) {
-      const file = input.files[0];
-      this.photoProfilFile = file;
-      this.photoFileName.set(file.name);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (ev: ProgressEvent<FileReader>) => {
-        this.fetchPhotoUrl.set(ev.target?.result as string);
-        this.fetchPhotoState.set(true);
-      };
+      this.photoProfilFile = input.files[0];
+      this.photoFileName.set(this.photoProfilFile.name); // ✅ corrigé
+      this.photoUploaded.set(true);
     }
   }
 
-  // ── UPLOAD CNI 
+
+
+  // ── UPLOAD CNI ────────────────────────────────────────────────────────────
   cniFile!: File;
-  cniUploaded  = signal<boolean>(false);
-  cniFileName  = signal<string>('');
+  cniUploaded = signal<boolean>(false);
+  cniFileName = signal<string>('');
 
   onSelectCNI(e: Event): void {
     const input = e.target as HTMLInputElement;
@@ -176,11 +168,10 @@ export class DevenirRepetiteur {
     }
   }
 
-
-  // ── UPLOAD CV ─
+  // ── UPLOAD CV ─────────────────────────────────────────────────────────────
   cvFile!: File;
-  cvUploaded  = signal<boolean>(false);
-  cvFileName  = signal<string>('');
+  cvUploaded = signal<boolean>(false);
+  cvFileName = signal<string>('');
 
   onSelectCv(e: Event): void {
     const input = e.target as HTMLInputElement;
@@ -191,10 +182,10 @@ export class DevenirRepetiteur {
     }
   }
 
-  // ── UPLOAD DIPLÔME 
+  // ── UPLOAD DIPLÔME ────────────────────────────────────────────────────────
   diplomeFile!: File;
-  diplomeUploaded  = signal<boolean>(false);
-  diplomeFileName  = signal<string>('');
+  diplomeUploaded = signal<boolean>(false);
+  diplomeFileName = signal<string>('');
 
   onSelectDiplome(e: Event): void {
     const input = e.target as HTMLInputElement;
@@ -205,12 +196,12 @@ export class DevenirRepetiteur {
     }
   }
 
-  // ── MOT DE PASSE ──
-  password              = signal<string>('');
-  confirmpassword       = signal<string>('');
-  passwordToStore       = signal<string>('');
-  messageErrorPassword  = signal<string>('');
-  showErrormessage      = signal<boolean>(false);
+  // ── MOT DE PASSE ──────────────────────────────────────────────────────────
+  password             = signal<string>('');
+  confirmpassword      = signal<string>('');
+  passwordToStore      = signal<string>('');
+  messageErrorPassword = signal<string>('');
+  showErrormessage     = signal<boolean>(false);
 
   passwordChange(e: Event): void {
     this.password.set((e.target as HTMLInputElement).value);
@@ -232,10 +223,10 @@ export class DevenirRepetiteur {
     }
   }
 
-  // ── CGU ───────
+  // ── CGU ───────────────────────────────────────────────────────────────────
   cguAccepted = false;
 
-  // ── SOUMISSION 
+  // ── SOUMISSION ────────────────────────────────────────────────────────────
   createEnseignantAccount(): void {
     sessionStorage.clear();
 
@@ -293,8 +284,7 @@ export class DevenirRepetiteur {
   private resetSignals(): void {
     this.currentStep.set(0);
     this.furthestStep.set(0);
-    this.fetchPhotoState.set(false);
-    this.fetchPhotoUrl.set('');
+    this.photoUploaded.set(false);
     this.photoFileName.set('');
     this.cniUploaded.set(false);
     this.cniFileName.set('');
@@ -308,9 +298,5 @@ export class DevenirRepetiteur {
     this.showErrormessage.set(false);
     this.selectedProfilLabel.set('');
     this.cguAccepted = false;
-  }
-
-  testReactivite(e:Event): void {
-    console.log('le composant reponds', e); 
   }
 }

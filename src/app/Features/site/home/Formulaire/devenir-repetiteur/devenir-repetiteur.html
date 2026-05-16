@@ -106,7 +106,7 @@
             </div>
           </div>
 
-          <!-- Photo + CNI dans la même étape -->
+          <!-- Documents d'identité -->
           <div class="slide-section">
             <div class="section-label">
               <span class="section-icon">📎</span>
@@ -117,11 +117,10 @@
             </div>
 
             <!-- Photo de profil -->
-          
             <div class="form-group">
-              <label class="form-label">Phot de Profil <span class="req">*</span></label>
-              <label for="photo-input" class="upload-zone" [class.uploaded]="fetchPhotoState()">
-                @if (fetchPhotoState()) {
+              <label class="form-label">Photo de Profil <span class="req">*</span></label>
+              <label for="upload-photo" class="upload-zone" [class.uploaded]="photoUploaded()">
+                @if (photoUploaded()) {
                   <div class="upload-icon">🤳</div>
                   <div class="upload-info">
                     <span class="upload-file-name">{{ photoFileName() }}</span>
@@ -136,17 +135,14 @@
                   <span class="upload-btn">Choisir</span>
                 }
               </label>
-              <input type="file" id="photo-input" accept=".jpg,.jpeg,.png" style="display:none"
-                (change)="testReactivite($event)" />
-              <span class="form-hint">Attestation ou relevé de notes acceptés si diplôme non disponible</span>
+              <input type="file" id="upload-photo" accept=".jpg,.jpeg,.png" style="display:none"
+                (change)="selectPhotoUploaded($event)" />
             </div>
 
             <!-- CNI -->
-          
-
             <div class="form-group">
               <label class="form-label">CNI <span class="req">*</span></label>
-              <label for="cni-input" class="upload-zone" [class.uploaded]="cniUploaded()">
+              <label for="upload-cni" class="upload-zone" [class.uploaded]="cniUploaded()">
                 @if (cniUploaded()) {
                   <div class="upload-icon">🪪</div>
                   <div class="upload-info">
@@ -156,16 +152,15 @@
                 } @else {
                   <div class="upload-icon">🪪</div>
                   <div class="upload-text">
-                     <strong>Téléverser votre CNI</strong>
+                    <strong>Téléverser votre CNI</strong>
                     <span>Recto-verso · JPG, PNG ou PDF · Max 5 Mo</span>
                   </div>
                   <span class="upload-btn">Choisir</span>
                 }
               </label>
-              <input type="file" id="cni-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none"
+              <input type="file" id="upload-cni" accept=".jpg,.jpeg,.png,.pdf" style="display:none"
                 (change)="onSelectCNI($event)" />
               <span class="form-hint">Utilisée uniquement pour vérifier votre identité — strictement confidentielle</span>
-              
             </div>
           </div>
 
@@ -229,7 +224,7 @@
                 <select id="diplome" class="form-select" formControlName="diplome">
                   <option [ngValue]="null" disabled>Choisir un diplôme</option>
                   @for (diplome of listDiplomes(); track diplome.id) {
-                    <option [ngValue]="diplome">{{ diplome.intitule }}</option>
+                    <option [ngValue]="diplome.id">{{ diplome.intitule }}</option>
                   } @empty {
                     <optgroup label="Secondaire">
                       <option value="bepc">BEPC / CAP</option>
@@ -261,7 +256,7 @@
                 <select id="section" class="form-select" formControlName="section">
                   <option [ngValue]="null" disabled>Choisir une section</option>
                   @for (section of listSections(); track section.id) {
-                    <option [ngValue]="section">{{ section.intitule }}</option>
+                    <option [ngValue]="section.id">{{ section.intitule }}</option>
                   }
                 </select>
               </div>
@@ -270,7 +265,7 @@
                 <select id="statusEnseignant" class="form-select" formControlName="statusEnseignant">
                   <option [ngValue]="null" disabled>Choisir un statut</option>
                   @for (status of listStatusEnseignant(); track status.id) {
-                    <option [ngValue]="status">{{ status.intitule }}</option>
+                    <option [ngValue]="status.id">{{ status.intitule }}</option>
                   }
                 </select>
               </div>
@@ -296,10 +291,11 @@
       </div>
       <!-- fin slide 2 -->
 
-      <!-- ═══════ ÉTAPE 3 : CV + Diplôme + Compte ═══════ -->
+      <!-- ═══════ ÉTAPE 3 : Documents + Compte ═══════ -->
       <div class="slide">
         <form [formGroup]="enseignantForm" (ngSubmit)="createEnseignantAccount()">
 
+          <!-- Section Documents -->
           <div class="slide-section">
             <div class="section-label">
               <span class="section-icon">📄</span>
@@ -312,7 +308,7 @@
             <!-- CV -->
             <div class="form-group">
               <label class="form-label">CV <span class="req">*</span></label>
-              <label for="cv-input" class="upload-zone" [class.uploaded]="cvUploaded()">
+              <label for="upload-cv" class="upload-zone" [class.uploaded]="cvUploaded()">
                 @if (cvUploaded()) {
                   <div class="upload-icon">📄</div>
                   <div class="upload-info">
@@ -328,14 +324,14 @@
                   <span class="upload-btn">Choisir</span>
                 }
               </label>
-              <input type="file" id="cv-input" accept=".pdf,.doc,.docx" style="display:none"
+              <input type="file" id="upload-cv" accept=".pdf,.doc,.docx" style="display:none"
                 (change)="onSelectCv($event)" />
             </div>
 
             <!-- Diplôme -->
             <div class="form-group">
               <label class="form-label">Diplôme <span class="req">*</span></label>
-              <label for="diplome-input" class="upload-zone" [class.uploaded]="diplomeUploaded()">
+              <label for="upload-diplome" class="upload-zone" [class.uploaded]="diplomeUploaded()">
                 @if (diplomeUploaded()) {
                   <div class="upload-icon">📜</div>
                   <div class="upload-info">
@@ -351,10 +347,11 @@
                   <span class="upload-btn">Choisir</span>
                 }
               </label>
-              <input type="file" id="diplome-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none"
+              <input type="file" id="upload-diplome" accept=".jpg,.jpeg,.png,.pdf" style="display:none"
                 (change)="onSelectDiplome($event)" />
               <span class="form-hint">Attestation ou relevé de notes acceptés si diplôme non disponible</span>
             </div>
+
           </div>
 
           <!-- Création de compte -->
