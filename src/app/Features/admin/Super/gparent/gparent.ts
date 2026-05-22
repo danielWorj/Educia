@@ -17,29 +17,26 @@ export class GParent {
   ParentForm!: FormGroup;
 
   // ── Signals UI ──────────────────────────────────────────────────────────────
-  activeFilter  = signal<'all' | 'parent' | 'etudiant' | 'actif' | 'inactif'>('all');
-  showFormModal = signal<boolean>(false);
-  isEditMode    = signal<boolean>(false);
+  activeFilter   = signal<'all' | 'parent' | 'etudiant' | 'actif' | 'inactif'>('all');
+  showFormModal  = signal<boolean>(false);
+  isEditMode     = signal<boolean>(false);
   parentToDelete = signal<Parent | null>(null);
   parentSelected = signal<Parent | null>(null);
+
+  // ── Loading ────────────────────────────────────────────────────────────────
+  isLoading = signal<boolean>(true);
 
   constructor(
     private fb: FormBuilder,
     private generalService: GeneralService,
     private utilisateurService: UtilisateurService
   ) {
-    /**
-     * Champs alignés sur ParentDTO (extends UtilisateurDTO) :
-     *   UtilisateurDTO : nomComplet, telephone, email, password, localisation
-     *   ParentDTO      : + profession
-     *   Note           : photo & cni sont envoyés en MultipartFile, pas dans le JSON
-     */
     this.ParentForm = this.fb.group({
       id:           new FormControl(null),
       nomComplet:   new FormControl(''),
       telephone:    new FormControl(''),
       email:        new FormControl(''),
-      password:     new FormControl(''),   // utilisé uniquement en création
+      password:     new FormControl(''),
       localisation: new FormControl(''),
       profession:   new FormControl(''),
     });
@@ -47,17 +44,22 @@ export class GParent {
     this.loadPage();
   }
 
-  loadPage(): void {
-    this.getAllParents();
-  }
+  loadPage(): void { this.getAllParents(); }
 
   // ── Données ─────────────────────────────────────────────────────────────────
   listParents = signal<Parent[]>([]);
 
   getAllParents(): void {
+    this.isLoading.set(true);
     this.utilisateurService.findAllParent().subscribe({
-      next:  (response: Parent[]) => this.listParents.set(response),
-      error: (err: any) => console.error('Erreur chargement parents :', err),
+      next: (response: Parent[]) => {
+        this.listParents.set(response);
+        this.isLoading.set(false);
+      },
+      error: (err: any) => {
+        console.error('Erreur chargement parents :', err);
+        this.isLoading.set(false);
+      },
     });
   }
 
@@ -75,15 +77,13 @@ export class GParent {
     this.activeFilter.set(filter);
   }
 
-  selectParent(p: Parent): void {
-    this.parentSelected.set(p);
-  }
+  selectParent(p: Parent): void { this.parentSelected.set(p); }
 
   // ── Fichiers – Photo ─────────────────────────────────────────────────────────
   modalPhotoFile!: File;
-  modalPhotoFileName  = signal<string>('');
-  modalPhotoPreview   = signal<string>('');
-  modalPhotoUploaded  = signal<boolean>(false);
+  modalPhotoFileName = signal<string>('');
+  modalPhotoPreview  = signal<string>('');
+  modalPhotoUploaded = signal<boolean>(false);
 
   onModalSelectPhoto(e: Event): void {
     const input = e.target as HTMLInputElement;
@@ -102,8 +102,8 @@ export class GParent {
 
   // ── Fichiers – CNI ───────────────────────────────────────────────────────────
   modalCniFile!: File;
-  modalCniFileName  = signal<string>('');
-  modalCniUploaded  = signal<boolean>(false);
+  modalCniFileName = signal<string>('');
+  modalCniUploaded = signal<boolean>(false);
 
   onModalSelectCNI(e: Event): void {
     const input = e.target as HTMLInputElement;
@@ -118,79 +118,47 @@ export class GParent {
   openAddModal(): void {
     this.isEditMode.set(false);
     this.ParentForm.reset();
-    // Reset fichiers
-    this.modalPhotoFile   = undefined!;
-    this.modalPhotoFileName.set('');
-    this.modalPhotoPreview.set('');
-    this.modalPhotoUploaded.set(false);
+    this.modalPhotoFile = undefined!;
+    this.modalPhotoFileName.set(''); this.modalPhotoPreview.set(''); this.modalPhotoUploaded.set(false);
     this.modalCniFile = undefined!;
-    this.modalCniFileName.set('');
-    this.modalCniUploaded.set(false);
+    this.modalCniFileName.set(''); this.modalCniUploaded.set(false);
     this.showFormModal.set(true);
   }
 
   openEditModal(parent: Parent): void {
     this.isEditMode.set(true);
-    // Patch uniquement les champs texte — pas les fichiers
     this.ParentForm.patchValue({
-      id:           parent.id,
-      nomComplet:   parent.nomComplet,
-      telephone:    parent.telephone,
-      email:        parent.email,
-      localisation: parent.localisation,
-      profession:   parent.profession,
+      id: parent.id, nomComplet: parent.nomComplet, telephone: parent.telephone,
+      email: parent.email, localisation: parent.localisation, profession: parent.profession,
     });
     this.showFormModal.set(true);
   }
 
-  confirmDelete(parent: Parent): void {
-    this.parentToDelete.set(parent);
-  }
+  confirmDelete(parent: Parent): void { this.parentToDelete.set(parent); }
 
   // ── Soumission ───────────────────────────────────────────────────────────────
   submitForm(): void {
     if (this.ParentForm.invalid) return;
 
     if (this.isEditMode()) {
-      // ── Mode édition : pas de fichiers requis (API à implémenter côté backend)
       const parentDTO = {
-        id:           this.ParentForm.value.id,
-        nomComplet:   this.ParentForm.value.nomComplet,
-        telephone:    this.ParentForm.value.telephone,
-        email:        this.ParentForm.value.email,
-        localisation: this.ParentForm.value.localisation,
-        profession:   this.ParentForm.value.profession,
+        id: this.ParentForm.value.id, nomComplet: this.ParentForm.value.nomComplet,
+        telephone: this.ParentForm.value.telephone, email: this.ParentForm.value.email,
+        localisation: this.ParentForm.value.localisation, profession: this.ParentForm.value.profession,
       };
-      // TODO: appeler le service de mise à jour quand l'endpoint sera disponible
       console.log('Update parent :', parentDTO);
       this.showFormModal.set(false);
       this.getAllParents();
       return;
     }
 
-    // ── Mode création : photo + CNI obligatoires (POST /parent/create)
-    if (!this.modalPhotoFile) {
-      alert('Veuillez sélectionner une photo de profil.');
-      return;
-    }
-    if (!this.modalCniFile) {
-      alert('Veuillez téléverser la CNI.');
-      return;
-    }
+    if (!this.modalPhotoFile) { alert('Veuillez sélectionner une photo de profil.'); return; }
+    if (!this.modalCniFile)   { alert('Veuillez téléverser la CNI.'); return; }
 
-    /**
-     * Le backend attend :
-     *   @Param("parent")  → JSON du ParentDTO
-     *   @RequestParam("photo") → MultipartFile
-     *   @RequestParam("cni")   → MultipartFile
-     */
     const parentDTO = {
-      nomComplet:   this.ParentForm.value.nomComplet,
-      telephone:    this.ParentForm.value.telephone,
-      email:        this.ParentForm.value.email,
-      password:     this.ParentForm.value.password,
-      localisation: this.ParentForm.value.localisation,
-      profession:   this.ParentForm.value.profession,
+      nomComplet: this.ParentForm.value.nomComplet, telephone: this.ParentForm.value.telephone,
+      email: this.ParentForm.value.email, password: this.ParentForm.value.password,
+      localisation: this.ParentForm.value.localisation, profession: this.ParentForm.value.profession,
     };
 
     const formData = new FormData();
@@ -200,13 +168,8 @@ export class GParent {
 
     this.utilisateurService.createParent(formData).subscribe({
       next: (response: number) => {
-        if (response > 0) {
-          this.showFormModal.set(false);
-          this.ParentForm.reset();
-          this.getAllParents();
-        } else {
-          alert('Erreur lors de la création du compte.');
-        }
+        if (response > 0) { this.showFormModal.set(false); this.ParentForm.reset(); this.getAllParents(); }
+        else { alert('Erreur lors de la création du compte.'); }
       },
       error: (err: any) => console.error('Erreur création parent :', err),
     });
@@ -216,10 +179,7 @@ export class GParent {
   changeStatus(id: number): void {
     this.utilisateurService.changeStatus(id).subscribe({
       next: (response: ResponseServer) => {
-        if (response.status) {
-          console.log(response.message);
-          this.getAllParents();
-        }
+        if (response.status) { console.log(response.message); this.getAllParents(); }
       },
       error: (err: any) => console.error('Erreur changement statut :', err),
     });
@@ -228,11 +188,7 @@ export class GParent {
   deleteParent(id: number): void {
     this.utilisateurService.deleteParent(id).subscribe({
       next: (response: ResponseServer) => {
-        if (response.status) {
-          console.log(response.message);
-          this.parentToDelete.set(null);
-          this.getAllParents();
-        }
+        if (response.status) { console.log(response.message); this.parentToDelete.set(null); this.getAllParents(); }
       },
       error: (err: any) => console.error('Erreur suppression parent :', err),
     });
@@ -241,12 +197,7 @@ export class GParent {
   // ── Utilitaires UI ───────────────────────────────────────────────────────────
   getInitials(nomComplet: string | undefined): string {
     if (!nomComplet) return '?';
-    return nomComplet
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    return nomComplet.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
 
   private gradients = [

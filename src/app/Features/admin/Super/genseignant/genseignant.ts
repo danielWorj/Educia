@@ -29,7 +29,7 @@ Chart.register(...registerables);
 })
 export class Genseignant implements AfterViewInit, OnDestroy {
 
-  // ── Références canvas Chart.js ────────────────────────────────────────────
+  // ─── ViewChild avec { static: false } — les canvas sont dans un @else conditionnel
   @ViewChild('chartDiplome') chartDiplomeRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('chartProfil')  chartProfilRef!:  ElementRef<HTMLCanvasElement>;
   @ViewChild('chartSection') chartSectionRef!: ElementRef<HTMLCanvasElement>;
@@ -37,13 +37,18 @@ export class Genseignant implements AfterViewInit, OnDestroy {
   private chartDiplome?: Chart;
   private chartProfil?:  Chart;
   private chartSection?: Chart;
-  private chartsReady = false;
+
+  // Flag : données HTTP reçues ET view prête
+  private dataLoaded  = false;
+  private viewReady   = false;
 
   private cdr = inject(ChangeDetectorRef);
 
-  // ── Formulaires ───────────────────────────────────────────────────────────
   enseignantForm!:    FormGroup;
   addEnseignantForm!: FormGroup;
+
+  // ─── Loading ──────────────────────────────────────────────────────────────
+  isLoading = signal<boolean>(true);
 
   constructor(
     private fb: FormBuilder,
@@ -92,14 +97,6 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     });
 
     this.loadPage();
-
-    // ── effect() réactif : se déclenche à chaque changement du signal ─────────
-    effect(() => {
-      const list = this.listEnseignants(); // tracking automatique du signal
-      if (this.chartsReady && list.length > 0) {
-        setTimeout(() => this.updateCharts(), 0);
-      }
-    });
   }
 
   loadPage(): void {
@@ -110,16 +107,12 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.getListDiplomes();
   }
 
+  // ─── ngAfterViewInit : la vue est prête, mais isLoading peut encore être true
+  //     On pose viewReady = true et on tente d'initialiser les charts si les
+  //     données sont déjà là (cas rare mais possible avec cache HTTP).
   ngAfterViewInit(): void {
-    // Délai minimal pour que les @ViewChild soient stables dans le DOM
-    setTimeout(() => {
-      this.createCharts();
-      this.chartsReady = true;
-      // Si les données sont déjà arrivées avant ngAfterViewInit (cache/rapide)
-      if (this.listEnseignants().length > 0) {
-        this.updateCharts();
-      }
-    }, 50);
+    this.viewReady = true;
+    this.tryInitCharts();
   }
 
   ngOnDestroy(): void {
@@ -128,7 +121,20 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.chartSection?.destroy();
   }
 
-  // ── Données ───────────────────────────────────────────────────────────────
+  // ─── Tentative d'initialisation : les deux conditions doivent être réunies.
+  //     Appelée depuis ngAfterViewInit ET depuis getAllEnseignants (next).
+  private tryInitCharts(): void {
+    if (!this.viewReady || !this.dataLoaded) return;
+
+    // Les canvas viennent d'apparaître dans le DOM (isLoading vient de passer à false).
+    // On laisse un tick pour qu'Angular applique le @else et insère les <canvas>.
+    setTimeout(() => {
+      this.createCharts();
+      this.updateCharts();
+    }, 0);
+  }
+
+  // ─── Données ──────────────────────────────────────────────────────────────
   listEnseignants      = signal<Enseignant[]>([]);
   listSection          = signal<Section[]>([]);
   listStatusEnseignant = signal<StatusEnseignant[]>([]);
@@ -136,12 +142,19 @@ export class Genseignant implements AfterViewInit, OnDestroy {
   listDiplomes         = signal<Diplome[]>([]);
 
   getAllEnseignants(): void {
+    this.isLoading.set(true);
     this.utilisateurService.findAllEnseignants().subscribe({
       next: (response: Enseignant[]) => {
         this.listEnseignants.set(response);
-        if (this.chartsReady) this.updateCharts();
+        this.isLoading.set(false);    // ← le @else s'affiche → les <canvas> entrent dans le DOM
+        this.dataLoaded = true;
+        this.cdr.detectChanges();     // ← force Angular à rendre les <canvas> immédiatement
+        this.tryInitCharts();         // ← maintenant les ViewChild sont accessibles
       },
-      error: (err: any) => console.error('Erreur chargement enseignants :', err),
+      error: (err: any) => {
+        console.error('Erreur chargement enseignants :', err);
+        this.isLoading.set(false);
+      },
     });
   }
 
@@ -173,7 +186,7 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     });
   }
 
-  // ── Filtres ───────────────────────────────────────────────────────────────
+  // ─── Filtres ──────────────────────────────────────────────────────────────
   activeFilter = signal<string>('all');
 
   filterChips = [
@@ -200,7 +213,7 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     return Math.round((this.countByStatus(status) / total) * 100) + '%';
   }
 
-  // ── Regroupements pour les graphiques ─────────────────────────────────────
+  // ─── Graphiques ───────────────────────────────────────────────────────────
   private groupBy(list: Enseignant[], key: (e: Enseignant) => string): Record<string, number> {
     const map: Record<string, number> = {};
     for (const e of list) {
@@ -211,104 +224,65 @@ export class Genseignant implements AfterViewInit, OnDestroy {
   }
 
   private readonly PALETTE = [
-    '#0A4FFF', '#22C55E', '#F59E0B', '#EF4444', '#A855F7',
-    '#FF6B35', '#06B6D4', '#EC4899', '#84CC16', '#F97316',
+    '#0A4FFF','#22C55E','#F59E0B','#EF4444','#A855F7',
+    '#FF6B35','#06B6D4','#EC4899','#84CC16','#F97316',
   ];
 
-  // ── Création initiale des graphiques ─────────────────────────────────────
-  private createCharts(): void {
-    /** Options partagées — canvas limité à 180 px de hauteur via CSS */
-    const sharedOptions = {
+  private chartOptions(title: string): any {
+    return {
       responsive: true,
-      maintainAspectRatio: false,   // false = hauteur fixée par le CSS du canvas
-      cutout: '62%',
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'bottom' as const,
-          labels: {
-            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
-            padding: 10,
-            usePointStyle: true,
-            pointStyleWidth: 8,
-            boxHeight: 8,
-          },
+          labels: { font: { family: 'Inter, sans-serif', size: 12 }, padding: 16 },
         },
-        tooltip: {
-          callbacks: {
-            label: (ctx: any) => {
-              const total: number = ctx.dataset.data.reduce(
-                (a: number, b: number) => a + b, 0
-              );
-              const pct = total ? Math.round((ctx.parsed / total) * 100) : 0;
-              return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
-            },
-          },
-        },
+        tooltip: { callbacks: { label: (ctx: any) => ` ${ctx.label} : ${ctx.parsed}` } },
       },
     };
-
-    const emptyDataset = () => ({
-      data: [] as number[],
-      backgroundColor: this.PALETTE,
-      borderWidth: 2,
-      borderColor: '#fff',
-      hoverOffset: 6,
-    });
-
-    this.chartDiplome = new Chart(this.chartDiplomeRef.nativeElement, {
-      type: 'doughnut',
-      data: { labels: [], datasets: [emptyDataset()] },
-      options: sharedOptions,
-    });
-
-    this.chartProfil = new Chart(this.chartProfilRef.nativeElement, {
-      type: 'doughnut',
-      data: { labels: [], datasets: [emptyDataset()] },
-      options: sharedOptions,
-    });
-
-    this.chartSection = new Chart(this.chartSectionRef.nativeElement, {
-      type: 'doughnut',
-      data: { labels: [], datasets: [emptyDataset()] },
-      options: sharedOptions,
-    });
   }
 
-  // ── Mise à jour des graphiques quand les données arrivent ─────────────────
-  private updateCharts(): void {
+  // Crée les instances Chart.js (canvas vides, sans données encore)
+  createCharts(): void {
+    const makeDonut = (ref: ElementRef<HTMLCanvasElement> | undefined, title: string): Chart | undefined => {
+      if (!ref?.nativeElement) return undefined;
+      return new Chart(ref.nativeElement, {
+        type: 'doughnut',
+        data: { labels: [], datasets: [{ data: [], backgroundColor: this.PALETTE, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }] },
+        options: this.chartOptions(title),
+      });
+    };
+
+    this.chartDiplome = makeDonut(this.chartDiplomeRef, 'Diplômes');
+    this.chartProfil  = makeDonut(this.chartProfilRef,  'Profils');
+    this.chartSection = makeDonut(this.chartSectionRef, 'Sections');
+  }
+
+  // Met à jour les données des charts existants (ou les recrée si null)
+  updateCharts(): void {
     const list = this.listEnseignants();
-    if (!list.length) return;
 
-    const byDiplome = this.groupBy(list, e => e.diplome?.intitule ?? '');
-    const byProfil  = this.groupBy(list, e => e.profilEnseignant?.intitule ?? '');
-    const bySection = this.groupBy(list, e => e.section?.intitule ?? '');
+    const fill = (chart: Chart | undefined, map: Record<string, number>): void => {
+      if (!chart) return;
+      chart.data.labels = Object.keys(map);
+      chart.data.datasets[0].data = Object.values(map);
+      chart.data.datasets[0].backgroundColor = this.PALETTE.slice(0, Object.keys(map).length);
+      chart.update();
+    };
 
-    this.applyChartData(this.chartDiplome!, byDiplome);
-    this.applyChartData(this.chartProfil!,  byProfil);
-    this.applyChartData(this.chartSection!, bySection);
+    fill(this.chartDiplome, this.groupBy(list, e => e.diplome?.intitule ?? ''));
+    fill(this.chartProfil,  this.groupBy(list, e => e.profilEnseignant?.intitule ?? ''));
+    fill(this.chartSection, this.groupBy(list, e => e.section?.intitule ?? ''));
   }
 
-  private applyChartData(chart: Chart, map: Record<string, number>): void {
-    const labels = Object.keys(map);
-    const data   = Object.values(map);
-    chart.data.labels                       = labels;
-    chart.data.datasets[0].data            = data;
-    chart.data.datasets[0].backgroundColor = this.PALETTE.slice(0, labels.length);
-    chart.update('active');
-  }
-
-  // ── Enseignant sélectionné ────────────────────────────────────────────────
-  cheminFile         = 'assets/file/';
-  enseignantSelected = signal<Enseignant | null>(null);
-  nomDiplome  = signal('');
-  nomCNI      = signal('');
-  nomCV       = signal('');
-  photoProfil = signal('');
+  // ─── Sélection enseignant ─────────────────────────────────────────────────
+  cheminFile = '';
+  nomCV      = signal<string>('');
+  nomCNI     = signal<string>('');
+  photoProfil = signal<string>('');
 
   selectEnseignant(enseignant: Enseignant): void {
-    this.enseignantSelected.set(enseignant);
     this.enseignantForm.patchValue(enseignant);
-    this.nomDiplome.set(enseignant.diplomeurl ?? '');
     this.nomCV.set(enseignant.cv ?? '');
     this.nomCNI.set(enseignant.cni ?? '');
     this.photoProfil.set(this.cheminFile + enseignant.photo);
@@ -317,7 +291,7 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.loadCniFile(this.cheminFile + enseignant.cni, enseignant.cni ?? '');
   }
 
-  // ── Fichiers Modal Ajout ──────────────────────────────────────────────────
+  // ─── Fichiers Modal Ajout ─────────────────────────────────────────────────
   addPhotoFile!: File;
   addPhotoFileName = signal<string>('');
   addPhotoPreview  = signal<string>('');
@@ -363,86 +337,59 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ── Modal Ajout ───────────────────────────────────────────────────────────
+  // ─── Modal Ajout ──────────────────────────────────────────────────────────
   openAddModal(): void {
     this.addEnseignantForm.reset();
     this.addPhotoFile = undefined!;
-    this.addPhotoFileName.set('');
-    this.addPhotoPreview.set('');
-    this.addPhotoUploaded.set(false);
+    this.addPhotoFileName.set(''); this.addPhotoPreview.set(''); this.addPhotoUploaded.set(false);
     this.addCvFile = undefined!;
-    this.addCvFileName.set('');
-    this.addCvUploaded.set(false);
+    this.addCvFileName.set(''); this.addCvUploaded.set(false);
     this.addDiplomeFile = undefined!;
-    this.addDiplomeFileName.set('');
-    this.addDiplomeUploaded.set(false);
+    this.addDiplomeFileName.set(''); this.addDiplomeUploaded.set(false);
     this.showAddModal.set(true);
   }
 
-  // ── Soumission création enseignant ────────────────────────────────────────
   saveEnseignant(): void {
     if (!this.addPhotoFile)   { alert('Veuillez sélectionner une photo de profil.'); return; }
-    if (!this.addCvFile)      { alert('Veuillez téléverser le CV.');                  return; }
-    if (!this.addDiplomeFile) { alert('Veuillez téléverser le diplôme.');             return; }
+    if (!this.addCvFile)      { alert('Veuillez téléverser le CV.'); return; }
+    if (!this.addDiplomeFile) { alert('Veuillez téléverser le diplôme.'); return; }
 
     const v = this.addEnseignantForm.value;
-
     const enseignantDTO = {
-      nomComplet:       v.nomComplet,
-      telephone:        v.telephone,
-      email:            v.email,
-      password:         v.password,
-      localisation:     v.localisation,
-      anneeexperience:  Number(v.anneeexperience),
-      dateNaissance:    v.dateNaissance,
-      bio:              v.bio,
-      tarifHoraire:     Number(v.tarifHoraire),
-      specialite:       v.specialite,
-      statusEnseignant: Number(v.statusEnseignant),
-      section:          Number(v.section),
-      profilEnseignant: Number(v.profilEnseignant),
-      diplome:          Number(v.diplome),
+      nomComplet: v.nomComplet, telephone: v.telephone, email: v.email,
+      password: v.password, localisation: v.localisation,
+      anneeexperience: Number(v.anneeexperience), dateNaissance: v.dateNaissance,
+      bio: v.bio, tarifHoraire: Number(v.tarifHoraire), specialite: v.specialite,
+      statusEnseignant: Number(v.statusEnseignant), section: Number(v.section),
+      profilEnseignant: Number(v.profilEnseignant), diplome: Number(v.diplome),
     };
 
     const formData = new FormData();
     formData.append('enseignant', JSON.stringify(enseignantDTO));
-    formData.append('photo',     this.addPhotoFile);
-    formData.append('cv',        this.addCvFile);
-    formData.append('diplome',   this.addDiplomeFile);
+    formData.append('photo',   this.addPhotoFile);
+    formData.append('cv',      this.addCvFile);
+    formData.append('diplome', this.addDiplomeFile);
 
     this.utilisateurService.createEnseignant(formData).subscribe({
       next: (response: number) => {
-        if (response > 0) {
-          this.showAddModal.set(false);
-          this.addEnseignantForm.reset();
-          this.loadPage();
-        } else {
-          alert('Erreur lors de la création du compte enseignant.');
-        }
+        if (response > 0) { this.showAddModal.set(false); this.addEnseignantForm.reset(); this.loadPage(); }
+        else { alert('Erreur lors de la création du compte enseignant.'); }
       },
       error: (err: any) => console.error('Erreur création enseignant :', err),
     });
   }
 
-  // ── Statut ────────────────────────────────────────────────────────────────
   changeStatus(id: number, idS: number): void {
     this.utilisateurService.changeStatusEnseignant(id, idS).subscribe({
-      next:  (response: ResponseServer) => {
-        console.log(response.message);
-        this.getAllEnseignants();
-      },
+      next:  (response: ResponseServer) => { console.log(response.message); this.getAllEnseignants(); },
       error: (err: any) => console.error(err),
     });
   }
 
-  // ── Suppression ───────────────────────────────────────────────────────────
   showDeleteModal = signal(false);
   idToDelete      = signal<number | null>(null);
 
-  confirmDelete(id: number): void {
-    this.idToDelete.set(id);
-    this.showDeleteModal.set(true);
-  }
+  confirmDelete(id: number): void { this.idToDelete.set(id); this.showDeleteModal.set(true); }
 
   executeDelete(): void {
     const id = this.idToDelete();
@@ -458,68 +405,47 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     });
   }
 
-  // ── Modals ────────────────────────────────────────────────────────────────
   showProfilModal = signal<boolean>(false);
   showDocsModal   = signal(false);
   showAddModal    = signal(false);
 
-  openProfilModal(enseignant: Enseignant): void {
-    this.selectEnseignant(enseignant);
-    this.showProfilModal.set(true);
-  }
-
+  openProfilModal(enseignant: Enseignant): void { this.selectEnseignant(enseignant); this.showProfilModal.set(true); }
   closeProfilModal(): void { this.showProfilModal.set(false); }
+  openDocsModal(enseignant: Enseignant): void { this.selectEnseignant(enseignant); this.showDocsModal.set(true); }
 
-  openDocsModal(enseignant: Enseignant): void {
-    this.selectEnseignant(enseignant);
-    this.showDocsModal.set(true);
-  }
-
-  // ── Fichiers détail ───────────────────────────────────────────────────────
-  diplomeUrl      = '';  diplomeFileName = '';  safeDiplomeUrl?: SafeResourceUrl;
+  diplomeUrl = ''; diplomeFileName = ''; safeDiplomeUrl?: SafeResourceUrl;
   diplomeFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
-
-  cvUrl           = '';  cvFileName = '';       safeCvUrl?: SafeResourceUrl;
-  cvFileType:      'image' | 'pdf' | 'docx' | 'other' = 'other';
-
-  cniUrl          = '';  cniFileName = '';      safeCniUrl?: SafeResourceUrl;
-  cniFileType:     'image' | 'pdf' | 'docx' | 'other' = 'other';
+  cvUrl = ''; cvFileName = ''; safeCvUrl?: SafeResourceUrl;
+  cvFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
+  cniUrl = ''; cniFileName = ''; safeCniUrl?: SafeResourceUrl;
+  cniFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';
 
   getFileType(filename: string): 'image' | 'pdf' | 'docx' | 'other' {
     if (!filename) return 'other';
     const ext = filename.split('.').pop()?.toLowerCase() ?? '';
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'image';
+    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return 'image';
     if (ext === 'pdf') return 'pdf';
-    if (['doc', 'docx'].includes(ext)) return 'docx';
+    if (['doc','docx'].includes(ext)) return 'docx';
     return 'other';
   }
 
   loadDiplomeFile(url: string, name: string): void {
-    this.diplomeUrl      = url;  this.diplomeFileName = name;
+    this.diplomeUrl = url; this.diplomeFileName = name;
     this.diplomeFileType = this.getFileType(name);
     this.safeDiplomeUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
-
   loadCvFile(url: string, name: string): void {
-    this.cvUrl      = url;  this.cvFileName = name;
+    this.cvUrl = url; this.cvFileName = name;
     this.cvFileType = this.getFileType(name);
     this.safeCvUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
-
   loadCniFile(url: string, name: string): void {
-    this.cniUrl      = url;  this.cniFileName = name;
+    this.cniUrl = url; this.cniFileName = name;
     this.cniFileType = this.getFileType(name);
     this.safeCniUrl  = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  // ── Utilitaires UI ────────────────────────────────────────────────────────
   getInitiales(nomComplet: string = ''): string {
-    return nomComplet
-      .trim()
-      .split(/\s+/)
-      .map(n => n[0] ?? '')
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
+    return nomComplet.trim().split(/\s+/).map(n => n[0] ?? '').join('').substring(0, 2).toUpperCase();
   }
 }

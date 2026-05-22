@@ -44,12 +44,14 @@ export class AssistantService {
   }
 
 
-  findAllMatchingSavedByEnseignant(id:number):Observable<ScoreMatch[]>{
-    return this.http.get<ScoreMatch[]>(edulearnDashboard.IA.allByEnseignant+id);
+  findAllMatchingSavedByEnseignant(id:number):Observable<MatchingDB[]>{
+    return this.http.get<MatchingDB[]>(edulearnDashboard.IA.allByEnseignant+id);
   }
 
   findMatchingResultForOffer(id:number):Observable<MatchingDB[]>{
     return this.http.get<MatchingDB[]>(edulearnDashboard.IA.allbyoffre+id);
   }
+
+  
   
 }

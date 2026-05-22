@@ -6,4 +6,11 @@ export interface Candidature{
     date : string ; 
     offre : Offre ; 
     enseignant : Enseignant ; 
+    statut : StatutCandidature;
 }
+
+export interface StatutCandidature{
+    id : number ; 
+    intitule : string; 
+}
+

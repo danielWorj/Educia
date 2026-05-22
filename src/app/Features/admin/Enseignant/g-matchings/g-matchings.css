@@ -1,0 +1,104 @@
+/* ─── Skeleton / spinner / empty  (identiques à g-candidature) ─ */
+.skeleton { background: linear-gradient(90deg, #e8edf5 25%, #f4f6fb 50%, #e8edf5 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+.skeleton--val { height: 36px; width: 60px; margin-bottom: 4px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; gap: 12px; }
+.loading-text  { font-size: 13px; color: var(--text-light); }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: #6366F1; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 48px 24px; color: var(--text-light); }
+.empty-state i    { font-size: 2.5rem; opacity: .25; }
+.empty-state p    { font-size: 14px; font-weight: 600; color: var(--text-mid); }
+.empty-state span { font-size: 12px; }
+
+/* ─── Filter bar ────────────────────────────────────────────────── */
+.filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 12px 16px; }
+.filter-label { font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .4px; }
+.filter-chip { padding: 5px 14px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; color: var(--text-mid); font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--transition); font-family: var(--font-body); }
+.filter-chip:hover  { border-color: #6366F1; color: #6366F1; background: #EEF2FF; }
+.filter-chip.active { border-color: #6366F1; background: #6366F1; color: #fff; }
+
+/* ─── IA Avatar ───────────────────────────────────────────────── */
+.ia-avatar {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+}
+
+/* ─── Score bar ───────────────────────────────────────────────── */
+.score-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 140px; }
+.score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.score-bar--lg { height: 10px; border-radius: 100px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 100px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.score-label { font-size: 11px; font-weight: 700; color: var(--text-mid); white-space: nowrap; }
+
+/* ─── Score Hero (modal) ──────────────────────────────────────── */
+.ia-badge-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
+.score-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.score-circle {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  border: 4px solid var(--score-color, #6366F1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--score-color, #6366F1) 12%, transparent);
+}
+.score-circle-val { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--score-color, #6366F1); line-height: 1; }
+.score-circle-sub { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-light); margin-top: 2px; }
+
+.score-hero-info .detail-name { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--text-dark); }
+.score-hero-info .detail-sub  { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+/* ─── Critères ────────────────────────────────────────────────── */
+.criteres-list { display: flex; flex-direction: column; gap: 8px; }
+.critere-item  { display: flex; align-items: center; gap: 4px; }
+.critere-label { font-size: 12px; font-weight: 600; color: var(--text-mid); min-width: 120px; }
+.critere-score { font-size: 12px; font-weight: 700; color: var(--text-dark); min-width: 36px; text-align: right; }
+
+/* ─── Detail grid / section ───────────────────────────────────── */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
+@media (max-width: 480px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-item { background: #F8FAFF; border-radius: var(--radius); border: 1px solid var(--border); padding: 12px 14px; }
+.detail-item-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--text-light); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+.detail-item-label i { color: #6366F1; }
+.detail-item-val { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+.detail-section { }
+.detail-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+.detail-section-title i { color: #6366F1; }
+.detail-message { font-size: 13px; color: var(--text-mid); line-height: 1.6; background: #F8FAFF; border-radius: var(--radius); border: 1px solid var(--border); padding: 12px 14px; }
+
+/* ─── Boutons ──────────────────────────────────────────────────── */
+.btn-primary { background: #6366F1; color: #fff; }
+.btn-primary:hover { background: #4F46E5; }
+.btn-ghost   { background: transparent; color: var(--text-mid); border: 1.5px solid var(--border); }
+.btn-ghost:hover { border-color: #6366F1; color: #6366F1; background: #EEF2FF; }
+.btn-danger  { background: var(--danger); color: #fff; border: none; }
+.btn-danger:hover { background: #DC2626; }

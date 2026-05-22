@@ -21,3 +21,8 @@ export interface OffreDescript{
     matieres : MatiereOffre[]; 
     candidature : number ; //nombre de candidatures pour cette offre
 }
+
+export interface OffreExposeDetails{
+  offre : Offre; 
+  matieres : MatiereOffre[]; 
+}

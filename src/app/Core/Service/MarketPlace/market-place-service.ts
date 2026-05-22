@@ -33,6 +33,9 @@ export class MarketPlaceService {
     return this.http.get<ResponseServer>(edulearnDashboard.MarketPlace.Support.delete+id);
   }
 
+  findMarketplaceItemByEnseignantId(id:number):Observable<Support[]> {
+    return this.http.get<Support[]>(edulearnDashboard.MarketPlace.Support.allbyEnseignant+id);
+  }
 
 
 

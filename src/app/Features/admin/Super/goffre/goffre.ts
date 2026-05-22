@@ -7,9 +7,8 @@ import { DatePipe } from '@angular/common';
 import { AssistantService } from '../../../../Core/Service/IA/Assistant-Service/assistant-service';
 import { MatchingResult } from '../../../../Core/Model/IA/MatchingResult';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import e from 'express';
+import { Console } from 'console';
 
-// Pas de statut dans le modèle Offre — filtres basés sur niveau/filière/texte
 export type FilterType = 'toutes' | 'urgentes';
 
 @Component({
@@ -20,44 +19,44 @@ export type FilterType = 'toutes' | 'urgentes';
 })
 export class GOffre {
 
-
   private repetitionService = inject(RepetitionService);
-  private iaService = inject(AssistantService);
+  private iaService         = inject(AssistantService);
 
   // ─── Données ──────
   listOffres        = signal<OffreDescript[]>([]);
   listOffresSaved   = signal<OffreDescript[]>([]);
   listLocalisation  = signal<string[]>([]);
 
-  // ─── Sélection / modals ────────────────────────────────────────────────────
+  // ─── Sélection / modals ───────────────────────────────────────────────────
   offreSelected     = signal<OffreDescript | null>(null);
   offreToDelete     = signal<OffreDescript | null>(null);
   offreForMatching  = signal<OffreDescript | null>(null);
 
   // ─── Filtres ──────
-  activeFilter      = signal<FilterType>('toutes');
-  searchQuery       = signal<string>('');
+  activeFilter  = signal<FilterType>('toutes');
+  searchQuery   = signal<string>('');
 
   // ─── UI modals ────
-  isViewModalOpen    = signal<boolean>(false);
-  isDeleteModalOpen  = signal<boolean>(false);
-  isBotModalOpen     = signal<boolean>(false);
-  showAddModal       = signal<boolean>(false);
+  isViewModalOpen   = signal<boolean>(false);
+  isDeleteModalOpen = signal<boolean>(false);
+  isBotModalOpen    = signal<boolean>(false);
+  showAddModal      = signal<boolean>(false);
+
+  // ─── Loading ──────────────────────────────────────────────────────────────
+  isLoading = signal<boolean>(true);
 
   // ─── Matching IA ──
-  isMatchingLoading  = signal<boolean>(true);
-  matchingResults    = signal<MatchingResult[]>([]);
-  matchingSaveState  = signal<'idle' | 'success' | 'error'>('idle');
-  isSaving           = signal<boolean>(false);
-  isInternError = signal<boolean>(false);
+  isMatchingLoading = signal<boolean>(true);
+  matchingResults   = signal<MatchingResult[]>([]);
+  matchingSaveState = signal<'idle' | 'success' | 'error'>('idle');
+  isSaving          = signal<boolean>(false);
+  isInternError     = signal<boolean>(false);
 
-  // ─── Stats (computed) ──────────────────────────────────────────────────────
-  totalOffres        = computed(() => this.listOffresSaved().length);
-  totalCandidatures  = computed(() =>
+  // ─── Stats (computed) ─────────────────────────────────────────────────────
+  totalOffres       = computed(() => this.listOffresSaved().length);
+  totalCandidatures = computed(() =>
     this.listOffresSaved().reduce((acc, o) => acc + o.candidature, 0)
   );
-
-  // ─── Init ─────────
 
   matchingDBFb !: FormGroup;
   addOffreForm  !: FormGroup;
@@ -85,7 +84,6 @@ export class GOffre {
   // ─── Ajout offre ──
   submitAddOffre(): void {
     if (this.addOffreForm.invalid) return;
-    // TODO: appeler le service de création d'offre
     console.log('Nouvelle offre :', this.addOffreForm.value);
     this.showAddModal.set(false);
     this.addOffreForm.reset();
@@ -94,6 +92,7 @@ export class GOffre {
 
   // ─── Chargement ───
   async constructOffre(): Promise<void> {
+    this.isLoading.set(true);
     try {
       const listOffre = await this.repetitionService.findAllOffre().toPromise();
       if (!listOffre) return;
@@ -125,12 +124,12 @@ export class GOffre {
 
     } catch (err) {
       console.error('Erreur chargement offres :', err);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
   // ─── Filtrage ─────
-  // Le modèle Offre n'ayant pas de statut, setFilter est conservé
-  // pour une extension future (ex: filtre par filière ou niveau)
   setFilter(filter: FilterType): void {
     this.activeFilter.set(filter);
     this.applyFilters();
@@ -145,19 +144,16 @@ export class GOffre {
   private applyFilters(): void {
     let result = this.listOffresSaved();
     const query = this.searchQuery().toLowerCase();
-
-    // Recherche sur les champs réels du modèle Offre
     if (query) {
       result = result.filter(o =>
-        o.offre.bio?.toLowerCase().includes(query)              ||
-        o.offre.niveau?.intitule?.toLowerCase().includes(query)      ||
-        o.offre.filiere?.intitule?.toLowerCase().includes(query)     ||
-        o.offre.parent?.nomComplet?.toLowerCase().includes(query)      ||
-        o.offre.parent?.localisation?.toLowerCase().includes(query) ||
+        o.offre.bio?.toLowerCase().includes(query)                    ||
+        o.offre.niveau?.intitule?.toLowerCase().includes(query)       ||
+        o.offre.filiere?.intitule?.toLowerCase().includes(query)      ||
+        o.offre.parent?.nomComplet?.toLowerCase().includes(query)     ||
+        o.offre.parent?.localisation?.toLowerCase().includes(query)   ||
         o.matieres.some(m => m.matiere?.intitule?.toLowerCase().includes(query))
       );
     }
-
     this.listOffres.set(result);
   }
 
@@ -179,7 +175,6 @@ export class GOffre {
   deleteOffre(): void {
     const offre = this.offreToDelete();
     if (!offre) return;
-
     this.repetitionService.deleteOffre(offre.offre.id).subscribe({
       next: (data: ResponseServer) => {
         console.log('Offre supprimée :', data);
@@ -187,9 +182,7 @@ export class GOffre {
         this.offreToDelete.set(null);
         this.constructOffre();
       },
-      error: (err) => {
-        console.error('Erreur suppression offre :', err);
-      },
+      error: (err) => console.error('Erreur suppression offre :', err),
     });
   }
 
@@ -203,21 +196,17 @@ export class GOffre {
     this.openModal('botMatching');
     this.matching();
   }
- 
+
   matching(): void {
     const offre = this.offreForMatching();
     if (!offre) return;
-
     this.isMatchingLoading.set(true);
     this.matchingResults.set([]);
-
     this.iaService.matchingForOffre(offre.offre.id).subscribe({
-      next: (results:MatchingResult[]) => {
+      next: (results: MatchingResult[]) => {
         this.matchingResults.set(results);
 
-        for (const r of results) {
-          console.log(`Enseignant: ${r.enseignant.nomComplet},  Score: ${r.score}`);
-        }
+        console.log(this.matchingResults()); 
         this.isMatchingLoading.set(false);
       },
       error: (err) => {
@@ -225,6 +214,25 @@ export class GOffre {
         this.isMatchingLoading.set(false);
       },
     });
+  }
+
+  // ─── WhatsApp ─────────────────────────────────────────────────────────────────
+  ouvrirWhatsApp(telephone: string, message?: string): void {
+    // Nettoie le numéro : supprime espaces, tirets, parenthèses
+    const numero = telephone.replace(/[\s\-\(\)]/g, '');
+
+    // Ajoute l'indicatif Cameroun (+237) si le numéro ne commence pas par '+'
+    const numeroFormate = numero.startsWith('+')
+      ? numero.replace('+', '')
+      : `237${numero}`;
+
+    // Message par défaut si aucun fourni
+    const texte = message
+      ? encodeURIComponent(message)
+      : encodeURIComponent('Bonjour, je vous contacte suite  à la correspondance de votre profil avec une offre d emploi sur notre plateforme de répétiteurs.');
+
+    const url = `https://wa.me/${numeroFormate}?text=${texte}`;
+    window.open(url, '_blank');
   }
 
   relanceMatching(): void {
@@ -251,14 +259,9 @@ export class GOffre {
     }
   }
 
-  // ─── Helpers template ──────────────────────────────────────────────────────
+  // ─── Helpers template ─────────────────────────────────────────────────────
   getInitiales(nom: string): string {
-    return nom
-      .split(' ')
-      .map(p => p[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    return nom.split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
   }
 
   getScoreClass(score: number): string {
@@ -269,49 +272,34 @@ export class GOffre {
     return 'score-70';
   }
 
-  revenirAuMatching(): void {
-    this.matchingSaveState.set('idle');
-  }
+  revenirAuMatching(): void { this.matchingSaveState.set('idle'); }
 
   sauvegarderMatching(): void {
-      const offre = this.offreForMatching();
-      if (!offre) return;
+    const offre   = this.offreForMatching();
+    const results = this.matchingResults();
+    if (!offre || !results.length) return;
 
-      const results = this.matchingResults();
-      if (!results || results.length === 0) {
-        console.warn('Aucun résultat de matching à sauvegarder.');
-        return;
+    this.isSaving.set(true);
+
+    const listeMatchings = results.map(r => ({
+      id: '', offre: offre.offre.id, enseignant: r.enseignant.id, score: r.score
+    }));
+
+    const formData = new FormData();
+    formData.append('matchings', JSON.stringify(listeMatchings));
+
+    this.iaService.saveMatchingResult(formData).subscribe({
+      next: (data: ResponseServer) => {
+        this.isInternError.set(false);
+        this.isSaving.set(false);
+        this.matchingSaveState.set(data.status ? 'success' : 'error');
+      },
+      error: (err) => {
+        console.error('Erreur sauvegarde matching :', err);
+        this.isInternError.set(true);
+        this.isSaving.set(false);
+        this.matchingSaveState.set('error');
       }
-
-      this.isSaving.set(true);
-
-      const listeMatchings = results.map(r => ({
-        id: '',
-        offre: offre.offre.id,
-        enseignant: r.enseignant.id,
-        score: r.score
-      }));
-
-      const formData = new FormData();
-      formData.append('matchings', JSON.stringify(listeMatchings));
-
-      this.iaService.saveMatchingResult(formData).subscribe({
-        next: (data: ResponseServer) => {
-          this.isInternError.set(false);
-          if(data.status) {
-            this.isSaving.set(false);
-            this.matchingSaveState.set('success');
-          } else { 
-            this.isSaving.set(false);
-            this.matchingSaveState.set('error');
-          }
-        },
-        error: (err) => {
-          console.error('Erreur sauvegarde matching :', err);
-          this.isInternError.set(true);
-          this.isSaving.set(false);
-          this.matchingSaveState.set('error');
-        }
-      });
-    }
+    });
+  }
 }

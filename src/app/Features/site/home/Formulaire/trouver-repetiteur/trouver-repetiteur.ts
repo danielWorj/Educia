@@ -7,6 +7,7 @@ import { GeneralService } from '../../../../../Core/Service/General/general-serv
 import { ResponseServer } from '../../../../../Core/Model/Server/ResponseServer';
 import { Niveau } from '../../../../../Core/Model/Academie/Niveau';
 import { Section } from '../../../../../Core/Model/Academie/Section';
+import { Filiere } from '../../../../../Core/Model/Academie/Filiere';
 
 @Component({
   selector: 'app-trouver-repetiteur',
@@ -27,6 +28,8 @@ export class TrouverRepetiteur {
       localisation: new FormControl(''),
       profession: new FormControl(''),
       niveau: new FormControl(''),
+      filiere: new FormControl(''),
+
 
       // Détails de l'offre
       bio: new FormControl(''),
@@ -37,7 +40,8 @@ export class TrouverRepetiteur {
 
 
     this.getAllMatiere(); 
-    this.getAllNiveau()
+    this.getAllNiveau();
+    this.getAllFiliere();
   }
 
   // ── Fichiers ──────────────────────────────────────────────
@@ -113,6 +117,15 @@ export class TrouverRepetiteur {
       }
     });
   }
+
+  listFiliere = signal<Filiere[]>([]); 
+  getAllFiliere(){
+    this.generalService.findAllFiliere().subscribe({
+      next:(data:Filiere[])=>{
+        this.listFiliere.set(data); 
+      }
+    });
+  } 
   toggleMatiere(event: any): void {
     let id = event.target.value; 
     const current = this.selectedMatieres();
@@ -158,6 +171,9 @@ export class TrouverRepetiteur {
       budget: String(this.offreForm.value.budget),
       frequence: Number(this.offreForm.value.frequence),
       duree: String(this.offreForm.value.duree),
+      niveau : this.offreForm.value.niveau, 
+      filiere : this.offreForm.value.filiere, 
+      
 
       // Matières (liste d'IDs)
       matieres: this.selectedMatieres(),

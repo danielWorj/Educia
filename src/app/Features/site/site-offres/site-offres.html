@@ -147,18 +147,7 @@
       <!-- RÉSULTATS -->
       <div class="results-area">
 
-        <!-- Barre résultats -->
-        <div class="results-header">
-          <div class="results-count">
-            <span class="count-num">{{ listOffreConstruct().length }}</span>
-            offre{{ listOffreConstruct().length > 1 ? 's' : '' }} trouvée{{ listOffreConstruct().length > 1 ? 's' : '' }}
-          </div>
-          <select class="sort-select" (change)="trierOffres($any($event.target).value)">
-            <option value="pertinence">Trier : Pertinence</option>
-            <option value="budget_asc">Budget croissant</option>
-            <option value="budget_desc">Budget décroissant</option>
-          </select>
-        </div>
+        
 
         <!-- LISTE -->
         <div class="offres-list">

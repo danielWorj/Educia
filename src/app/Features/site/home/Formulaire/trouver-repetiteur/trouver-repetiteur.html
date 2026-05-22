@@ -13,9 +13,23 @@
     <div class="form-group">
     <label class="form-label">Niveau <span class="req">*</span></label>
     <div class="matieres-grid">
-      <select name="" id="" formControlName="niveau">
+      <select class="form-select" name="" id="" formControlName="niveau">
           <option value="">--Selectionner le niveau--</option>
           @for (n of listNiveau(); track $index) {
+              <option value="{{n.id}}">{{n.intitule}}</option>
+          }
+      </select>
+      
+    </div>
+    </div>
+
+    <!-- Filiere -->
+    <div class="form-group">
+    <label class="form-label">Filiere <span class="req">*</span></label>
+    <div class="matieres-grid">
+      <select class="form-select" name="" id="" formControlName="filiere">
+          <option value="">--Selectionner la filiere--</option>
+          @for (n of listFiliere(); track $index) {
               <option value="{{n.id}}">{{n.intitule}}</option>
           }
       </select>
@@ -27,7 +41,7 @@
     <div class="form-group">
       <label class="form-label">Matière(s) <span class="req">*</span></label>
       <div class="matieres-grid">
-        <select name="" id="" (change)="toggleMatiere($event)">
+        <select class="form-select" name="" id="" (change)="toggleMatiere($event)">
             <option value="">--Selectionner la matiere--</option>
             @for (m of listMatiere(); track $index) {
                 <option value="{{m.id}}">{{m.intitule}}</option>
