@@ -1,4 +1,3 @@
-
 <!-- HERO ENSEIGNANT -->
 <div class="page-header" style="padding-bottom:100px;">
   <div class="container">
@@ -12,14 +11,112 @@
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════
+     LISTE DES ENSEIGNANTS
+══════════════════════════════════════ -->
+<section class="section" id="repetiteurs">
+  <div class="container">
+
+    <div class="section-header">
+      <span class="tag">Répétiteurs vedettes</span>
+      <h2>Nos meilleurs répétiteurs</h2>
+      <p>Des enseignants vérifiés, passionnés et expérimentés.</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="tutors-loading">
+        @for (skeleton of [1,2,3,4,5,6]; track skeleton) {
+          <div class="tutor-card tutor-card--skeleton">
+            <div class="skeleton skeleton--banner"></div>
+            <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px;">
+              <div class="skeleton skeleton--line skeleton--lg"></div>
+              <div class="skeleton skeleton--line skeleton--sm"></div>
+              <div class="skeleton skeleton--line skeleton--md"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+
+      <div class="tutors-grid">
+        @for (enseignant of listEnseignants(); track enseignant.id) {
+
+          <div class="tutor-card" (click)="openModal(enseignant)" style="cursor:pointer;">
+
+            <!-- PHOTO BANNIÈRE -->
+            <div class="tutor-card__banner">
+              @if (enseignant.photo) {
+                <img
+                  class="tutor-card__banner-img"
+                  [src]="enseignant.photo"
+                  [alt]="enseignant.nomComplet"
+                  (error)="onPhotoError($event)"
+                />
+              } @else {
+                <div class="tutor-card__banner-fallback">
+                  {{ getInitiales(enseignant.nomComplet) }}
+                </div>
+              }
+              @if (enseignant.statusEnseignant.id == 2) {
+                <span class="tutor-card__badge-verifie">✓ Vérifié</span>
+              }
+            </div>
+
+            <!-- CORPS -->
+            <div class="tutor-card__body">
+              <div class="tutor-card__diplome-row">
+                <span class="tutor-card__diplome-icon">🎓</span>
+                <span class="tutor-card__diplome-label">{{ enseignant.diplome?.intitule }}</span>
+              </div>
+              <h3 class="tutor-card__name">{{ enseignant.nomComplet }}</h3>
+              <p class="tutor-card__specialite">{{ enseignant.specialite }}</p>
+              <div class="tutor-card__divider"></div>
+              <div class="tutor-card__tags">
+                <span class="tutor-card__tag">{{ enseignant.section?.intitule }}</span>
+                <span class="tutor-card__tag">{{ enseignant.localisation }}</span>
+              </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="tutor-card__footer">
+              <div>
+                <div class="tutor-card__tarif-label">Tarif / heure</div>
+                <div class="tutor-card__tarif">
+                  {{ enseignant.tarifHoraire.toLocaleString('fr-FR') }}
+                  <span class="tutor-card__tarif-unit"> FCFA</span>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm" (click)="openModal(enseignant); $event.stopPropagation()">
+                Voir profil
+              </button>
+            </div>
+
+          </div>
+
+        } @empty {
+          <div class="tutors-empty">
+            <div class="tutors-empty__icon">🔍</div>
+            <h3>Aucun répétiteur disponible</h3>
+            <p>Revenez bientôt, de nouveaux profils sont en cours de vérification.</p>
+            <a href="#inscription" class="btn btn-primary">Devenir répétiteur</a>
+          </div>
+        }
+      </div>
+
+    }
+
+  </div>
+</section>
+
 <!-- AVANTAGES -->
 <section class="section-sm" style="background:var(--bg-soft);">
   <div class="container">
-    <div class="section-header ">
+    <div class="section-header">
       <span class="tag">Pourquoi Educia ?</span>
       <h2>Les avantages d'enseigner sur Educia</h2>
     </div>
-    <div class="become-tutor-benefits ">
+    <div class="become-tutor-benefits">
       <div class="benefit-card">
         <div class="benefit-icon" style="background:var(--primary-light);">💰</div>
         <div>
@@ -66,15 +163,14 @@
   </div>
 </section>
 
-
 <!-- ÉTAPES INSCRIPTION -->
 <section class="section" style="background:var(--bg-soft);">
   <div class="container">
-    <div class="section-header ">
+    <div class="section-header">
       <span class="tag">En 3 étapes</span>
       <h2>Comment rejoindre Educia ?</h2>
     </div>
-    <div class="steps-apply ">
+    <div class="steps-apply">
       <div class="step-card">
         <div class="step-number">1</div>
         <div class="step-icon">📝</div>
@@ -97,332 +193,128 @@
   </div>
 </section>
 
-<!-- FORMULAIRE INSCRIPTION -->
-<section class="section" id="inscription">
-  <div class="container">
-    <div class="section-header ">
-      <span class="tag">Inscription gratuite</span>
-      <h2>Créer mon profil de répétiteur</h2>
-      <p>Rejoignez Educia gratuitement. Aucune commission sur vos 3 premières séances !</p>
-    </div>
-    <div class="profile-form-grid ">
-      <!-- PREVIEW -->
-      <div class="profile-preview">
-        <div class="preview-avatar" id="previewAvatar">?</div>
-        <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;" id="previewName">Votre nom</div>
-        <div style="font-size:14px;color:var(--text-light);margin-top:4px;" id="previewSubject">Matière principale</div>
-        <div style="color:#F59E0B;margin:8px 0;">★★★★★</div>
-        <div class="tutor-badges" style="justify-content:center;margin-top:12px;">
-          <span class="tag tag-green" style="font-size:11px;padding:4px 10px;">✓ Vérifié</span>
-          <span class="tag" id="previewVille" style="font-size:11px;padding:4px 10px;">Votre ville</span>
-        </div>
-        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
-          <div style="font-size:13px;color:var(--text-light);">Tarif horaire</div>
-          <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--primary);" id="previewTarif">— FCFA/h</div>
-        </div>
-        <div class="income-calc">
-          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Revenu potentiel</div>
-          <div class="income-num" id="previewIncome">0 FCFA</div>
-          <div style="font-size:12px;color:var(--text-mid);">pour 10h/semaine</div>
-        </div>
-      </div>
+<!-- ══════════════════════════════════════
+     MODAL DÉTAIL ENSEIGNANT
+══════════════════════════════════════ -->
+@if (modalEnseignant()) {
+  <div class="enseignant-overlay" (click)="closeModal()">
+    <div class="enseignant-modal" (click)="$event.stopPropagation()">
 
-      <!-- FORM -->
-       <div id="repet-form-container">
+      <!-- BOUTON FERMER -->
+      <button class="enseignant-modal__close" (click)="closeModal()" aria-label="Fermer">✕</button>
 
-    <!-- ── BLOC 1 : Informations personnelles ── -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">👤</div>
-        <div>
-          <div class="form-card-title">Informations personnelles</div>
-          <div class="form-card-subtitle">Identité, coordonnées et localisation</div>
-        </div>
-      </div>
-
-      <!-- Nom complet -->
-      <div class="form-group">
-        <label class="form-label" for="nom_complet">Nom complet <span class="req">*</span></label>
-        <input id="nom_complet" name="nom_complet" type="text" class="form-input" placeholder="Ex : Jean-Baptiste Mbarga Essomba" />
-      </div>
-
-      <!-- Email + Téléphone -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="email">Adresse email <span class="req">*</span></label>
-          <input id="email" name="email" type="email" class="form-input" placeholder="votre@email.com" />
-          <span class="form-hint">Pour recevoir les demandes des parents</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="telephone">Téléphone <span class="req">*</span></label>
-          <input id="telephone" name="telephone" type="tel" class="form-input" placeholder="Ex : 691 23 45 67" />
-          <span class="form-hint">MTN ou Orange Cameroun</span>
-        </div>
-      </div>
-
-      <!-- Ville + Quartier -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="ville">Ville <span class="req">*</span></label>
-          <select id="ville" name="ville" class="form-select" onchange="updateQuartiers(this.value)">
-            <option value="" disabled selected>Choisir une ville</option>
-            <option value="douala">Douala</option>
-            <option value="yaounde">Yaoundé</option>
-            <option value="bafoussam">Bafoussam</option>
-            <option value="bamenda">Bamenda</option>
-            <option value="garoua">Garoua</option>
-            <option value="maroua">Maroua</option>
-            <option value="ngaoundere">Ngaoundéré</option>
-            <option value="bertoua">Bertoua</option>
-            <option value="ebolowa">Ebolowa</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="quartier">Quartier <span class="req">*</span></label>
-          <select id="quartier" name="quartier" class="form-select" disabled>
-            <option value="" disabled selected>Sélectionnez d'abord une ville</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Date de naissance + Années d'expérience -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="date_naissance">Date de naissance <span class="req">*</span></label>
-          <input id="date_naissance" name="date_naissance" type="date" class="form-input" />
-          <span class="form-hint">Vous devez avoir au moins 18 ans</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="experience">Années d'expérience <span class="req">*</span></label>
-          <div class="input-number-wrap">
-            <input type="number" id="experience" name="experience" min="0" max="50" step="1" placeholder="Ex : 3" />
-            <span class="input-number-unit">an(s)</span>
+      <!-- PHOTO BANNIÈRE -->
+      <div class="enseignant-modal__banner">
+        @if (modalEnseignant()!.photo) {
+          <img
+            class="enseignant-modal__banner-img"
+            [src]="modalEnseignant()!.photo"
+            [alt]="modalEnseignant()!.nomComplet"
+          />
+        } @else {
+          <div class="enseignant-modal__banner-fallback">
+            {{ getInitiales(modalEnseignant()!.nomComplet) }}
           </div>
-          <span class="form-hint">Nombre d'années d'enseignement ou de répétition</span>
-        </div>
+        }
+        @if (modalEnseignant()!.statusEnseignant.id == 2) {
+          <span class="tutor-card__badge-verifie">✓ Vérifié</span>
+        }
       </div>
 
-      <!-- Tarif horaire -->
-      <div class="form-group">
-        <label class="form-label" for="tarif">Tarif horaire <span class="req">*</span></label>
-        <div class="input-number-wrap" style="max-width: 320px;">
-          <input type="number" id="tarif" name="tarif" min="500" max="100000" step="500" placeholder="Ex : 3000" />
-          <span class="input-number-unit">FCFA / heure</span>
+      <!-- CONTENU -->
+      <div class="enseignant-modal__body">
+
+        <!-- En-tête identité -->
+        <div class="enseignant-modal__identity">
+          <h2 class="enseignant-modal__name">{{ modalEnseignant()!.nomComplet }}</h2>
+          <p class="enseignant-modal__specialite">{{ modalEnseignant()!.specialite }}</p>
+          <div class="enseignant-modal__tags">
+            <span class="tutor-card__tag">📍 {{ modalEnseignant()!.localisation }}</span>
+            <span class="tutor-card__tag">🎓 {{ modalEnseignant()!.diplome?.intitule }}</span>
+            <span class="tutor-card__tag">📚 {{ modalEnseignant()!.section?.intitule }}</span>
+            <span class="tutor-card__tag">⏳ {{ modalEnseignant()!.anneeexperience }} ans d'expérience</span>
+          </div>
         </div>
-        <span class="form-hint">Montant que vous souhaitez recevoir par heure de cours</span>
-      </div>
 
-    </div>
-    <!-- fin bloc 1 -->
+        <div class="enseignant-modal__divider"></div>
 
-    <!-- ── BLOC 2 : Photo de profil & CNI ── -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon accent">📎</div>
-        <div>
-          <div class="form-card-title">Documents d'identité</div>
-          <div class="form-card-subtitle">Photo de profil et pièce d'identité</div>
-        </div>
-      </div>
+        <!-- Bio -->
+        @if (modalEnseignant()!.bio) {
+          <div class="enseignant-modal__section">
+            <div class="enseignant-modal__section-title">À propos</div>
+            <p class="enseignant-modal__bio">{{ modalEnseignant()!.bio }}</p>
+          </div>
+          <div class="enseignant-modal__divider"></div>
+        }
 
-      <!-- Photo de profil -->
-      <div class="form-group">
-        <label class="form-label">Photo de profil <span class="req">*</span></label>
-        <div class="upload-id-wrapper" id="photo-wrapper">
-          <div class="upload-id-left">
-            <div class="upload-id-icon">🤳</div>
-            <div>
-              <div class="upload-id-title" id="photo-title">Téléverser votre photo</div>
-              <div class="upload-id-sub" id="photo-sub">Visage dégagé, fond neutre · JPG ou PNG · Max 5 Mo</div>
+        <!-- Infos clés -->
+        <div class="enseignant-modal__section">
+          <div class="enseignant-modal__section-title">Informations</div>
+          <div class="enseignant-modal__info-grid">
+            <div class="enseignant-modal__info-item">
+              <span class="enseignant-modal__info-icon">💰</span>
+              <div>
+                <div class="enseignant-modal__info-label">Tarif horaire</div>
+                <div class="enseignant-modal__info-value">{{ modalEnseignant()!.tarifHoraire.toLocaleString('fr-FR') }} FCFA / h</div>
+              </div>
             </div>
-          </div>
-          <label for="photo-input" class="upload-id-btn" id="photo-btn-label">📎 Choisir un fichier</label>
-          <input type="file" id="photo-input" name="photo" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleUpload(this, 'photo-wrapper', 'photo-title', 'photo-sub', 'photo-btn-label')" />
-        </div>
-        <span class="form-hint">Cette photo sera visible par les parents sur votre profil</span>
-      </div>
-
-      <!-- CNI -->
-      <div class="form-group">
-        <label class="form-label">Carte Nationale d'Identité <span class="req">*</span></label>
-        <div class="upload-id-wrapper" id="cni-wrapper">
-          <div class="upload-id-left">
-            <div class="upload-id-icon">🪪</div>
-            <div>
-              <div class="upload-id-title" id="cni-title">Téléverser votre pièce d'identité</div>
-              <div class="upload-id-sub" id="cni-sub">CNI recto-verso · JPG, PNG ou PDF · Max 5 Mo</div>
+            <div class="enseignant-modal__info-item">
+              <span class="enseignant-modal__info-icon">📅</span>
+              <div>
+                <div class="enseignant-modal__info-label">Membre depuis</div>
+                <div class="enseignant-modal__info-value">{{ modalEnseignant()!.dateInscription | date:'MMMM yyyy' }}</div>
+              </div>
             </div>
-          </div>
-          <label for="cni-input" class="upload-id-btn" id="cni-btn-label">📎 Choisir un fichier</label>
-          <input type="file" id="cni-input" name="cni" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleUpload(this, 'cni-wrapper', 'cni-title', 'cni-sub', 'cni-btn-label')" />
-        </div>
-        <span class="form-hint">Utilisée uniquement pour vérifier votre identité — strictement confidentielle</span>
-      </div>
-
-    </div>
-    <!-- fin bloc 2 -->
-
-    <!-- ── BLOC 3 : Qualifications & Diplôme ── -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">🎓</div>
-        <div>
-          <div class="form-card-title">Qualifications & Diplôme</div>
-          <div class="form-card-subtitle">Votre filière, votre plus haut diplôme et votre spécialité</div>
-        </div>
-      </div>
-
-      <!-- Type d'enseignant -->
-      <div class="form-group">
-        <label class="form-label">Type d'enseignant <span class="req">*</span></label>
-        <div class="type-grid">
-          <div class="type-card">
-            <input type="radio" id="type-lit" name="type_enseignant" value="litteraire" />
-            <label for="type-lit">
-              <span class="type-card-icon">📖</span>
-              <span class="type-card-name">Littéraire</span>
-              <span class="type-card-desc">Français, Anglais, Philosophie, Histoire-Géo…</span>
-            </label>
-          </div>
-          <div class="type-card">
-            <input type="radio" id="type-sci" name="type_enseignant" value="scientifique" />
-            <label for="type-sci">
-              <span class="type-card-icon">🔬</span>
-              <span class="type-card-name">Scientifique</span>
-              <span class="type-card-desc">Maths, Physique, SVT, Chimie…</span>
-            </label>
-          </div>
-          <div class="type-card">
-            <input type="radio" id="type-tech" name="type_enseignant" value="technique" />
-            <label for="type-tech">
-              <span class="type-card-icon">⚙️</span>
-              <span class="type-card-name">Sciences Techniques</span>
-              <span class="type-card-desc">Informatique, Mécatronique, Génie Civil…</span>
-            </label>
-          </div>
-        </div>
-        <span class="form-hint">Sélectionnez la filière qui correspond à votre formation principale</span>
-      </div>
-
-      <!-- Niveau de diplôme + Spécialité -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="niveau_diplome">Plus haut diplôme obtenu <span class="req">*</span></label>
-          <select id="niveau_diplome" name="niveau_diplome" class="form-select">
-            <option value="" disabled selected>Choisir un diplôme</option>
-            <optgroup label="Enseignement secondaire">
-              <option value="bepc">BEPC / CAP</option>
-              <option value="probatoire">Probatoire</option>
-              <option value="bac">Baccalauréat</option>
-            </optgroup>
-            <optgroup label="Enseignement supérieur">
-              <option value="bts">BTS / DUT</option>
-              <option value="licence">Licence (Bac+3)</option>
-              <option value="master">Master (Bac+5)</option>
-              <option value="doctorat">Doctorat (Bac+8)</option>
-              <option value="ingenieur">Diplôme d'Ingénieur</option>
-              <option value="capes">CAPES / Agrégation</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="specialite">Spécialité <span class="req">*</span></label>
-          <input id="specialite" name="specialite" type="text" class="form-input" placeholder="Ex : Informatique industrielle, Mécatronique…" />
-          <span class="form-hint">Votre domaine de spécialisation principal</span>
-        </div>
-      </div>
-
-      <!-- Upload Diplôme -->
-      <div class="form-group">
-        <label class="form-label">Téléverser votre diplôme <span class="req">*</span></label>
-        <div class="upload-id-wrapper" id="diplome-wrapper">
-          <div class="upload-id-left">
-            <div class="upload-id-icon">📜</div>
-            <div>
-              <div class="upload-id-title" id="diplome-title">Téléverser votre diplôme</div>
-              <div class="upload-id-sub" id="diplome-sub">Scan lisible · JPG, PNG ou PDF · Max 5 Mo</div>
+            <div class="enseignant-modal__info-item">
+              <span class="enseignant-modal__info-icon">📞</span>
+              <div>
+                <div class="enseignant-modal__info-label">Téléphone</div>
+                <div class="enseignant-modal__info-value">{{ modalEnseignant()!.telephone }}</div>
+              </div>
             </div>
-          </div>
-          <label for="diplome-input" class="upload-id-btn" id="diplome-btn-label">📎 Choisir un fichier</label>
-          <input type="file" id="diplome-input" name="diplome" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleUpload(this, 'diplome-wrapper', 'diplome-title', 'diplome-sub', 'diplome-btn-label')" />
-        </div>
-        <span class="form-hint">Attestation ou relevé de notes acceptés si le diplôme n'est pas encore disponible</span>
-      </div>
-
-    </div>
-    <!-- fin bloc 3 -->
-
-    <!-- ── BLOC 4 : Création du compte (fond bleu) ── -->
-    <div class="compte-card">
-      <div class="compte-inner">
-
-        <div class="compte-header">
-          <div class="compte-icon">🔐</div>
-          <div>
-            <div class="compte-title">Création de votre compte</div>
-            <div class="compte-subtitle">Ces informations restent strictement confidentielles</div>
-          </div>
-        </div>
-
-        <!-- Mot de passe + Confirmation -->
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="password">Mot de passe <span class="req">*</span></label>
-            <div class="password-wrap">
-              <input id="password" name="password" type="password" class="form-input" placeholder="Minimum 8 caractères" oninput="checkStrength(this.value)" />
-              <button type="button" class="password-toggle" onclick="togglePassword('password', this)" title="Afficher/masquer">👁</button>
-            </div>
-            <div class="password-strength" id="strength-box">
-              <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
-              <span class="strength-label" id="strength-label"></span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="password2">Confirmer le mot de passe <span class="req">*</span></label>
-            <div class="password-wrap">
-              <input id="password2" name="password2" type="password" class="form-input" placeholder="Répétez le mot de passe" />
-              <button type="button" class="password-toggle" onclick="togglePassword('password2', this)" title="Afficher/masquer">👁</button>
+            <div class="enseignant-modal__info-item">
+              <span class="enseignant-modal__info-icon">✉️</span>
+              <div>
+                <div class="enseignant-modal__info-label">Email</div>
+                <div class="enseignant-modal__info-value">{{ modalEnseignant()!.email }}</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- CGU -->
-        <div class="cgu-row">
-          <input type="checkbox" id="cgu" name="cgu" />
-          <label for="cgu">
-            J'accepte les <a href="#">Conditions Générales d'Utilisation</a>
-            et la <a href="#">Politique de confidentialité</a> d'Educia. Je certifie que toutes les informations fournies sont exactes.
-          </label>
-        </div>
-
-        <!-- Bouton soumission -->
-        <button type="button" onclick="submitForm()" class="btn btn-lg btn-submit">
-          🚀 Créer mon compte répétiteur
-        </button>
-
-        <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-top:16px;">
-          Déjà un compte ? <a href="login.html" style="color:#fff;font-weight:600;">Se connecter</a>
-        </p>
-
       </div>
-    </div>
-    <!-- fin bloc 4 -->
 
-  </div>
-      <!-- FIN FORM -->
+      <!-- FOOTER ACTIONS -->
+      <div class="enseignant-modal__footer">
+        <button class="btn btn-ghost" (click)="closeModal()">Fermer</button>
+        <a
+          [href]="getWhatsappLink(modalEnseignant()!)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-whatsapp"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.57a.5.5 0 0 0 .611.611l5.718-1.475A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.787 9.787 0 0 1-4.99-1.365l-.357-.213-3.708.956.987-3.608-.233-.371A9.789 9.789 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+          </svg>
+          Contacter sur WhatsApp
+        </a>
+      </div>
+
     </div>
   </div>
-</section>
+}
+
 
 <!-- TÉMOIGNAGES RÉPÉTITEURS -->
 <section class="section" style="background:var(--bg-soft);">
   <div class="container">
-    <div class="section-header ">
+    <div class="section-header">
       <span class="tag">Ils enseignent sur Educia</span>
       <h2>Ce que disent nos répétiteurs</h2>
     </div>
     <div class="testimonials-grid">
-      <div class="testimonial-card ">
+      <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <p class="testimonial-text">"Je génère 180 000 FCFA de revenus supplémentaires chaque mois. La plateforme est simple et le support client est réactif. Meilleure décision de ma carrière !"</p>
         <div class="testimonial-author">
@@ -430,7 +322,7 @@
           <div><div class="testimonial-name">Amélie Kamdem</div><div class="testimonial-role">Répétitrice Mathématiques · Douala</div></div>
         </div>
       </div>
-      <div class="testimonial-card ">
+      <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <p class="testimonial-text">"J'enseigne depuis Yaoundé à des élèves de tout le pays grâce aux cours en ligne. Le système de notation m'a aidé à bâtir une excellente réputation rapidement."</p>
         <div class="testimonial-author">
@@ -438,7 +330,7 @@
           <div><div class="testimonial-name">Paul Nguele</div><div class="testimonial-role">Répétiteur Français · Yaoundé</div></div>
         </div>
       </div>
-      <div class="testimonial-card ">
+      <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <p class="testimonial-text">"Le tableau de bord me permet de suivre tous mes élèves et revenus en temps réel. Le paiement via Orange Money chaque semaine est très pratique !"</p>
         <div class="testimonial-author">

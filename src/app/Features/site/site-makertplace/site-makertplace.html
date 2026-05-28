@@ -94,50 +94,89 @@
       </select>
     </div>
 
-    <div class="doc-list">
-      @for (s of listSupport(); track $index) {
-        <div class="doc-item reveal visible">
-          <div class="doc-type-badge">
-            <i class="fas fa-book text-primary"></i>
+    <div class="support-grid">
+      @for (s of listSupport(); track s.id) {
+
+        <div class="support-card">
+
+          <!-- THUMBNAIL : icône selon extension -->
+          <div class="support-card__thumb" [ngClass]="getFileType(s.file)">
+            @switch (getFileType(s.file)) {
+              @case ('pdf') {
+                <!-- Icône PDF -->
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="support-card__file-icon">
+                  <rect width="64" height="64" rx="12" fill="#FEE2E2"/>
+                  <path d="M16 8h22l10 10v38H16V8z" fill="#fff" stroke="#EF4444" stroke-width="2"/>
+                  <path d="M38 8v10h10" fill="none" stroke="#EF4444" stroke-width="2"/>
+                  <text x="22" y="44" font-family="Arial" font-weight="800" font-size="12" fill="#EF4444">PDF</text>
+                </svg>
+              }
+              @case ('docx') {
+                <!-- Icône DOCX -->
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="support-card__file-icon">
+                  <rect width="64" height="64" rx="12" fill="#DBEAFE"/>
+                  <path d="M16 8h22l10 10v38H16V8z" fill="#fff" stroke="#3B82F6" stroke-width="2"/>
+                  <path d="M38 8v10h10" fill="none" stroke="#3B82F6" stroke-width="2"/>
+                  <text x="16" y="44" font-family="Arial" font-weight="800" font-size="11" fill="#3B82F6">DOCX</text>
+                </svg>
+              }
+              @case ('img') {
+                <!-- Icône Image -->
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="support-card__file-icon">
+                  <rect width="64" height="64" rx="12" fill="#D1FAE5"/>
+                  <rect x="12" y="16" width="40" height="32" rx="4" fill="#fff" stroke="#22C55E" stroke-width="2"/>
+                  <circle cx="22" cy="26" r="4" fill="#22C55E" opacity=".5"/>
+                  <path d="M12 38l12-10 10 8 8-6 10 8" stroke="#22C55E" stroke-width="2" fill="none"/>
+                </svg>
+              }
+              @default {
+                <!-- Icône générique -->
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="support-card__file-icon">
+                  <rect width="64" height="64" rx="12" fill="#F1F5F9"/>
+                  <path d="M16 8h22l10 10v38H16V8z" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+                  <path d="M38 8v10h10" fill="none" stroke="#94A3B8" stroke-width="2"/>
+                  <line x1="22" y1="30" x2="42" y2="30" stroke="#94A3B8" stroke-width="2"/>
+                  <line x1="22" y1="36" x2="38" y2="36" stroke="#94A3B8" stroke-width="2"/>
+                </svg>
+              }
+            }
+
+            <!-- Badge type en haut à gauche -->
+            @if (s.type.id == 1) { <span class="support-card__badge epreuve">{{s.type.nom}}</span> }
+            @if (s.type.id == 2) { <span class="support-card__badge correction">{{s.type.nom}}</span> }
+            @if (s.type.id == 3) { <span class="support-card__badge enseignant">{{s.type.nom}}</span> }
           </div>
-        
-          <div class="doc-info">
-            <div class="doc-title">{{s.title}}</div>
-            <div class="doc-resum">{{s.resume}}</div>
-            <div class="doc-meta">
-              @if (s.type.id==1) {
-                <span class="doc-tag epreuve">{{s.type.nom}}</span>
-              }
-              @if (s.type.id==2) {
-                <span class="doc-tag corrections">{{s.type.nom}}</span>
-              }
-              @if (s.type.id==3) {
-                <span class="doc-tag enseignant">{{s.type.nom}}</span>
-              }
-              <span class="doc-level">{{s.niveau.intitule}}: {{s.filiere.intitule}}</span>
+
+          <!-- CORPS -->
+          <div class="support-card__body">
+            <div class="support-card__level">{{ s.niveau.intitule }} · {{ s.filiere.intitule }}</div>
+            <h3 class="support-card__title">{{ s.title }}</h3>
+            <p class="support-card__resume">{{ s.resume }}</p>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="support-card__footer">
+            <div class="support-card__prix">
+              {{ s.prix.toLocaleString('fr-FR') }}
+              <span class="support-card__prix-unit"> FCFA</span>
             </div>
-          </div>
-        
-          <div class="doc-price-col">
-            <div class="doc-price">{{ s.prix | number }} FCFA</div>
-            <div class="doc-actions-group">
-              <!-- Bouton Visualiser -->
-              <button class="btn btn-ghost btn-sm doc-view-btn" (click)="openVisualiser(s)">
+            <div class="support-card__actions">
+              <button class="btn btn-ghost btn-sm support-card__preview-btn" (click)="openVisualiser(s)" title="Aperçu">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
                   <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                Aperçu
               </button>
-              <!-- Bouton Acheter -->
-              <button class="btn btn-primary btn-sm doc-buy-btn" (click)="openPayment(s)">
+              <button class="btn btn-primary btn-sm" (click)="openPayment(s)">
                 Acheter →
               </button>
             </div>
           </div>
+
         </div>
+
       } @empty {
-        <div class="empty-state visible" id="emptyState">
+        <div class="empty-state-grid">
           <div class="empty-icon">🔍</div>
           <h3>Aucun document trouvé</h3>
           <p>Essayez de modifier vos filtres ou votre recherche.</p>

@@ -1,0 +1,479 @@
+/* ══════════════════════════════════════
+   LISTE DES ENSEIGNANTS — CARDS
+══════════════════════════════════════ */
+
+.tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+/* ── Card ── */
+.tutor-card {
+  background: var(--bg-white, #fff);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.tutor-card:hover {
+  box-shadow: 0 8px 32px rgba(10, 79, 255, 0.10);
+  transform: translateY(-4px);
+}
+
+/* ── Bannière photo rectangulaire ── */
+.tutor-card__banner {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: #f0f0f0;
+  border-radius: 16px 16px 0 0;
+}
+
+.tutor-card__banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tutor-card__banner-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary, #0A4FFF), #6B8FFF);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 2px;
+}
+
+.tutor-card__badge-verifie {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #22C55E;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 2px solid #fff;
+}
+
+/* ── Body ── */
+.tutor-card__body {
+  padding: 16px 18px 10px;
+  flex: 1;
+}
+
+.tutor-card__diplome-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.tutor-card__diplome-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.tutor-card__diplome-label {
+  font-size: 12px;
+  color: var(--text-light, #6B7280);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutor-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 3px;
+  color: var(--text-dark, #111827);
+}
+
+.tutor-card__specialite {
+  font-size: 13px;
+  color: var(--text-light, #6B7280);
+  margin: 0 0 12px;
+}
+
+.tutor-card__divider {
+  height: 1px;
+  background: var(--border, #E5E7EB);
+  margin-bottom: 10px;
+}
+
+.tutor-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tutor-card__tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--bg-soft, #F9FAFB);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 20px;
+  color: var(--text-mid, #374151);
+}
+
+/* ── Footer ── */
+.tutor-card__footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border, #E5E7EB);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tutor-card__tarif-label {
+  font-size: 11px;
+  color: var(--text-light, #6B7280);
+  margin-bottom: 2px;
+}
+
+.tutor-card__tarif {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary, #0A4FFF);
+}
+
+.tutor-card__tarif-unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-light, #6B7280);
+}
+
+/* ── Skeleton loader ── */
+.tutors-loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.tutor-card--skeleton {
+  padding: 28px 20px 20px;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
+
+.skeleton--avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+}
+
+.skeleton--line { height: 14px; width: 100%; }
+.skeleton--lg   { width: 70%; }
+.skeleton--md   { width: 50%; }
+.skeleton--sm   { width: 40%; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty state ── */
+.tutors-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tutors-empty__icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.tutors-empty h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark, #111827);
+}
+
+.tutors-empty p {
+  font-size: 14px;
+  color: var(--text-light, #6B7280);
+  max-width: 340px;
+}
+/* ══════════════════════════════════════
+   SKELETON BANNIÈRE
+══════════════════════════════════════ */
+.skeleton--banner {
+  width: 100%;
+  height: 160px;
+  border-radius: 16px 16px 0 0;
+}
+
+/* ══════════════════════════════════════
+   MODAL DÉTAIL ENSEIGNANT
+══════════════════════════════════════ */
+
+/* Overlay */
+.enseignant-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 27, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Modal box */
+.enseignant-modal {
+  background: var(--bg-card, #fff);
+  border-radius: var(--radius-xl, 32px);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--shadow-lg, 0 24px 64px rgba(10,79,255,0.15));
+  animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* Bouton fermer */
+.enseignant-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: var(--text-dark);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: background 0.2s, transform 0.2s;
+}
+.enseignant-modal__close:hover {
+  background: #fff;
+  transform: rotate(90deg);
+}
+
+/* Bannière */
+.enseignant-modal__banner {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--radius-xl, 32px) var(--radius-xl, 32px) 0 0;
+  background: #f0f0f0;
+}
+
+.enseignant-modal__banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.enseignant-modal__banner-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary, #0A4FFF), #6B8FFF);
+  color: #fff;
+  font-size: 3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 4px;
+}
+
+/* Corps */
+.enseignant-modal__body {
+  padding: 24px 28px;
+}
+
+.enseignant-modal__identity {
+  margin-bottom: 4px;
+}
+
+.enseignant-modal__name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.enseignant-modal__specialite {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+}
+
+.enseignant-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.enseignant-modal__divider {
+  height: 1px;
+  background: var(--border, #E2E8F0);
+  margin: 20px 0;
+}
+
+.enseignant-modal__section {
+  margin-bottom: 4px;
+}
+
+.enseignant-modal__section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+}
+
+.enseignant-modal__bio {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+}
+
+/* Grille infos */
+.enseignant-modal__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.enseignant-modal__info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-soft, #F8FAFF);
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border, #E2E8F0);
+}
+
+.enseignant-modal__info-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.enseignant-modal__info-label {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.enseignant-modal__info-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+  word-break: break-word;
+}
+
+/* Footer actions */
+.enseignant-modal__footer {
+  padding: 16px 28px 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border, #E2E8F0);
+}
+
+/* Bouton WhatsApp */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25D366;
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+}
+.btn-whatsapp:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+}
+
+/* ── Responsive modal ── */
+@media (max-width: 640px) {
+  .enseignant-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .enseignant-modal {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+  .enseignant-modal__info-grid {
+    grid-template-columns: 1fr;
+  }
+  .enseignant-modal__footer {
+    flex-direction: column;
+  }
+  .enseignant-modal__footer .btn,
+  .enseignant-modal__footer .btn-whatsapp {
+    width: 100%;
+    justify-content: center;
+  }
+}

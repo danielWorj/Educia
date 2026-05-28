@@ -1,4 +1,4 @@
- /* ===== PAGE-SPECIFIC STYLES ===== */
+/* ===== PAGE-SPECIFIC STYLES ===== */
 
     /* Filter Section */
     .filter-section {
@@ -683,3 +683,184 @@
 
 
     
+/* ============================================================ */
+/* SUPPORT GRID — Cards col-md-3                                */
+/* ============================================================ */
+
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);   /* col-md-3 = 4 colonnes */
+  gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .support-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .support-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 480px) {
+  .support-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Card --- */
+.support-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: box-shadow 0.22s, transform 0.22s, border-color 0.22s;
+  cursor: pointer;
+}
+
+.support-card:hover {
+  box-shadow: 0 8px 28px rgba(10, 79, 255, 0.12);
+  transform: translateY(-3px);
+  border-color: var(--primary);
+}
+
+/* --- Thumbnail zone --- */
+.support-card__thumb {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Couleur de fond selon le type de fichier */
+.support-card__thumb.pdf  { background: #FEF2F2; }
+.support-card__thumb.docx { background: #EFF6FF; }
+.support-card__thumb.img  { background: #F0FDF4; }
+.support-card__thumb.unknown { background: #F8FAFC; }
+
+/* Icône SVG centrée */
+.support-card__file-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+/* Badge type (Épreuve / Correction / Enseignant) en haut à gauche */
+.support-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.support-card__badge.epreuve    { background: var(--primary-light); color: var(--primary); }
+.support-card__badge.correction { background: var(--green-light);   color: #15803D; }
+.support-card__badge.enseignant { background: var(--accent-light);  color: var(--accent); }
+
+/* --- Body --- */
+.support-card__body {
+  flex: 1;
+  padding: 14px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.support-card__level {
+  font-size: 11px;
+  color: var(--text-light);
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 100px;
+  align-self: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.support-card__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.support-card__resume {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Footer --- */
+.support-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.support-card__prix {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.support-card__prix-unit {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.65;
+}
+
+.support-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Bouton aperçu (ghost icon) */
+.support-card__preview-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Empty state dans la grid */
+.empty-state-grid {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.empty-state-grid .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+.empty-state-grid h3 { margin-bottom: 8px; color: var(--text-mid); }
