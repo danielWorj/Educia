@@ -1,9 +1,9 @@
 import { Type } from "@angular/core";
 import { create } from "domain";
 
-const api = "http://localhost:8080/edulearn/api" ; 
+//const api = "http://localhost:8080/edulearn/api" ; 
 //const api = "https://edulearn-backend-8coh.onrender.com/edulearn/api"  ;       
-//const api = "https://educiaback.onrender.com/edulearn/api"  ;       
+const api = "https://educiaback.onrender.com/edulearn/api"  ;       
 
 ''
 
