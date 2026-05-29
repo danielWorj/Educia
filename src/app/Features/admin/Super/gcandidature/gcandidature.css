@@ -1,0 +1,456 @@
+/* ============================================================
+   GCANDIDATURE — CSS du composant
+   Toutes les règles globales (btn, badge, modal, form, table,
+   breadcrumb, page-title-bar…) viennent de style.css.
+   Ce fichier n'ajoute que les classes propres à ce composant.
+   ============================================================ */
+
+
+/* ── 1. STATS MINI ──────────────────────────────────────────
+   Bande de 4 indicateurs chiffrés sous le title bar.
+   ---------------------------------------------------------- */
+.stats-mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-mini-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.stat-mini-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-mini-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stat-mini-val {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.stat-mini-label {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+
+/* ── 2. FILTERS BAR ─────────────────────────────────────────
+   Barre de filtres (select + recherche + reset).
+   ---------------------------------------------------------- */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Surcharge du form-select natif pour ce contexte pill */
+.filters-bar .form-select {
+  border-radius: 100px;
+  padding: 8px 40px 8px 18px;
+  font-size: 13px;
+  height: 36px;
+  background-color: var(--bg-soft);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  /* flèche SVG custom */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2394A3B8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  appearance: none;
+  width: auto;
+}
+.filters-bar .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10,79,255,0.1);
+  outline: none;
+}
+
+/* Barre de recherche dans la filters-bar */
+.filters-bar .filter-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 16px;
+  margin-left: auto;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 240px;
+}
+.filters-bar .filter-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10,79,255,0.1);
+  background: #fff;
+}
+.filters-bar .filter-search i {
+  color: var(--text-light);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.filters-bar .filter-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dark);
+  width: 100%;
+}
+.filters-bar .filter-search input::placeholder { color: var(--text-light); }
+
+
+/* ── 3. TABLE ADMIN CANDIDATURES ────────────────────────────
+   Enveloppe + styles spécifiques (les règles génériques
+   table/thead/tbody sont dans style.css).
+   ---------------------------------------------------------- */
+.table-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;         /* clip les coins arrondis */
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.admin-table thead tr {
+  background: var(--bg-soft);
+  border-bottom: 1.5px solid var(--border);
+}
+.admin-table thead th {
+  padding: 13px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-light);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.admin-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text-dark);
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr {
+  transition: background 0.15s;
+}
+.admin-table tbody tr:hover { background: var(--bg-soft); }
+
+/* Ligne sélectionnée */
+.admin-table tbody tr.row-selected {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+}
+.admin-table tbody tr.row-selected td:first-child {
+  padding-left: 13px; /* compense le border-left 3px */
+}
+
+/* Colonne numéro */
+.td-num {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  width: 40px;
+  text-align: center;
+}
+
+
+/* ── 4. CELL USER / CELL OFFRE ──────────────────────────────
+   Cellule avec avatar + nom + sous-titre (parent demandeur).
+   ---------------------------------------------------------- */
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cell-user-name {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.cell-user-sub {
+  font-size: 11.5px;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+/* Avatar initiales (carré arrondi) */
+.parent-avatar-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.cell-offre {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Tags matière / filière */
+.matiere-tag {
+  display: inline-flex;
+  align-items: center;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+
+/* ── 5. BADGES DE STATUT ────────────────────────────────────
+   Badges colorés — les classes .badge .badge-* viennent de
+   style.css. On ajoute seulement badge-active pour le
+   statut "actif" s'il devait apparaître.
+   ---------------------------------------------------------- */
+.badge-active {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Surcharge légère : badges dans la table un peu plus petits */
+.admin-table .badge {
+  font-size: 11.5px;
+  padding: 4px 10px;
+  gap: 4px;
+}
+
+
+/* ── 6. MODAL DÉTAIL — sections internes ────────────────────
+   .modal, .modal-header, .modal-body, .modal-footer,
+   .modal-title, .modal-subtitle, .modal-close, .modal-xl,
+   .modal-sm  →  tous dans style.css.
+   On ajoute : .modal-xl / .modal-sm (tailles), .modal-subtitle,
+   .detail-section, .detail-grid, .detail-item,
+   .detail-label, .detail-val.
+   ---------------------------------------------------------- */
+
+/* Tailles de modales */
+.modal-xl { max-width: 720px; }
+.modal-sm { max-width: 480px; }
+
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 3px;
+}
+
+/* Scroll si le contenu dépasse */
+.modal-body {
+  max-height: 65vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.modal-body::-webkit-scrollbar { width: 4px; }
+.modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* Section dans la modale */
+.detail-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.detail-section-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Grille 2 colonnes pour les champs */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detail-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+/* ── 7. NOTICE BAND — variante danger ───────────────────────
+   .notice-band de base est dans style.css.
+   On surcharge seulement la couleur dans le contexte modale.
+   ---------------------------------------------------------- */
+.modal-body .notice-band {
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--text-mid);
+  border-left-width: 4px;
+  border-left-style: solid;
+  border-radius: 0;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+
+/* ── 8. BOUTON AI / WHATSAPP ────────────────────────────────
+   Bouton IA (dégradé) utilisé dans les actions d'offres.
+   ---------------------------------------------------------- */
+.btn-ai {
+  background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(10,79,255,0.25);
+}
+.btn-ai:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+
+/* ── 9. EMPTY STATE ─────────────────────────────────────────
+   .empty-state est dans style.css, on précise l'icône ici.
+   ---------------------------------------------------------- */
+.empty-state i {
+  font-size: 2.8rem;
+  opacity: 0.2;
+  display: block;
+  margin-bottom: 12px;
+  color: var(--text-light);
+}
+.empty-state p {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+
+/* ── 10. RESPONSIVE ─────────────────────────────────────────
+   ---------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .stats-mini { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .stats-mini { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .filters-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .filters-bar .filter-search { margin-left: 0; min-width: 0; }
+  .filters-bar .filter-group  { width: 100%; }
+  .filters-bar .form-select   { width: 100%; }
+
+  .cell-user-name { max-width: 110px; }
+
+  .modal-xl,
+  .modal-sm { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .stats-mini { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-mini-val { font-size: 1.2rem; }
+  .stat-mini-card { padding: 14px; }
+
+  .admin-table { min-width: 560px; }
+
+  .modal-body { max-height: 75vh; }
+}

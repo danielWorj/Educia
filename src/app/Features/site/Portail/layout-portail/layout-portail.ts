@@ -1,6 +1,6 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Offre } from '../../../../Core/Model/Repetition/Offre';
 import { Candidature } from '../../../../Core/Model/Repetition/Candidature';
 import { RepetitionService } from '../../../../Core/Service/Repetition/repetition-service';
@@ -11,7 +11,7 @@ type Section = 'dashboard' | 'offres' | 'candidatures';
 
 @Component({
   selector: 'app-layout-portail',
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './layout-portail.html',
   styleUrl: './layout-portail.css',
 })

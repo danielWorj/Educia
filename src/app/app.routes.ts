@@ -47,10 +47,11 @@ export const routes: Routes = [
    {
     path : 'portail', 
     canActivate: [authGuard],
+    loadComponent: () => import('./Features/site/Portail/layout-portail/layout-portail').then(m => m.LayoutPortail) ,
     children:[
       {
           path: 'dasboard',
-          loadComponent: () => import('./Features/site/Portail/layout-portail/layout-portail').then(m => m.LayoutPortail) 
+          loadComponent: () => import('./Features/site/Portail/portail-parent/portail-parent').then(m => m.PortailParent) 
       },
     ]
    }, 
@@ -76,6 +77,10 @@ export const routes: Routes = [
           { 
           path: 'offres', 
           loadComponent: () => import('./Features/admin/Super/goffre/goffre').then(m => m.GOffre) 
+          },
+          { 
+          path: 'candidature', 
+          loadComponent: () => import('./Features/admin/Super/gcandidature/gcandidature').then(m => m.Gcandidature) 
           },
           { 
           path: 'revenus', 

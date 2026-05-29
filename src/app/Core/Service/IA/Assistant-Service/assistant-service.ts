@@ -38,6 +38,10 @@ export class AssistantService {
     return this.http.get<MatchingResult[]>(edulearnDashboard.IA.matchingForOffre+id);
   }
 
+  matchingSilencieuxForOffre(id:number):Observable<ResponseServer>{
+    return this.http.get<ResponseServer>(edulearnDashboard.IA.matchingForOffre+id);
+  }
+
   // Méthode pour sauvegarder le résultat du matching dans la base de données
   saveMatchingResult(request: any): Observable<ResponseServer> {
     return this.http.post<ResponseServer>(edulearnDashboard.IA.create,request);

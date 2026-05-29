@@ -46,6 +46,9 @@ export class UtilisateurService {
     return this.http.get<ResponseServer>(edulearnDashboard.Enseignant.changestatus+id);
   }
 
+  actuverLecompte(id:number):Observable<ResponseServer>{
+    return this.http.get<ResponseServer>(edulearnDashboard.Enseignant.activecompte+id);
+  }
   findEnseignantById(id: number): Observable<Enseignant> {
     return this.http.get<Enseignant>(`${edulearnDashboard.Enseignant.findById}${id}`);
   }

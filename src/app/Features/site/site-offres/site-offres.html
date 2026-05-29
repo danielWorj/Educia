@@ -149,6 +149,27 @@
 
         
 
+      <!-- SKELETON chargement offres -->
+      @if (isLoading()) {
+        <div class="offres-skeleton">
+          @for (sk of [1,2,3,4,5]; track sk) {
+            <div class="offre-card-skeleton">
+              <div class="skeleton offre-card-skeleton__avatar"></div>
+              <div class="offre-card-skeleton__body">
+                <div class="skeleton offre-card-skeleton__line offre-card-skeleton__line--lg"></div>
+                <div class="skeleton offre-card-skeleton__line offre-card-skeleton__line--md"></div>
+                <div class="skeleton offre-card-skeleton__line offre-card-skeleton__line--sm"></div>
+                <div class="offre-card-skeleton__tags">
+                  <div class="skeleton offre-card-skeleton__tag"></div>
+                  <div class="skeleton offre-card-skeleton__tag"></div>
+                  <div class="skeleton offre-card-skeleton__tag"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+
         <!-- LISTE -->
         <div class="offres-list">
           @for (od of listOffreConstruct(); track od.offre.id) {
@@ -218,6 +239,8 @@
             </div>
           }
         </div>
+
+      } <!-- end @else isLoading -->
 
         <!-- PAGINATION -->
         <div class="pagination">

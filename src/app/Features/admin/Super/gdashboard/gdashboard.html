@@ -1,272 +1,254 @@
+<div class="page-body">
 
+  <!-- ══════════════════════════════════════════════════════
+       TITLE BAR
+       ══════════════════════════════════════════════════════ -->
+  <div class="page-title-bar fade-up">
+    <div>
+      <h1>Tableau de bord</h1>
+      <div class="breadcrumb">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span><span>›</span>
+        <span>Vue d'ensemble</span>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" (click)="loadAll()">
+      <i class="fas fa-sync-alt"></i> Actualiser
+    </button>
+  </div>
 
-      <!-- TITLE -->
-      <div class="page-title-bar fade-up">
-        <div>
-          <h1>Tableau de bord</h1>
-          <div class="breadcrumb">
-            <i class="fas fa-home"></i>
-            <span>Accueil</span>
-            <span>›</span>
-            <span>Vue d'ensemble</span>
-          </div>
+  <!-- ══════════════════════════════════════════════════════
+       SPINNER — affiché pendant le chargement
+       ══════════════════════════════════════════════════════ -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p class="loading-text">Chargement du tableau de bord…</p>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════
+       CONTENU — visible uniquement quand isLoading() = false
+       Les canvas sont TOUJOURS dans le DOM (hors @if) pour
+       que Chart.js les trouve via document.getElementById().
+       On les cache avec la classe .db-hidden tant que les
+       données ne sont pas prêtes.
+       ══════════════════════════════════════════════════════ -->
+  <div [class.db-hidden]="isLoading()">
+
+    <!-- ════════════════════════════════════════════════════
+         BLOC 1 — 4 STAT-CARDS
+         ════════════════════════════════════════════════════ -->
+    <div class="stats-mini fade-up">
+
+      <div class="stat-mini-card fade-up-1">
+        <div class="stat-mini-icon" style="background:#EEF3FF;color:var(--primary);">
+          <i class="fas fa-chalkboard-teacher"></i>
         </div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Exporter</button>
-          <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nouvel utilisateur</button>
+        <div class="stat-mini-content">
+          <div class="stat-mini-val" style="color:var(--primary);">{{ totalEnseignants() }}</div>
+          <div class="stat-mini-label">Enseignants</div>
         </div>
       </div>
 
-      <!-- STAT CARDS -->
-      <div class="stats-grid">
-        <div class="stat-card fade-up fade-up-1" style="--stat-color:#0A4FFF;--stat-bg:#EEF3FF;">
-          <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-          <div>
-            <div class="stat-value" data-target="142" data-suffix="">0</div>
-            <div class="stat-label">Enseignants actifs</div>
-            <span class="stat-change up"><i class="fas fa-arrow-up"></i> +12 ce mois</span>
-          </div>
+      <div class="stat-mini-card fade-up-2">
+        <div class="stat-mini-icon" style="background:var(--yellow-light);color:#92400E;">
+          <i class="fas fa-clipboard-list"></i>
         </div>
-        <div class="stat-card fade-up fade-up-2" style="--stat-color:#22C55E;--stat-bg:#DCFCE7;">
-          <div class="stat-icon"><i class="fas fa-users"></i></div>
-          <div>
-            <div class="stat-value" data-target="847" data-suffix="">0</div>
-            <div class="stat-label">Parents / Étudiants</div>
-            <span class="stat-change up"><i class="fas fa-arrow-up"></i> +38 ce mois</span>
-          </div>
-        </div>
-        <div class="stat-card fade-up fade-up-3" style="--stat-color:#FF6B35;--stat-bg:#FFF0EA;">
-          <div class="stat-icon"><i class="fas fa-book-open"></i></div>
-          <div>
-            <div class="stat-value" data-target="316" data-suffix="">0</div>
-            <div class="stat-label">Supports pédagogiques</div>
-            <span class="stat-change up"><i class="fas fa-arrow-up"></i> +24 ce mois</span>
-          </div>
-        </div>
-        <div class="stat-card fade-up fade-up-4" style="--stat-color:#F59E0B;--stat-bg:#FEF3C7;">
-          <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
-          <div>
-            <div class="stat-value" data-target="59" data-suffix="">0</div>
-            <div class="stat-label">Offres en cours</div>
-            <span class="stat-change down"><i class="fas fa-arrow-down"></i> -3 ce mois</span>
-          </div>
+        <div class="stat-mini-content">
+          <div class="stat-mini-val" style="color:#92400E;">{{ totalOffres() }}</div>
+          <div class="stat-mini-label">Offres de cours</div>
         </div>
       </div>
 
-      <!-- CHARTS ROW -->
-      <div class="dashboard-grid three" style="margin-bottom:20px;">
-        <!-- Bar Chart -->
-        <div class="card fade-up">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Inscriptions mensuelles</div>
-              <div style="font-size:12px;color:var(--text-light);margin-top:2px;">Enseignants & Parents - 2025</div>
-            </div>
-            <select class="form-select" style="width:auto;padding:6px 12px;font-size:13px;">
-              <option>2025</option>
-              <option>2024</option>
-            </select>
-          </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="45"><span style="display:none">45</span></div><span class="chart-label">Jan</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="60"><span style="display:none">60</span></div><span class="chart-label">Fév</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar active" data-height="80"><span style="display:none">80</span></div><span class="chart-label">Mar</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="55"><span style="display:none">55</span></div><span class="chart-label">Avr</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar active" data-height="90"><span style="display:none">90</span></div><span class="chart-label">Mai</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="70"><span style="display:none">70</span></div><span class="chart-label">Jun</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="65"><span style="display:none">65</span></div><span class="chart-label">Jul</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar active" data-height="85"><span style="display:none">85</span></div><span class="chart-label">Aoû</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="75"><span style="display:none">75</span></div><span class="chart-label">Sep</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="50"><span style="display:none">50</span></div><span class="chart-label">Oct</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="40"><span style="display:none">40</span></div><span class="chart-label">Nov</span></div>
-              <div class="chart-bar-wrap"><div class="chart-bar" data-height="30"><span style="display:none">30</span></div><span class="chart-label">Déc</span></div>
-            </div>
-            <div style="display:flex;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-              <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-light);">
-                <span style="width:12px;height:12px;border-radius:3px;background:var(--primary);display:inline-block;"></span> Enseignants
-              </span>
-              <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-light);">
-                <span style="width:12px;height:12px;border-radius:3px;background:var(--primary-light);display:inline-block;"></span> Parents
-              </span>
-            </div>
-          </div>
+      <div class="stat-mini-card fade-up-3">
+        <div class="stat-mini-icon" style="background:#FFF0EA;color:var(--accent);">
+          <i class="fas fa-book-open"></i>
         </div>
-
-        <!-- Quick Stats -->
-        <div class="card fade-up">
-          <div class="card-header">
-            <div class="card-title">Indicateurs clés</div>
-            <a href="#" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none;">Voir tout →</a>
-          </div>
-          <div class="card-body" style="padding-top:8px;padding-bottom:8px;">
-            <ul class="quick-stat-list">
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-user-check"></i> En attente d'approbation</span>
-                <span class="quick-stat-value" style="color:var(--yellow);">5</span>
-              </li>
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-star"></i> Avis soumis</span>
-                <span class="quick-stat-value">28</span>
-              </li>
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-credit-card"></i> Revenus du mois</span>
-                <span class="quick-stat-value" style="color:var(--green);">384 000 FCFA</span>
-              </li>
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-book"></i> Cours réservés</span>
-                <span class="quick-stat-value">112</span>
-              </li>
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-exclamation-triangle"></i> Litiges ouverts</span>
-                <span class="quick-stat-value" style="color:var(--red);">2</span>
-              </li>
-              <li class="quick-stat-item">
-                <span class="quick-stat-label"><i class="fas fa-file-upload"></i> Docs à vérifier</span>
-                <span class="quick-stat-value" style="color:var(--accent);">9</span>
-              </li>
-            </ul>
-          </div>
+        <div class="stat-mini-content">
+          <div class="stat-mini-val" style="color:var(--accent);">{{ totalSupports() }}</div>
+          <div class="stat-mini-label">Supports pédagogiques</div>
         </div>
       </div>
 
-      <!-- TABLES ROW -->
-      <div class="dashboard-grid">
-        <!-- Recent teachers -->
-        <div class="card fade-up">
-          <div class="card-header">
+      <div class="stat-mini-card fade-up-4">
+        <div class="stat-mini-icon" style="background:var(--green-light);color:#15803D;">
+          <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="stat-mini-content">
+          <div class="stat-mini-val" style="color:#15803D;">{{ tauxAcceptation() }}%</div>
+          <div class="stat-mini-label">Taux d'acceptation</div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════
+         BLOC 2 — GRAPHES 2 × 2
+         Les <canvas> ont un id fixe → document.getElementById
+         ════════════════════════════════════════════════════ -->
+    <div class="db-charts-row fade-up">
+
+   
+
+      <!-- Bar horizontal supports -->
+      <div class="card db-chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Supports pédagogiques</div>
+            <div class="db-card-sub">Actifs · Gratuits · Payants</div>
+          </div>
+          <span class="badge badge-orange">{{ totalSupports() }} fichiers</span>
+        </div>
+        <div class="card-body db-chart-body">
+          <canvas id="canvasSupports"></canvas>
+        </div>
+      </div>
+
+      <!-- Bar vertical offres par filière -->
+      <div class="card db-chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Offres par filière</div>
+            <div class="db-card-sub">Distribution des {{ totalOffres() }} offres</div>
+          </div>
+        </div>
+        <div class="card-body db-chart-body">
+          <canvas id="canvasOffres"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /db-charts-row -->
+
+
+    <!-- ════════════════════════════════════════════════════
+         BLOC 3 — TABLES : offres + enseignants récents
+         ════════════════════════════════════════════════════ -->
+    <div class="db-tables-row fade-up">
+
+      <!-- Offres récentes -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Offres récentes</div>
+            <div class="db-card-sub">{{ totalOffres() }} offre(s) au total</div>
+          </div>
+          <span class="badge badge-blue">
+            <i class="fas fa-clipboard-list"></i> Actives
+          </span>
+        </div>
+        <div class="card-body db-table-body">
+          
+              @for (item of recentOffres().slice(-3); track item.offre.id) {
+                 <div class="offre-card">
+                    <div class="offre-card-top">
+                      <div>
+                        <div class="offre-title">
+                          {{ item.offre.filiere?.intitule }} — {{ item.offre.niveau?.intitule }}
+                        </div>
+                      </div>
+                      <span class="offre-status-badge badge-active">
+                        {{ item.offre.filiere?.intitule }}
+                      </span>
+                    </div>
+
+                    <div class="offre-card-body">
+                      <p class="offre-desc">{{ item.offre.bio }}</p>
+
+                      <div class="offre-matieres">
+                        @for (m of item.matieres; track m.id) {
+                          <span class="matiere-tag">
+                            <i class="fas fa-book" style="margin-right:4px;"></i>
+                            {{ m.matiere?.intitule }}
+                          </span>
+                        }
+                      </div>
+
+                      <div class="offre-meta">
+                        <span class="offre-meta-item cand">
+                          <i class="fas fa-users"></i> {{ item.candidature }} candidatures
+                        </span>
+                        <span class="offre-meta-item nivel">
+                          <i class="fas fa-graduation-cap" style="color:var(--purple);"></i>
+                          {{ item.offre.niveau?.intitule }}
+                        </span>
+                        <span class="offre-meta-item loc">
+                          <i class="fas fa-map-marker-alt"></i>
+                          {{ item.offre.parent?.localisation }}
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+              }
+              @if (recentOffres().length === 0) {
+                <tr><td colspan="4">
+                  <div class="db-empty">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>Aucune offre disponible.</p>
+                  </div>
+                </td></tr>
+              }
+            
+        </div>
+      </div>
+
+      <!-- Enseignants récents -->
+      <div class="card">
+        <div class="card-header">
+          <div>
             <div class="card-title">Enseignants récents</div>
-            <a href="gestion-profils/enseignants.html" class="btn btn-outline btn-sm">Voir tous</a>
+            <div class="db-card-sub">{{ totalEnseignants() }} enseignant(s) au total</div>
           </div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Enseignant</th>
-                  <th>Matière</th>
-                  <th>Statut</th>
-                  <th>Inscription</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><div class="user-cell"><div class="user-avatar-sm">KN</div><div><div class="user-name">Kengne Nathalie</div><div class="user-email">k.nathalie@email.com</div></div></div></td>
-                  <td>Mathématiques</td>
-                  <td><span class="badge badge-yellow">En attente</span></td>
-                  <td>08 avr. 2025</td>
-                  <td><div class="action-group"><button class="btn btn-success btn-sm" data-approve>Approuver</button><button class="btn btn-danger btn-sm" data-reject>Rejeter</button></div></td>
-                </tr>
-                <tr>
-                  <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#22C55E,#0A4FFF);">EM</div><div><div class="user-name">Essama Marc</div><div class="user-email">essama.marc@email.com</div></div></div></td>
-                  <td>Physique-Chimie</td>
-                  <td><span class="badge badge-green">Approuvé</span></td>
-                  <td>05 avr. 2025</td>
-                  <td><div class="action-group"><a href="gestion-profils/enseignants.html" class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i></a><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button></div></td>
-                </tr>
-                <tr>
-                  <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#FF6B35,#F59E0B);">BA</div><div><div class="user-name">Biya Arouna</div><div class="user-email">biya.a@email.com</div></div></div></td>
-                  <td>Français</td>
-                  <td><span class="badge badge-yellow">En attente</span></td>
-                  <td>03 avr. 2025</td>
-                  <td><div class="action-group"><button class="btn btn-success btn-sm" data-approve>Approuver</button><button class="btn btn-danger btn-sm" data-reject>Rejeter</button></div></td>
-                </tr>
-                <tr>
-                  <td><div class="user-cell"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#A855F7,#0A4FFF);">LF</div><div><div class="user-name">Lobe Francine</div><div class="user-email">lobe.f@email.com</div></div></div></td>
-                  <td>Informatique</td>
-                  <td><span class="badge badge-green">Approuvé</span></td>
-                  <td>01 avr. 2025</td>
-                  <td><div class="action-group"><a href="gestion-profils/enseignants.html" class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i></a><button class="btn btn-danger btn-sm btn-icon" data-confirm-delete="Supprimer cet enseignant ?"><i class="fas fa-trash"></i></button></div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          @if (enseignantsAttente() > 0) {
+            <span class="badge badge-yellow">
+              <i class="fas fa-clock"></i> {{ enseignantsAttente() }} en attente
+            </span>
+          }
         </div>
-
-        <!-- Activity Feed -->
-        <div class="card fade-up">
-          <div class="card-header">
-            <div class="card-title">Activité récente</div>
-            <span class="badge badge-blue">Temps réel</span>
-          </div>
-          <div class="card-body" style="padding-top:8px;padding-bottom:8px;">
-            <ul class="activity-list">
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--green-light);color:#15803D;"><i class="fas fa-user-check"></i></div>
-                <div>
-                  <div class="activity-text"><strong>Essama Marc</strong> a été approuvé comme enseignant.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 15 min</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--primary-light);color:var(--primary);"><i class="fas fa-book"></i></div>
-                <div>
-                  <div class="activity-text"><strong>Nguemo Patricia</strong> a publié un nouveau support : <em>Cours d'Algèbre – Terminale</em>.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 42 min</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--accent-light);color:var(--accent);"><i class="fas fa-clipboard-list"></i></div>
-                <div>
-                  <div class="activity-text"><strong>Parent: Fanta Koné</strong> a posté une offre de cours de soutien en Maths pour son fils.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 1h</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--yellow-light);color:#92400E;"><i class="fas fa-star"></i></div>
-                <div>
-                  <div class="activity-text"><strong>Diallo Fatou</strong> a laissé un avis 5★ pour <em>Kengne Joseph</em>.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 2h</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--red-light);color:var(--red);"><i class="fas fa-exclamation-triangle"></i></div>
-                <div>
-                  <div class="activity-text">Un nouveau <strong>litige</strong> a été signalé par <strong>Mama Cissé</strong>.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 3h</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-icon" style="background:var(--green-light);color:#15803D;"><i class="fas fa-credit-card"></i></div>
-                <div>
-                  <div class="activity-text">Paiement de <strong>15 000 FCFA</strong> confirmé pour une réservation de cours.</div>
-                  <div class="activity-time"><i class="fas fa-clock"></i> Il y a 4h</div>
-                </div>
-              </li>
-            </ul>
-          </div>
+        <div class="card-body db-table-body">
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Enseignant</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of recentEnseignants().slice(-3); track e.id; let i = $index) {
+                <tr>
+                  <td>
+                    <div class="db-user-cell">
+                      <div>
+                        <div class="db-cell-title">{{ e.nomComplet }}</div>
+                        <div class="db-cell-sub">{{ e.specialite ?? '—' }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td>
+                    <span class="badge {{ getStatutBadgeClass(e.statusEnseignant?.intitule ?? '') }} db-badge-sm">
+                      {{ getStatutLabel(e.statusEnseignant?.intitule ?? '') }}
+                    </span>
+                  </td>
+                </tr>
+              }
+              @if (recentEnseignants().length === 0) {
+                <tr><td colspan="4">
+                  <div class="db-empty">
+                    <i class="fas fa-user-slash"></i>
+                    <p>Aucun enseignant enregistré.</p>
+                  </div>
+                </td></tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <!-- QUICK ACCESS FOOTER -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px;" class="fade-up">
-        <a href="gestion-profils/enseignants.html" style="text-decoration:none;">
-          <div class="card" style="padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
-            <div style="font-size:1.6rem;margin-bottom:8px;">👩‍🏫</div>
-            <div style="font-weight:700;font-size:13px;font-family:var(--font-display);">Enseignants</div>
-            <div style="font-size:11px;color:var(--text-light);margin-top:2px;">142 profils</div>
-          </div>
-        </a>
-        <a href="gestion-profils/parents.html" style="text-decoration:none;">
-          <div class="card" style="padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
-            <div style="font-size:1.6rem;margin-bottom:8px;">👨‍👩‍👦</div>
-            <div style="font-weight:700;font-size:13px;font-family:var(--font-display);">Parents</div>
-            <div style="font-size:11px;color:var(--text-light);margin-top:2px;">847 comptes</div>
-          </div>
-        </a>
-        <a href="supports/supports.html" style="text-decoration:none;">
-          <div class="card" style="padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
-            <div style="font-size:1.6rem;margin-bottom:8px;">📚</div>
-            <div style="font-weight:700;font-size:13px;font-family:var(--font-display);">Supports</div>
-            <div style="font-size:11px;color:var(--text-light);margin-top:2px;">316 fichiers</div>
-          </div>
-        </a>
-        <a href="offres/offres.html" style="text-decoration:none;">
-          <div class="card" style="padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
-            <div style="font-size:1.6rem;margin-bottom:8px;">📋</div>
-            <div style="font-weight:700;font-size:13px;font-family:var(--font-display);">Offres</div>
-            <div style="font-size:11px;color:var(--text-light);margin-top:2px;">59 actives</div>
-          </div>
-        </a>
-      </div>
+    </div><!-- /db-tables-row -->
 
+  </div><!-- /db-hidden wrapper -->
+
+</div><!-- /page-body -->

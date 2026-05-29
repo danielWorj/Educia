@@ -65,6 +65,7 @@ export class SiteOffres {
 
   // ─── Données brutes ───────────────────────────────────────────────────────
   private readonly toutesLesOffres = signal<OffreDescript[]>([]);
+  isLoading = signal<boolean>(false);
 
   // Référentiels
   listMatiere      = signal<Matiere[]>([]);
@@ -151,9 +152,10 @@ export class SiteOffres {
   }
 
   async constructOffre(): Promise<void> {
+    this.isLoading.set(true);
     try {
       const listOffre = await this.repetitionService.findAllOffre().toPromise();
-      if (!listOffre) return;
+      if (!listOffre) { this.isLoading.set(false); return; }
 
       const resultats: OffreDescript[] = [];
       for (const o of listOffre) {
@@ -169,6 +171,8 @@ export class SiteOffres {
       this.listLocalisation.set(locs);
     } catch (err) {
       console.error('Erreur chargement offres :', err);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 

@@ -1,9 +1,9 @@
 import { Type } from "@angular/core";
 import { create } from "domain";
 
-//const api = "http://localhost:8080/edulearn/api" ; 
+const api = "http://localhost:8080/edulearn/api" ; 
 //const api = "https://edulearn-backend-8coh.onrender.com/edulearn/api"  ;       
-const api = "https://educiaback.onrender.com/edulearn/api"  ;       
+//const api = "https://educiaback.onrender.com/edulearn/api"  ;       
 
 ''
 
@@ -36,7 +36,8 @@ export const edulearnDashboard = {
         create : `${userapi}/enseignant/create`,
         delete : `${userapi}/enseignant/delete/`,
         findById : `${userapi}/enseignant/findById/`,
-        changestatus : `${userapi}/change/status/`,
+        changestatus : `${userapi}/enseignant/status/`,
+        activecompte : `${userapi}/change/status/`,
     }, 
 
     Eleve :{
@@ -56,6 +57,7 @@ export const edulearnDashboard = {
             allByEnseignant : `${repetitionapi}/candidature/allbyenseignant/`,
             create : `${repetitionapi}/candidature/create`,
             update : `${repetitionapi}/candidature/update`,
+            updatestatut : `${repetitionapi}/candidature/updatestatut`,
             delete : `${repetitionapi}/candidature/delete/`,
             
         }, 
@@ -216,6 +218,7 @@ export const edulearnDashboard = {
     IA :{
         assistant : `${aiapi}/assistant`, 
         matchingForOffre : `${aiapi}/matching/offre-multienseignant/`,
+        matchingForOffreForSend : `${aiapi}/matching/offre-multienseignant/send/`,
         create : `${aiapi}/matching/db/create`, 
         allbyoffre : `${aiapi}/matching/db/findbyoffre/`, 
         allByEnseignant : `${aiapi}/matching/db/findbyenseignant/`

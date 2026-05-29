@@ -279,14 +279,19 @@
         <!-- ═══ RÉSULTATS MATCHING ═══ -->
         @if (!isMatchingLoading() && matchingSaveState() === 'idle') {
           <div class="matching-list">
-            @for (result of matchingResults(); track result.enseignant.id) {
-              <div class="teacher-match-card">
-                <div class="teacher-match-info">
-                  <!-- FIX : fallback sur nom_complet (snake_case) si camelCase absent -->
+            @for (result of matchingResults(); track result.enseignant.id; let i = $index) {
+              <div class="teacher-match-card" [class.teacher-match-card--expanded]="expandedCard() === result.enseignant.id">
 
-                  <div>
-                    <div class="t-meta">
-                      M/Mme. {{ result.enseignant.nomComplet}}
+                <!-- ── En-tête de la carte ── -->
+                <div class="teacher-match-header">
+                  <!-- Médaille de classement -->
+                  <div class="teacher-rank-badge" [ngClass]="getRankClass(i)">
+                    {{ i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉' }}
+                  </div>
+
+                  <div class="teacher-match-info">
+                    <div class="teacher-match-name">
+                      M/Mme. {{ result.enseignant.nomComplet }}
                     </div>
                     <div class="t-meta">
                       <span class="t-meta-item">
@@ -298,15 +303,79 @@
                         {{ result.enseignant.telephone || '—' }}
                       </span>
                     </div>
+
+                    <!-- Verdict système (interprétation) -->
+                    @if (result.interpretation) {
+                      <div class="match-interpretation">
+                        {{ result.interpretation }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Score + actions -->
+                  <div class="teacher-match-score">
+                    <div class="score-ring {{ getScoreClass(result.score) }}">{{ result.score }}%</div>
+                    <div class="score-label">Match</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:8px;padding:6px 12px;font-size:11px;"
+                      (click)="ouvrirWhatsApp(result.enseignant.telephone)">
+                      <i class="fas fa-paper-plane"></i> Contacter
+                    </button>
+                    <!-- Bouton toggle avis IA -->
+                    @if (result.avisIA) {
+                      <button class="btn-toggle-avis" (click)="toggleCard(result.enseignant.id)"
+                        [title]="expandedCard() === result.enseignant.id ? 'Masquer l\'avis IA' : 'Voir l\'avis IA'">
+                        <i class="fas" [ngClass]="expandedCard() === result.enseignant.id ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        <span>Avis IA</span>
+                      </button>
+                    }
                   </div>
                 </div>
-                <div class="teacher-match-score">
-                  <div class="score-val ">{{ result.score }}%</div>
-                  <div class="score-label">Match</div>
-                  <button class="btn btn-primary text-white btn-sm" style="margin-top:8px;padding:6px 12px;font-size:11px;" (click)="ouvrirWhatsApp(result.enseignant.telephone)">
-                    <i class="fas fa-paper-plane"></i> Contacter
-                  </button>
-                </div>
+
+                <!-- ── Avis IA dépliable ── -->
+                @if (result.avisIA && expandedCard() === result.enseignant.id) {
+                  <div class="avis-ia-panel">
+
+                    <div class="avis-ia-header">
+                      <span class="avis-ia-badge"><i class="fas fa-robot"></i> Analyse IA — Groq / LLaMA</span>
+                    </div>
+
+                    <div class="avis-ia-grid">
+
+                      <!-- Points forts -->
+                      <div class="avis-ia-block avis-ia-block--forts">
+                        <div class="avis-ia-block-title">
+                          <i class="fas fa-check-circle"></i> Points forts
+                        </div>
+                        <p class="avis-ia-block-text">{{ result.avisIA.points_forts }}</p>
+                      </div>
+
+                      <!-- Points faibles -->
+                      <div class="avis-ia-block avis-ia-block--faibles">
+                        <div class="avis-ia-block-title">
+                          <i class="fas fa-exclamation-triangle"></i> Points faibles
+                        </div>
+                        <p class="avis-ia-block-text">{{ result.avisIA.points_faibles }}</p>
+                      </div>
+
+                    </div>
+
+                    <!-- Recommandation -->
+                    <div class="avis-ia-block avis-ia-block--reco">
+                      <div class="avis-ia-block-title">
+                        <i class="fas fa-lightbulb"></i> Recommandation
+                      </div>
+                      <p class="avis-ia-block-text">{{ result.avisIA.recommandation }}</p>
+                    </div>
+
+                    <!-- Verdict final -->
+                    <div class="avis-ia-verdict">
+                      <i class="fas fa-star"></i>
+                      <span>{{ result.avisIA.verdict_final }}</span>
+                    </div>
+
+                  </div>
+                }
+
               </div>
             }
 

@@ -94,6 +94,27 @@
       </select>
     </div>
 
+    <!-- SKELETON chargement -->
+    @if (isLoading()) {
+      <div class="support-grid-skeleton">
+        @for (sk of [1,2,3,4,5,6,7,8]; track sk) {
+          <div class="support-card-skeleton">
+            <div class="skeleton support-card-skeleton__thumb"></div>
+            <div class="support-card-skeleton__body">
+              <div class="skeleton support-card-skeleton__line support-card-skeleton__line--sm"></div>
+              <div class="skeleton support-card-skeleton__line support-card-skeleton__line--title"></div>
+              <div class="skeleton support-card-skeleton__line"></div>
+              <div class="skeleton support-card-skeleton__line support-card-skeleton__line--xs"></div>
+            </div>
+            <div class="support-card-skeleton__footer">
+              <div class="skeleton support-card-skeleton__price"></div>
+              <div class="skeleton support-card-skeleton__btn"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+
     <div class="support-grid">
       @for (s of listSupport(); track s.id) {
 
@@ -183,6 +204,7 @@
         </div>
       }
     </div>
+    } <!-- end @else isLoading -->
 
   </div>
 </section>

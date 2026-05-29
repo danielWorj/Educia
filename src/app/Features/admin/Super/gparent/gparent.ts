@@ -5,6 +5,7 @@ import { GeneralService } from '../../../../Core/Service/General/general-service
 import { UtilisateurService } from '../../../../Core/Service/Utlisateur/utilisateur-service';
 import { Parent } from '../../../../Core/Model/Utilisateur/Parents';
 import { ResponseServer } from '../../../../Core/Model/Server/ResponseServer';
+import { AssistantService } from '../../../../Core/Service/IA/Assistant-Service/assistant-service';
 
 @Component({
   selector: 'app-gparent',
@@ -29,7 +30,8 @@ export class GParent {
   constructor(
     private fb: FormBuilder,
     private generalService: GeneralService,
-    private utilisateurService: UtilisateurService
+    private utilisateurService: UtilisateurService,
+    private iaService : AssistantService, 
   ) {
     this.ParentForm = this.fb.group({
       id:           new FormControl(null),
@@ -177,14 +179,29 @@ export class GParent {
 
   // ── CRUD ─────────────────────────────────────────────────────────────────────
   changeStatus(id: number): void {
-    this.utilisateurService.changeStatus(id).subscribe({
+    this.utilisateurService.actuverLecompte(id).subscribe({
       next: (response: ResponseServer) => {
-        if (response.status) { console.log(response.message); this.getAllParents(); }
+        if (response.status) { 
+          console.log(response.message); 
+          this.getAllParents(); 
+
+
+        }
       },
       error: (err: any) => console.error('Erreur changement statut :', err),
     });
   }
 
+  lancerLeMatchingOffreDuParent(id:number){
+    this.iaService.matchingSilencieuxForOffre(id).subscribe({
+      next:(data : ResponseServer)=>{
+        console.log('Matching envoye au parent'); 
+      }, 
+      error:()=>{
+        console.log('Echec de lancement du matching : failed'); 
+      }
+    })
+  }
   deleteParent(id: number): void {
     this.utilisateurService.deleteParent(id).subscribe({
       next: (response: ResponseServer) => {

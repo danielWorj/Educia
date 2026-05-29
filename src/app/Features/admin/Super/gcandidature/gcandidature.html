@@ -1,1 +1,431 @@
-<p>gcandidature works!</p>
+<div class="page-body">
+
+  <!-- TITLE BAR -->
+  <div class="page-title-bar fade-up">
+    <div>
+      <h1>Candidatures</h1>
+      <div class="breadcrumb">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span><span>›</span>
+        <span>Gestion</span><span>›</span>
+        <span>Candidatures</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost btn-sm">
+        <i class="fas fa-download"></i> Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS MINI -->
+  <div class="stats-mini">
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background:#EEF3FF;color:var(--primary);">
+        <i class="fas fa-paper-plane"></i>
+      </div>
+      <div>
+        <div class="stat-mini-val" style="color:var(--primary);">
+          {{ listCandidatureSaved().length }}
+        </div>
+        <div class="stat-mini-label">Total candidatures</div>
+      </div>
+    </div>
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background:var(--green-light);color:#15803D;">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div>
+        <div class="stat-mini-val" style="color:#15803D;">
+          {{ countByStatut('ACCEPTEE') }}
+        </div>
+        <div class="stat-mini-label">Acceptées</div>
+      </div>
+    </div>
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background:var(--yellow-light);color:#92400E;">
+        <i class="fas fa-hourglass-half"></i>
+      </div>
+      <div>
+        <div class="stat-mini-val" style="color:#92400E;">
+          {{ countByStatut('EN_ATTENTE') }}
+        </div>
+        <div class="stat-mini-label">En attente</div>
+      </div>
+    </div>
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background:var(--red-light);color:var(--red);">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <div>
+        <div class="stat-mini-val" style="color:var(--red);">
+          {{ countByStatut('REFUSEE') }}
+        </div>
+        <div class="stat-mini-label">Refusées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar fade-up">
+    <div class="filter-group">
+      <select
+        class="form-select"
+        style="border-radius:100px;padding:8px 20px;font-size:13px;width:auto;"
+        (change)="onFilterByOffre($event)">
+        <option value="">Toutes les offres</option>
+        @for (offre of listOffres(); track offre.id) {
+          <option [value]="offre.id">
+            {{ offre.filiere?.intitule }} — {{ offre.niveau?.intitule }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="filter-search">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        placeholder="Rechercher par filière, niveau, statut…"
+        (input)="onSearch($event)" />
+    </div>
+    @if (activeFilter()) {
+      <button class="btn btn-ghost btn-sm" (click)="refreshList()">
+        <i class="fas fa-times"></i> Réinitialiser
+      </button>
+    }
+  </div>
+
+  <!-- SPINNER -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p class="loading-text">Chargement des candidatures…</p>
+    </div>
+  }
+
+  <!-- TABLE -->
+  @if (!isLoading()) {
+    <div class="table-wrapper fade-up">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Offre</th>
+            <th>Filière / Niveau</th>
+            <th>Budget</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of listCandidature(); track c.id; let i = $index) {
+            <tr [class.row-selected]="selectCandidature()?.id === c.id">
+
+              <!-- # -->
+              <td class="td-num">{{ i + 1 }}</td>
+
+              <!-- Offre (parent demandeur) -->
+              <td>
+                <div class="cell-user">
+                  <div class="parent-avatar-sm"
+                    style="background:linear-gradient(135deg,#0A4FFF,#6366F1);flex-shrink:0;">
+                    {{ getInitiales(c.offre.parent?.nomComplet ?? '') }}
+                  </div>
+                  <div>
+                    <div class="cell-user-name">{{ c.offre.parent?.nomComplet ?? '—' }}</div>
+                    <div class="cell-user-sub">
+                      <i class="fas fa-map-marker-alt"
+                        style="font-size:11px;color:var(--text-light);"></i>
+                      {{ c.offre.parent?.localisation ?? '—' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Filière / Niveau -->
+              <td>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <span class="badge badge-blue">
+                    <i class="fas fa-graduation-cap"></i>
+                    {{ c.offre.niveau?.intitule ?? '—' }}
+                  </span>
+                  <span class="matiere-tag" style="width:fit-content;">
+                    <i class="fas fa-layer-group" style="margin-right:4px;"></i>
+                    {{ c.offre.filiere?.intitule ?? '—' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Budget -->
+              <td>
+                <span style="font-size:13px;font-weight:600;color:var(--text-dark);">
+                  {{ c.offre.budget ?? '—' }}
+                  <span style="font-size:11px;color:var(--text-light);font-weight:400;">XAF</span>
+                </span>
+                <div style="font-size:11px;color:var(--text-light);">
+                  {{ c.offre.frequence }}x/sem · {{ c.offre.duree }}
+                </div>
+              </td>
+
+              <!-- Date -->
+              <td>
+                <span style="font-size:13px;color:var(--text-mid);">
+                  <i class="fas fa-calendar"
+                    style="color:var(--text-light);margin-right:4px;"></i>
+                  {{ c.date | date:'dd MMM yyyy' }}
+                </span>
+              </td>
+
+              <!-- Statut -->
+              <td>
+                @if (c.statut.intitule === 'ACCEPTEE') {
+                  <span class="badge badge-green">
+                    <i class="fas fa-check-circle"></i> Acceptée
+                  </span>
+                }
+                @if (c.statut.intitule === 'EN_ATTENTE') {
+                  <span class="badge badge-yellow">
+                    <i class="fas fa-hourglass-half"></i> En attente
+                  </span>
+                }
+                @if (c.statut.intitule === 'REFUSEE') {
+                  <span class="badge badge-red">
+                    <i class="fas fa-times-circle"></i> Refusée
+                  </span>
+                }
+              </td>
+
+              <!-- Actions -->
+              <td>
+                <div class="action-group" style="justify-content:flex-end;">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="Voir"
+                    (click)="viewCandidature(c)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-danger btn-sm btn-icon" title="Supprimer"
+                    (click)="confirmDelete(c)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          }
+
+          @if (listCandidature().length === 0) {
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <i class="fas fa-search"></i>
+                  <p>Aucune candidature trouvée pour ce filtre.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+
+<!-- ============================================================
+     MODAL 1 : VOIR LA CANDIDATURE
+     ============================================================ -->
+@if (isViewModalOpen()) {
+  <div class="modal-overlay open" (click)="closeModal('view')">
+    <div class="modal modal-xl" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Détail de la candidature</div>
+          <div class="modal-subtitle">Informations complètes sur cette demande</div>
+        </div>
+        <button class="modal-close" (click)="closeModal('view')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      @if (selectCandidature(); as c) {
+        <div class="modal-body">
+
+          <!-- Statut pill centré en haut -->
+          <div style="display:flex;justify-content:center;margin-bottom:24px;">
+            @if (c.statut.intitule === 'ACCEPTEE') {
+              <span class="badge badge-green" style="font-size:14px;padding:8px 20px;">
+                <i class="fas fa-check-circle"></i> Acceptée
+              </span>
+            }
+            @if (c.statut.intitule === 'EN_ATTENTE') {
+              <span class="badge badge-yellow" style="font-size:14px;padding:8px 20px;">
+                <i class="fas fa-hourglass-half"></i> En attente
+              </span>
+            }
+            @if (c.statut.intitule === 'REFUSEE') {
+              <span class="badge badge-red" style="font-size:14px;padding:8px 20px;">
+                <i class="fas fa-times-circle"></i> Refusée
+              </span>
+            }
+          </div>
+
+          <!-- Bloc offre -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <i class="fas fa-clipboard-list" style="color:var(--accent);"></i> Offre associée
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Filière</span>
+                <span class="detail-val">{{ c.offre.filiere?.intitule ?? '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Niveau</span>
+                <span class="detail-val">{{ c.offre.niveau?.intitule ?? '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Budget mensuel</span>
+                <span class="detail-val">
+                  {{ c.offre.budget ?? '—' }}
+                  <span style="font-size:12px;color:var(--text-light);"> XAF</span>
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Fréquence / Durée</span>
+                <span class="detail-val">
+                  {{ c.offre.frequence }} séance(s)/sem · {{ c.offre.duree }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Localisation</span>
+                <span class="detail-val">
+                  <i class="fas fa-map-marker-alt"
+                    style="color:var(--accent);margin-right:4px;"></i>
+                  {{ c.offre.parent?.localisation ?? '—' }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Date de l'offre</span>
+                <span class="detail-val">{{ c.offre.date | date:'dd MMM yyyy' }}</span>
+              </div>
+            </div>
+
+            @if (c.offre.bio) {
+              <p style="margin-top:12px;padding:14px 16px;background:var(--bg-soft);
+                         border-radius:var(--radius-sm);border-left:4px solid var(--accent);
+                         font-size:13px;line-height:1.8;color:var(--text-mid);">
+                {{ c.offre.bio }}
+              </p>
+            }
+          </div>
+
+          <!-- Bloc parent demandeur -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <i class="fas fa-user-friends" style="color:var(--primary);"></i> Parent demandeur
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Nom complet</span>
+                <span class="detail-val">{{ c.offre.parent?.nomComplet ?? '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Localisation</span>
+                <span class="detail-val">{{ c.offre.parent?.localisation ?? '—' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloc statut & date -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <i class="fas fa-info-circle" style="color:#6366F1;"></i> Suivi
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Date de candidature</span>
+                <span class="detail-val">{{ c.date | date:'dd MMM yyyy' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Statut (intitulé)</span>
+                <span class="detail-val">{{ c.statut.intitule }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /modal-body -->
+      }
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="closeModal('view')">
+          <i class="fas fa-times"></i> Fermer
+        </button>
+        @if (selectCandidature()?.statut?.intitule !== 'ACCEPTEE') {
+          <button class="btn btn-success"
+            (click)="updateStatut(selectCandidature()!, selectCandidature()?.statut?.id!)">
+            <i class="fas fa-check"></i> Accepter
+          </button>
+        }
+        @if (selectCandidature()?.statut?.intitule !== 'REFUSEE') {
+          <button class="btn btn-danger"
+            (click)="updateStatut(selectCandidature()!, selectCandidature()?.statut?.id!)">
+            <i class="fas fa-ban"></i> Refuser
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+}
+
+
+<!-- ============================================================
+     MODAL 2 : CONFIRMER SUPPRESSION
+     ============================================================ -->
+@if (isDeleteModalOpen()) {
+  <div class="modal-overlay open" (click)="closeModal('delete')">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" style="color:var(--red);">
+            Confirmer la suppression
+          </div>
+          <div class="modal-subtitle">Cette action est irréversible</div>
+        </div>
+        <button class="modal-close" (click)="closeModal('delete')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="notice-band"
+          style="border-color:var(--red);background:var(--red-light);">
+          <i class="fas fa-exclamation-triangle"
+            style="color:var(--red);flex-shrink:0;"></i>
+          <div>
+            Vous allez supprimer la candidature pour l'offre
+            <strong>
+              {{ selectCandidature()?.offre?.filiere?.intitule }}
+              — {{ selectCandidature()?.offre?.niveau?.intitule }}
+            </strong>
+            du <strong>{{ selectCandidature()?.date | date:'dd MMM yyyy' }}</strong>.
+            Confirmer ?
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="closeModal('delete')">
+          Annuler
+        </button>
+        <button class="btn btn-danger"
+          (click)="deleteCandidature(selectCandidature()!.id)">
+          <i class="fas fa-trash"></i> Supprimer définitivement
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

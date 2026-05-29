@@ -7,13 +7,13 @@ import { DatePipe } from '@angular/common';
 import { AssistantService } from '../../../../Core/Service/IA/Assistant-Service/assistant-service';
 import { MatchingResult } from '../../../../Core/Model/IA/MatchingResult';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Console } from 'console';
+import { NgClass } from '@angular/common';
 
 export type FilterType = 'toutes' | 'urgentes';
 
 @Component({
   selector: 'app-goffre',
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, NgClass],
   templateUrl: './goffre.html',
   styleUrl: './goffre.css',
 })
@@ -193,6 +193,7 @@ export class GOffre {
     this.matchingResults.set([]);
     this.matchingSaveState.set('idle');
     this.isSaving.set(false);
+    this.expandedCard.set(null);
     this.openModal('botMatching');
     this.matching();
   }
@@ -257,6 +258,19 @@ export class GOffre {
       case 'deleteOffer': this.isDeleteModalOpen.set(false); break;
       case 'botMatching': this.isBotModalOpen.set(false);    break;
     }
+  }
+
+  // ─── Avis IA – carte développée ──
+  expandedCard = signal<number | null>(null);
+
+  toggleCard(enseignantId: number): void {
+    this.expandedCard.set(
+      this.expandedCard() === enseignantId ? null : enseignantId
+    );
+  }
+
+  getRankClass(index: number): string {
+    return index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : 'rank-bronze';
   }
 
   // ─── Helpers template ─────────────────────────────────────────────────────

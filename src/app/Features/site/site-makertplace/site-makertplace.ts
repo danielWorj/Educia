@@ -52,7 +52,8 @@ export class SiteMakertplace {
   listMatiere = signal<Matiere[]>([]);
   listSupport = signal<Support[]>([]);
   listSupportSaved = signal<Support[]>([]);
-  imageUrl = ''; 
+  imageUrl = '';
+  isLoading = signal<boolean>(false);
 
   getAllDataToFilter() {
     this.marketPlaceService.findAllTypeRessource().subscribe({
@@ -66,12 +67,17 @@ export class SiteMakertplace {
   }
 
   getAllSupport() {
+    this.isLoading.set(true);
     this.marketPlaceService.findMarketplaceItems().subscribe({
       next: (data: Support[]) => {
         this.listSupport.set(data);
         this.listSupportSaved.set(data);
+        this.isLoading.set(false);
       },
-      error: () => console.log('Fetch list support : failed')
+      error: () => {
+        console.log('Fetch list support : failed');
+        this.isLoading.set(false);
+      }
     });
   }
 

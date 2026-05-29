@@ -1,5 +1,4 @@
-
-    :root {
+:root {
       --primary: #0A4FFF;
       --primary-dark: #0035CC;
       --primary-light: #EEF3FF;
@@ -983,3 +982,181 @@
   85%  { opacity: 0.4; }
   100% { opacity: 0;   transform: translateY(-220px) scale(1.1); }
 }
+
+    /* ===================================================
+       AVIS IA – PANEL DÉPLIABLE DANS LES CARTES MATCHING
+       =================================================== */
+
+    /* ── Carte matching restructurée ── */
+    .teacher-match-card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      margin-bottom: 12px;
+    }
+    .teacher-match-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .teacher-match-card--expanded {
+      border-color: #6366F1;
+      box-shadow: 0 4px 24px rgba(99,102,241,0.14);
+    }
+
+    /* ── En-tête de la carte ── */
+    .teacher-match-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    /* Badge de classement (médaille) */
+    .teacher-rank-badge {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Nom de l'enseignant */
+    .teacher-match-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    /* Verdict système */
+    .match-interpretation {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 7px;
+      padding: 4px 11px;
+      border-radius: 100px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Bouton toggle "Avis IA" */
+    .btn-toggle-avis {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      padding: 5px 11px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid #6366F1;
+      background: transparent;
+      color: #6366F1;
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+    .btn-toggle-avis:hover {
+      background: #6366F1;
+      color: #fff;
+    }
+
+    /* ── Panel Avis IA ── */
+    .avis-ia-panel {
+      border-top: 1.5px dashed rgba(99,102,241,0.3);
+      padding: 18px 16px 16px;
+      background: linear-gradient(135deg, #fafbff, #f5f3ff);
+      animation: fadeUp 0.25s ease both;
+    }
+
+    .avis-ia-header {
+      margin-bottom: 14px;
+    }
+    .avis-ia-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 13px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, #6366F1, #A855F7);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      letter-spacing: 0.2px;
+    }
+
+    /* Grille 2 colonnes pour forts/faibles */
+    .avis-ia-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 600px) {
+      .avis-ia-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Blocs individuels */
+    .avis-ia-block {
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .avis-ia-block--forts {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+    .avis-ia-block--faibles {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+    .avis-ia-block--reco {
+      background: var(--primary-light);
+      border: 1px solid #bfdbfe;
+      margin-bottom: 10px;
+    }
+
+    .avis-ia-block-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 7px;
+    }
+    .avis-ia-block--forts  .avis-ia-block-title { color: #15803D; }
+    .avis-ia-block--faibles .avis-ia-block-title { color: #C2410C; }
+    .avis-ia-block--reco   .avis-ia-block-title { color: var(--primary); }
+
+    .avis-ia-block-text {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* Verdict final */
+    .avis-ia-verdict {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      color: #e0e7ff;
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .avis-ia-verdict i {
+      color: #fbbf24;
+      font-size: 14px;
+      flex-shrink: 0;
+    }

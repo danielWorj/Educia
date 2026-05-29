@@ -1,19 +1,17 @@
 import {
-  Component, computed, signal, effect,
-  AfterViewInit, OnDestroy,
-  ViewChild, ElementRef, ChangeDetectorRef, inject
+  Component, computed, signal, OnDestroy,
+  ChangeDetectorRef, inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule }                                              from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Chart, registerables } from 'chart.js';
+import { DomSanitizer, SafeResourceUrl }                            from '@angular/platform-browser';
+import { Chart, registerables }                                     from 'chart.js';
 
 import { Section }            from '../../../../Core/Model/Academie/Section';
 import { ResponseServer }     from '../../../../Core/Model/Server/ResponseServer';
 import { Enseignant }         from '../../../../Core/Model/Utilisateur/Enseignant/Enseignant';
 import { GeneralService }     from '../../../../Core/Service/General/general-service';
 import { UtilisateurService } from '../../../../Core/Service/Utlisateur/utilisateur-service';
-import { DevenirRepetiteur }  from '../../../site/home/Formulaire/devenir-repetiteur/devenir-repetiteur';
 import { Diplome }            from '../../../../Core/Model/Utilisateur/Enseignant/Diplome';
 import { ProfilEnseignant }   from '../../../../Core/Model/Utilisateur/Enseignant/ProfilEnseignant';
 import { StatusEnseignant }   from '../../../../Core/Model/Utilisateur/Enseignant/StatusEnseignant';
@@ -23,31 +21,24 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-genseignant',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DevenirRepetiteur],
+  imports: [CommonModule, ReactiveFormsModule],  // ← DevenirRepetiteur retiré
   templateUrl: './genseignant.html',
   styleUrl: './genseignant.css',
 })
-export class Genseignant implements AfterViewInit, OnDestroy {
+export class Genseignant implements OnDestroy {
 
-  // ─── ViewChild avec { static: false } — les canvas sont dans un @else conditionnel
-  @ViewChild('chartDiplome') chartDiplomeRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('chartProfil')  chartProfilRef!:  ElementRef<HTMLCanvasElement>;
-  @ViewChild('chartSection') chartSectionRef!: ElementRef<HTMLCanvasElement>;
-
+  // ── Instances Chart.js — on utilise document.getElementById()
+  //    pour éviter le bug @ViewChild dans @if (les canvas n'existent
+  //    pas dans le DOM tant que isLoading() = true).
   private chartDiplome?: Chart;
   private chartProfil?:  Chart;
   private chartSection?: Chart;
-
-  // Flag : données HTTP reçues ET view prête
-  private dataLoaded  = false;
-  private viewReady   = false;
 
   private cdr = inject(ChangeDetectorRef);
 
   enseignantForm!:    FormGroup;
   addEnseignantForm!: FormGroup;
 
-  // ─── Loading ──────────────────────────────────────────────────────────────
   isLoading = signal<boolean>(true);
 
   constructor(
@@ -99,6 +90,19 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.loadPage();
   }
 
+  ngOnDestroy(): void {
+    this.chartDiplome?.destroy();
+    this.chartProfil?.destroy();
+    this.chartSection?.destroy();
+  }
+
+  // ── Données ───────────────────────────────────────────────────
+  listEnseignants      = signal<Enseignant[]>([]);
+  listSection          = signal<Section[]>([]);
+  listStatusEnseignant = signal<StatusEnseignant[]>([]);
+  listProfilEnseignant = signal<ProfilEnseignant[]>([]);
+  listDiplomes         = signal<Diplome[]>([]);
+
   loadPage(): void {
     this.getAllEnseignants();
     this.getListSection();
@@ -107,49 +111,17 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.getListDiplomes();
   }
 
-  // ─── ngAfterViewInit : la vue est prête, mais isLoading peut encore être true
-  //     On pose viewReady = true et on tente d'initialiser les charts si les
-  //     données sont déjà là (cas rare mais possible avec cache HTTP).
-  ngAfterViewInit(): void {
-    this.viewReady = true;
-    this.tryInitCharts();
-  }
-
-  ngOnDestroy(): void {
-    this.chartDiplome?.destroy();
-    this.chartProfil?.destroy();
-    this.chartSection?.destroy();
-  }
-
-  // ─── Tentative d'initialisation : les deux conditions doivent être réunies.
-  //     Appelée depuis ngAfterViewInit ET depuis getAllEnseignants (next).
-  private tryInitCharts(): void {
-    if (!this.viewReady || !this.dataLoaded) return;
-
-    // Les canvas viennent d'apparaître dans le DOM (isLoading vient de passer à false).
-    // On laisse un tick pour qu'Angular applique le @else et insère les <canvas>.
-    setTimeout(() => {
-      this.createCharts();
-      this.updateCharts();
-    }, 0);
-  }
-
-  // ─── Données ──────────────────────────────────────────────────────────────
-  listEnseignants      = signal<Enseignant[]>([]);
-  listSection          = signal<Section[]>([]);
-  listStatusEnseignant = signal<StatusEnseignant[]>([]);
-  listProfilEnseignant = signal<ProfilEnseignant[]>([]);
-  listDiplomes         = signal<Diplome[]>([]);
-
   getAllEnseignants(): void {
     this.isLoading.set(true);
     this.utilisateurService.findAllEnseignants().subscribe({
       next: (response: Enseignant[]) => {
         this.listEnseignants.set(response);
-        this.isLoading.set(false);    // ← le @else s'affiche → les <canvas> entrent dans le DOM
-        this.dataLoaded = true;
-        this.cdr.detectChanges();     // ← force Angular à rendre les <canvas> immédiatement
-        this.tryInitCharts();         // ← maintenant les ViewChild sont accessibles
+        this.isLoading.set(false);
+        this.cdr.detectChanges();       // force Angular à rendre les canvas
+        setTimeout(() => {
+          this.destroyCharts();
+          this.buildAllCharts();
+        }, 0);
       },
       error: (err: any) => {
         console.error('Erreur chargement enseignants :', err);
@@ -186,14 +158,14 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     });
   }
 
-  // ─── Filtres ──────────────────────────────────────────────────────────────
+  // ── Filtres ───────────────────────────────────────────────────
   activeFilter = signal<string>('all');
 
   filterChips = [
-    { value: 'all',      label: 'Tous'       },
-    { value: 'approuve', label: 'Approuvés'  },
-    { value: 'attente',  label: 'En attente' },
-    { value: 'suspendu', label: 'Suspendus'  },
+    { value: 'all',       label: 'Tous'        },
+    { value: 'VERIFIE',   label: 'Vérifiés'    },
+    { value: 'EN_ATTENTE',label: 'En attente'  },
+    { value: 'SUSPENDU',  label: 'Suspendus'   },
   ];
 
   filteredEnseignants = computed(() => {
@@ -213,7 +185,96 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     return Math.round((this.countByStatus(status) / total) * 100) + '%';
   }
 
-  // ─── Graphiques ───────────────────────────────────────────────────────────
+  // Badge CSS selon le statut
+  getStatutBadgeClass(intitule: string): string {
+    const map: Record<string, string> = {
+      VERIFIE:    'badge-green',
+      EN_ATTENTE: 'badge-yellow',
+      SUSPENDU:   'badge-red',
+    };
+    return map[intitule] ?? 'badge-gray';
+  }
+
+  getStatutLabel(intitule: string): string {
+    const map: Record<string, string> = {
+      VERIFIE:    'Vérifié',
+      EN_ATTENTE: 'En attente',
+      SUSPENDU:   'Suspendu',
+    };
+    return map[intitule] ?? intitule;
+  }
+
+  // Récupère l'id d'un statut depuis la liste chargée — évite les ids hardcodés
+  getStatusId(intitule: string): number {
+    const found = this.listStatusEnseignant().find(s => s.intitule === intitule);
+    return found?.id ?? 0;
+  }
+
+  // ── Graphiques Chart.js ───────────────────────────────────────
+  private readonly PALETTE = [
+    '#0A4FFF','#22C55E','#F59E0B','#EF4444','#A855F7',
+    '#FF6B35','#06B6D4','#EC4899','#84CC16','#F97316',
+  ];
+
+  private canvas(id: string): HTMLCanvasElement | null {
+    return document.getElementById(id) as HTMLCanvasElement | null;
+  }
+
+  private destroyCharts(): void {
+    this.chartDiplome?.destroy(); this.chartDiplome = undefined;
+    this.chartProfil?.destroy();  this.chartProfil  = undefined;
+    this.chartSection?.destroy(); this.chartSection = undefined;
+  }
+
+  private buildAllCharts(): void {
+    const list = this.listEnseignants();
+    this.chartDiplome = this.makeDonut('canvasDiplome', 'Diplômes',
+      this.groupBy(list, e => e.diplome?.intitule ?? 'Non renseigné'));
+    this.chartProfil  = this.makeDonut('canvasProfil',  'Profils',
+      this.groupBy(list, e => e.profilEnseignant?.intitule ?? 'Non renseigné'));
+    this.chartSection = this.makeDonut('canvasSection', 'Sections',
+      this.groupBy(list, e => e.section?.intitule ?? 'Non renseigné'));
+  }
+
+  private makeDonut(id: string, title: string, map: Record<string, number>): Chart | undefined {
+    const ctx = this.canvas(id);
+    if (!ctx) return undefined;
+    const labels = Object.keys(map);
+    const data   = Object.values(map);
+    return new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: this.PALETTE.slice(0, labels.length),
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverOffset: 6,
+        }],
+      },
+      options: {
+        cutout: '62%',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: { family: 'Inter, sans-serif', size: 11 },
+              padding: 14,
+              boxWidth: 11,
+              boxHeight: 11,
+            },
+          },
+          tooltip: {
+            callbacks: { label: (ctx) => `  ${ctx.label} : ${ctx.raw}` },
+          },
+        },
+      },
+    });
+  }
+
   private groupBy(list: Enseignant[], key: (e: Enseignant) => string): Record<string, number> {
     const map: Record<string, number> = {};
     for (const e of list) {
@@ -223,62 +284,10 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     return map;
   }
 
-  private readonly PALETTE = [
-    '#0A4FFF','#22C55E','#F59E0B','#EF4444','#A855F7',
-    '#FF6B35','#06B6D4','#EC4899','#84CC16','#F97316',
-  ];
-
-  private chartOptions(title: string): any {
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom' as const,
-          labels: { font: { family: 'Inter, sans-serif', size: 12 }, padding: 16 },
-        },
-        tooltip: { callbacks: { label: (ctx: any) => ` ${ctx.label} : ${ctx.parsed}` } },
-      },
-    };
-  }
-
-  // Crée les instances Chart.js (canvas vides, sans données encore)
-  createCharts(): void {
-    const makeDonut = (ref: ElementRef<HTMLCanvasElement> | undefined, title: string): Chart | undefined => {
-      if (!ref?.nativeElement) return undefined;
-      return new Chart(ref.nativeElement, {
-        type: 'doughnut',
-        data: { labels: [], datasets: [{ data: [], backgroundColor: this.PALETTE, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }] },
-        options: this.chartOptions(title),
-      });
-    };
-
-    this.chartDiplome = makeDonut(this.chartDiplomeRef, 'Diplômes');
-    this.chartProfil  = makeDonut(this.chartProfilRef,  'Profils');
-    this.chartSection = makeDonut(this.chartSectionRef, 'Sections');
-  }
-
-  // Met à jour les données des charts existants (ou les recrée si null)
-  updateCharts(): void {
-    const list = this.listEnseignants();
-
-    const fill = (chart: Chart | undefined, map: Record<string, number>): void => {
-      if (!chart) return;
-      chart.data.labels = Object.keys(map);
-      chart.data.datasets[0].data = Object.values(map);
-      chart.data.datasets[0].backgroundColor = this.PALETTE.slice(0, Object.keys(map).length);
-      chart.update();
-    };
-
-    fill(this.chartDiplome, this.groupBy(list, e => e.diplome?.intitule ?? ''));
-    fill(this.chartProfil,  this.groupBy(list, e => e.profilEnseignant?.intitule ?? ''));
-    fill(this.chartSection, this.groupBy(list, e => e.section?.intitule ?? ''));
-  }
-
-  // ─── Sélection enseignant ─────────────────────────────────────────────────
-  cheminFile = '';
-  nomCV      = signal<string>('');
-  nomCNI     = signal<string>('');
+  // ── Sélection enseignant ──────────────────────────────────────
+  cheminFile  = '';
+  nomCV       = signal<string>('');
+  nomCNI      = signal<string>('');
   photoProfil = signal<string>('');
 
   selectEnseignant(enseignant: Enseignant): void {
@@ -291,7 +300,7 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     this.loadCniFile(this.cheminFile + enseignant.cni, enseignant.cni ?? '');
   }
 
-  // ─── Fichiers Modal Ajout ─────────────────────────────────────────────────
+  // ── Fichiers ajout ────────────────────────────────────────────
   addPhotoFile!: File;
   addPhotoFileName = signal<string>('');
   addPhotoPreview  = signal<string>('');
@@ -337,7 +346,13 @@ export class Genseignant implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ─── Modal Ajout ──────────────────────────────────────────────────────────
+  // ── Modal ajout ───────────────────────────────────────────────
+  showAddModal    = signal(false);
+  showProfilModal = signal<boolean>(false);
+  showDocsModal   = signal(false);
+  showDeleteModal = signal(false);
+  idToDelete      = signal<number | null>(null);
+
   openAddModal(): void {
     this.addEnseignantForm.reset();
     this.addPhotoFile = undefined!;
@@ -372,22 +387,25 @@ export class Genseignant implements AfterViewInit, OnDestroy {
 
     this.utilisateurService.createEnseignant(formData).subscribe({
       next: (response: number) => {
-        if (response > 0) { this.showAddModal.set(false); this.addEnseignantForm.reset(); this.loadPage(); }
-        else { alert('Erreur lors de la création du compte enseignant.'); }
+        if (response > 0) {
+          this.showAddModal.set(false);
+          this.addEnseignantForm.reset();
+          this.loadPage();
+        } else {
+          alert('Erreur lors de la création du compte enseignant.');
+        }
       },
       error: (err: any) => console.error('Erreur création enseignant :', err),
     });
   }
 
+  // ── Statut & suppression ──────────────────────────────────────
   changeStatus(id: number, idS: number): void {
     this.utilisateurService.changeStatusEnseignant(id, idS).subscribe({
-      next:  (response: ResponseServer) => { console.log(response.message); this.getAllEnseignants(); },
+      next:  (r: ResponseServer) => { console.log(r.message); this.getAllEnseignants(); },
       error: (err: any) => console.error(err),
     });
   }
-
-  showDeleteModal = signal(false);
-  idToDelete      = signal<number | null>(null);
 
   confirmDelete(id: number): void { this.idToDelete.set(id); this.showDeleteModal.set(true); }
 
@@ -400,18 +418,62 @@ export class Genseignant implements AfterViewInit, OnDestroy {
 
   deleteEnseignant(id: number): void {
     this.utilisateurService.deleteEnseignant(id).subscribe({
-      next:  () => { this.getAllEnseignants(); },
+      next:  () => this.getAllEnseignants(),
       error: (err: any) => console.error('Erreur suppression enseignant :', err),
     });
   }
 
-  showProfilModal = signal<boolean>(false);
-  showDocsModal   = signal(false);
-  showAddModal    = signal(false);
+  // ── Modals profil & docs ──────────────────────────────────────
+  // Enseignant actuellement affiché dans la modale profil
+  selectedEnseignant = signal<Enseignant | null>(null);
+  // Id du statut sélectionné dans les chips (0 = aucun choix)
+  selectedStatusId   = signal<number>(0);
+  // Spinner pendant la sauvegarde du statut
+  isSavingStatus     = signal<boolean>(false);
 
-  openProfilModal(enseignant: Enseignant): void { this.selectEnseignant(enseignant); this.showProfilModal.set(true); }
-  closeProfilModal(): void { this.showProfilModal.set(false); }
-  openDocsModal(enseignant: Enseignant): void { this.selectEnseignant(enseignant); this.showDocsModal.set(true); }
+  openProfilModal(enseignant: Enseignant): void {
+    this.selectEnseignant(enseignant);          // charge photo, cv, etc.
+    this.selectedEnseignant.set(enseignant);
+    // Pré-sélectionne le statut actuel de l'enseignant
+    this.selectedStatusId.set(enseignant.statusEnseignant?.id ?? 0);
+    this.showProfilModal.set(true);
+  }
+
+  closeProfilModal(): void {
+    this.showProfilModal.set(false);
+    this.selectedEnseignant.set(null);
+    this.selectedStatusId.set(0);
+  }
+
+  /** Applique le statut sélectionné via les chips */
+  applyStatus(enseignantId: number): void {
+    const idStatus = this.selectedStatusId();
+    if (!idStatus) return;
+
+    this.isSavingStatus.set(true);
+    this.utilisateurService.changeStatusEnseignant(enseignantId, idStatus).subscribe({
+      next: (r: ResponseServer) => {
+        this.isSavingStatus.set(false);
+        // Met à jour le signal local sans recharger toute la liste
+        this.listEnseignants.update(list =>
+          list.map(e => {
+            if (e.id !== enseignantId) return e;
+            const nouveauStatut = this.listStatusEnseignant().find(s => s.id === idStatus) ?? e.statusEnseignant;
+            return { ...e, statusEnseignant: nouveauStatut };
+          })
+        );
+        // Rafraîchit aussi l'enseignant dans la modale
+        const updated = this.listEnseignants().find(e => e.id === enseignantId) ?? null;
+        this.selectedEnseignant.set(updated);
+      },
+      error: (err) => {
+        console.error('[applyStatus] erreur :', err);
+        this.isSavingStatus.set(false);
+      },
+    });
+  }
+
+  openDocsModal(enseignant: Enseignant): void   { this.selectEnseignant(enseignant); this.showDocsModal.set(true); }
 
   diplomeUrl = ''; diplomeFileName = ''; safeDiplomeUrl?: SafeResourceUrl;
   diplomeFileType: 'image' | 'pdf' | 'docx' | 'other' = 'other';

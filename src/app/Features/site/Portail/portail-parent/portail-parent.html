@@ -29,7 +29,7 @@
         <div class="stat-pill-icon orange">🎯</div>
         <div>
           <div class="stat-pill-val">{{ listMatching().length }}</div>
-          <div class="stat-pill-label">Matchings total</div>
+          <div class="stat-pill-label">Matchings trouvés</div>
         </div>
       </div>
     </div>
@@ -69,6 +69,7 @@
       }
 
       @for (offre of listOffres(); track offre.id; let idx = $index) {
+
         <div
           class="offre-card reveal visible"
           (click)="getAllMatchingByOffre(offre)"
@@ -130,7 +131,7 @@
 
 
 <!-- ══════════════════════════════════════
-     MODAL MATCHING
+     MODAL MATCHING + AVIS IA
      ══════════════════════════════════════ -->
 @if (offreActive() !== null) {
   <div
@@ -167,7 +168,7 @@
       <!-- Toolbar -->
       <div class="match-modal-toolbar">
         @if (chargementMatching()) {
-          <span class="match-count">Chargement…</span>
+          <span class="match-count">Analyse IA en cours…</span>
         } @else {
           <span class="match-count">{{ listMatching().length }} enseignant(s) matché(s)</span>
         }
@@ -181,7 +182,15 @@
         </div>
       }
 
-      <!-- Liste ScoreMatch -->
+      <!-- ── Chargement matching ── -->
+      @if (chargementMatching()) {
+        <div style="padding:32px; display:flex; flex-direction:column; align-items:center; gap:12px; color:var(--text-light);">
+          <span style="font-size:2rem;">🤖</span>
+          <p style="margin:0; font-size:13px;">Analyse IA des profils en cours…</p>
+        </div>
+      }
+
+      <!-- ── Liste MatchingDB avec Avis IA ── -->
       <div class="match-modal-body">
 
         @if (!chargementMatching() && listMatching().length === 0 && !erreurMatching()) {
@@ -191,29 +200,109 @@
           </div>
         }
 
-        @for (match of listMatching(); track match.enseignant; let i = $index) {
-          <div class="ens-card">
+        @for (match of listMatching(); track match.id; let i = $index) {
 
-            <!-- Rang -->
-            <div class="ens-rank" [class.top]="i < 3">#{{ i + 1 }}</div>
+          <!-- Wrapper carte + panel avis IA -->
+          <div
+            class="ens-card-wrapper"
+            [class.ens-card-wrapper--open]="expandedMatch() === match.id"
+          >
 
-            <!-- Avatar initiales -->
-            <div class="ens-photo" [class]="photoClassFor(i)">
-              {{ initialesDe(match.enseignant.nomComplet) }}
-            </div>
+            <!-- ── Ligne principale ── -->
+            <div class="ens-card">
 
-            <!-- Nom -->
-            <div class="ens-info">
-              <div class="ens-name">{{ match.enseignant.nomComplet }}</div>
-            </div>
+              <div class="ens-rank" [class.top]="i < 3">#{{ i + 1 }}</div>
 
-            <!-- Score mF -->
-            <div class="ens-score-block">
-              <div class="ens-score-val">{{ match.score }}</div>
-              <div class="ens-score-label">score mF</div>
-            </div>
+              <div class="ens-photo" [class]="photoClassFor(i)">
+                {{ initialesDe(match.enseignant.nomComplet) }}
+              </div>
 
-          </div>
+              <div class="ens-info">
+                <div class="ens-name">{{ match.enseignant.nomComplet }}</div>
+
+                <!-- Spécialité si disponible -->
+                @if (match.enseignant.specialite) {
+                  <div class="ens-specialite">
+                    <i class="fas fa-graduation-cap"></i>
+                    {{ match.enseignant.specialite }}
+                  </div>
+                }
+
+                <!-- Verdict mini (première ligne du verdict_final) -->
+                @if (getAvis(match); as avis) {
+                  <div class="ens-verdict-mini" [title]="avis.verdict_final">
+                    ✨ {{ avis.verdict_final }}
+                  </div>
+                }
+              </div>
+
+              <!-- Score + bouton avis IA -->
+              <div class="ens-score-block">
+                <div class="ens-score-val">{{ match.score }}</div>
+                <div class="ens-score-label">score mF</div>
+
+                @if (getAvis(match)) {
+                  <button
+                    class="btn-avis-toggle"
+                    type="button"
+                    (click)="toggleMatch(match.id); $event.stopPropagation()"
+                  >
+                    <i class="fas fa-robot" style="font-size:9px;"></i>
+                    {{ expandedMatch() === match.id ? 'Masquer' : 'Avis IA' }}
+                  </button>
+                }
+              </div>
+
+            </div><!-- /ens-card -->
+
+            <!-- ── Panel Avis IA dépliable ── -->
+            @if (expandedMatch() === match.id && getAvis(match); as avis) {
+              <div class="ens-avis-panel">
+
+                <!-- Badge -->
+                <div class="ens-avis-badge">
+                  <i class="fas fa-robot"></i>
+                  Analyse IA — Groq / LLaMA
+                </div>
+
+                <!-- Grille forts / faibles -->
+                <div class="ens-avis-grid">
+
+                  <div class="ens-avis-block ens-avis-block--forts">
+                    <div class="ens-avis-block-title">
+                      <i class="fas fa-check-circle"></i> Points forts
+                    </div>
+                    <p>{{ avis.points_forts }}</p>
+                  </div>
+
+                  <div class="ens-avis-block ens-avis-block--faibles">
+                    <div class="ens-avis-block-title">
+                      <i class="fas fa-exclamation-triangle"></i> Points faibles
+                    </div>
+                    <p>{{ avis.points_faibles }}</p>
+                  </div>
+
+                </div>
+
+                <!-- Recommandation -->
+                <div class="ens-avis-block ens-avis-block--reco">
+                  <div class="ens-avis-block-title">
+                    <i class="fas fa-lightbulb"></i> Recommandation
+                  </div>
+                  <p>{{ avis.recommandation }}</p>
+                </div>
+
+                <!-- Verdict final -->
+                <div class="ens-avis-verdict">
+                  <i class="fas fa-star"></i>
+                  <span>{{ avis.verdict_final }}</span>
+                </div>
+
+              </div><!-- /ens-avis-panel -->
+            }
+
+          </div><!-- /ens-card-wrapper -->
+
         }
 
       </div><!-- /match-modal-body -->

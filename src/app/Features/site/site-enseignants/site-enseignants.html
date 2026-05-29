@@ -25,6 +25,11 @@
     </div>
 
     @if (isLoading()) {
+      <!-- Spinner centré -->
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <span class="spinner-label">Chargement des répétiteurs…</span>
+      </div>
       <div class="tutors-loading">
         @for (skeleton of [1,2,3,4,5,6]; track skeleton) {
           <div class="tutor-card tutor-card--skeleton">

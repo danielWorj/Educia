@@ -45,6 +45,10 @@ export class RepetitionService {
     return this.http.get<ResponseServer>(edulearnDashboard.OffreRepetition.Candidature.delete+id);
   }
 
+  updateStatutCandidature(idc: number , id:number){
+    return this.http.get<ResponseServer>(edulearnDashboard.OffreRepetition.Candidature.updatestatut+id);
+  }
+
   findAllCandidatureByOffre(id:number):Observable<Candidature[]>{
     return this.http.get<Candidature[]>(edulearnDashboard.OffreRepetition.Candidature.allByOffre+id);
   }

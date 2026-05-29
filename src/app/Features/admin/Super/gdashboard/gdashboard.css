@@ -1,0 +1,416 @@
+/* ============================================================
+   GDASHBOARD — CSS
+   ============================================================ */
+
+
+/* ── 0. STATS MINI ──────────────────────────────────────────
+   ---------------------------------------------------------- */
+.stats-mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-mini-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(10,79,255,0.05);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.stat-mini-card:hover {
+  box-shadow: 0 6px 22px rgba(10,79,255,0.11);
+  transform: translateY(-2px);
+}
+
+.stat-mini-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.stat-mini-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+/* Valeur numérique */
+.stat-mini-val {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* Label */
+.stat-mini-label {
+  font-size: 11.5px;
+  color: var(--text-light);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+
+/* ── 1. MASQUAGE CHARGEMENT ─────────────────────────────────
+   ---------------------------------------------------------- */
+.db-hidden { display: none !important; }
+
+
+/* ── 2. SURCHARGE GLOBALE CARD DANS LE DASHBOARD ────────────
+   style.css définit .card-title à 1rem/700 — trop grossier
+   pour un dashboard compact. On surcharge ici via le
+   contexte .page-body qui englobe tout le contenu.
+   ---------------------------------------------------------- */
+
+/* Titre de card */
+.page-body .card-title {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0;
+}
+
+/* Header de card : padding réduit */
+.page-body .card-header {
+  padding: 12px 16px !important;
+}
+
+/* Badge dans card-header : taille réduite */
+.page-body .card-header .badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  font-weight: 500;
+}
+
+/* Sous-titre gris sous le titre */
+.db-card-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 1px;
+  font-weight: 400;
+}
+
+
+/* ── 3. LIGNE DE GRAPHES 2 × 1 ─────────────────────────────
+   ---------------------------------------------------------- */
+.db-charts-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.db-chart-card { display: flex; flex-direction: column; }
+
+.db-chart-body {
+  position: relative;
+  height: 210px;
+  padding: 12px 16px 16px;
+}
+.db-chart-body canvas {
+  width:  100% !important;
+  height: 100% !important;
+}
+
+
+/* ── 4. LIGNE DE TABLES 2 colonnes ─────────────────────────
+   ---------------------------------------------------------- */
+.db-tables-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.db-table-body { padding: 0; }
+
+
+/* ── 5. TABLE INTERNE ───────────────────────────────────────
+   ---------------------------------------------------------- */
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.db-table thead tr {
+  background: var(--bg-soft);
+  border-bottom: 1.5px solid var(--border);
+}
+.db-table thead th {
+  padding: 9px 14px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-light);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.db-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 400;
+}
+.db-table tbody tr:last-child td { border-bottom: none; }
+.db-table tbody tr { transition: background 0.15s; }
+.db-table tbody tr:hover { background: var(--bg-soft); }
+
+
+/* ── 6. CELLULES ────────────────────────────────────────────
+   ---------------------------------------------------------- */
+.db-cell-title {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.db-cell-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.db-cell-bold  { font-weight: 500; font-size: 12px; color: var(--text-dark); }
+.db-cell-unit  { font-size: 10.5px; color: var(--text-light); font-weight: 400; }
+.db-cell-date  { font-size: 11px; color: var(--text-light); white-space: nowrap; font-weight: 400; }
+
+.db-cell-loc {
+  font-size: 11px;
+  color: var(--text-mid);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.db-cell-loc i { color: var(--accent); font-size: 10px; }
+
+.db-badge-sm {
+  font-size: 10px !important;
+  padding: 2px 7px !important;
+}
+
+
+/* ── 7. AVATAR + CELLULE USER ───────────────────────────────
+   ---------------------------------------------------------- */
+.db-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 10px;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+
+
+/* ── 8. ÉTAT VIDE ───────────────────────────────────────────
+   ---------------------------------------------------------- */
+.db-empty {
+  text-align: center;
+  padding: 24px 16px;
+}
+.db-empty i {
+  font-size: 1.6rem;
+  opacity: 0.18;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-light);
+}
+.db-empty p {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+
+/* ── 9. OFFRE-CARDS (résumé dans le dashboard) ──────────────
+   ---------------------------------------------------------- */
+.offre-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  animation: fadeUp 0.35s ease both;
+  margin-bottom: 10px;
+}
+.offre-card:last-child { margin-bottom: 0; }
+.offre-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.offre-card:nth-child(2) { animation-delay: 0.05s; }
+.offre-card:nth-child(3) { animation-delay: 0.10s; }
+
+.offre-card-top {
+  padding: 14px 16px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Titre de l'offre */
+.offre-title {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.offre-status-badge {
+  padding: 3px 9px;
+  border-radius: 100px;
+  font-size: 10.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.badge-active  { background: var(--green-light);  color: #15803D; }
+.badge-pending { background: var(--yellow-light); color: #92400E; }
+.badge-closed  { background: var(--border);       color: var(--text-mid); }
+.badge-urgent  { background: var(--red-light);    color: var(--red); }
+
+.offre-card-body { padding: 10px 16px 0; }
+
+/* Description */
+.offre-desc {
+  font-size: 11.5px;
+  color: var(--text-mid);
+  line-height: 1.5;
+  font-weight: 400;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.offre-matieres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+/* Tag matière */
+.matiere-tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Méta */
+.offre-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.offre-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--text-light);
+  font-weight: 400;
+}
+.offre-meta-item i        { color: var(--primary); font-size: 10px; }
+.offre-meta-item.cand i   { color: var(--accent); }
+.offre-meta-item.loc i    { color: var(--green); }
+.offre-meta-item.nivel i  { color: #A855F7; }
+
+.offre-card-footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offre-parent {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+}
+
+.parent-avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+/* Nom parent */
+.parent-name { font-size: 11px; font-weight: 500; color: var(--text-mid); }
+.parent-date { font-size: 10px; color: var(--text-light); font-weight: 400; }
+
+.offre-actions { display: flex; gap: 5px; }
+
+
+/* ── 10. RESPONSIVE ─────────────────────────────────────────
+   ---------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .stats-mini    { grid-template-columns: repeat(2, 1fr); }
+  .db-charts-row { grid-template-columns: repeat(2, 1fr); }
+  .db-tables-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .stats-mini    { grid-template-columns: repeat(2, 1fr); }
+  .db-charts-row { grid-template-columns: 1fr; }
+  .db-tables-row { grid-template-columns: 1fr; }
+  .db-chart-body { height: 200px; }
+}
+
+@media (max-width: 768px) {
+  .db-chart-body { height: 180px; padding: 10px 12px 14px; }
+  .db-table thead th { font-size: 10px; padding: 8px 10px; }
+  .db-table tbody td { padding: 9px 10px; }
+}
+
+@media (max-width: 480px) {
+  .stats-mini    { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-mini-val { font-size: 1.15rem; }
+  .db-charts-row { gap: 10px; }
+  .db-tables-row { gap: 10px; }
+  .db-chart-body { height: 160px; }
+}
